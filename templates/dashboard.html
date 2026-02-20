@@ -168,4 +168,42 @@
 
 </div>
 
+<div class="card" style="margin-top: 2rem;">
+
+    <h3 style="margin-bottom: 1rem;">
+        
+        VirusTotal API Key
+    
+    </h3>
+
+    <p style="margin-bottom: 1rem; color: var(--text-muted);">
+
+        Your key is stored per-account and used automatically when scanning mismatched files with VirusTotal enabled.
+
+    </p>
+
+    <form method="post" action="{{ url_for('save_virustotal_key') }}">
+
+        <input type="password" name="virustotal_key" class="form-input" placeholder="Enter your VirusTotal API key" value="{{ virustotal_key }}">
+
+        <button type="submit" class="button" style="width: auto;">
+
+            Save Key
+
+        </button>
+
+        {% if virustotal_key %}
+
+        <button type="submit" name="virustotal_key" value="" class="button" style="width: auto; background: var(--bg-surface); color: var(--text-main); margin-left: 0.75rem;">
+
+            Remove Key
+
+        </button>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
 {% endblock %}

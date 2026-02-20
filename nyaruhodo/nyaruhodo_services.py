@@ -8,7 +8,7 @@ RED   = "\033[91m"
 
 VIRUS_TOTAL = "https://www.virustotal.com/api/v3/files/"
 
-def virus_total(file_path, key=None):
+def virustotal(file_path, key=None):
 
     if not key:
 
@@ -58,7 +58,7 @@ def virus_total(file_path, key=None):
 
                 return {
                     "file_hash": file_hash,
-                    "message":   "Sorry! File was not found in the Virus Total database. You can upload it manually.",
+                    "message":   "Sorry! File was not found in the VirusTotal database. You can upload it manually.",
                     "link":      "https://www.virustotal.com/gui/home/upload"
                 }
 

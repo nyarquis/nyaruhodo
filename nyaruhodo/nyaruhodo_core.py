@@ -11,9 +11,13 @@ YELLOW     = "\033[93m"
 SIGNATURES = None
 
 def signatures():
+
     global SIGNATURES
+
     if SIGNATURES is None:
+
         SIGNATURES = nyaruhodo_signatures.load_signatures()
+
     return SIGNATURES
 
 def get_header(file_path, byte_count=32):

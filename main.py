@@ -9,7 +9,7 @@ import werkzeug.utils
 import nyaruhodo
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-DATABASE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db.sqlite3")
+DATABASE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.sqlite3")
 server = flask.Flask(__name__)
 server.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 server.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
@@ -48,7 +48,7 @@ def initialise_database():
     with server.app_context():
 
         database = get_database()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)")
+        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virus_total_key TEXT)")
         database.execute("CREATE TABLE IF NOT EXISTS logs (log_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
         database.commit()
 
@@ -128,14 +128,14 @@ def logout():
     return flask.redirect(flask.url_for("index"))
 
 @server.route("/dashboard")
-
 @requirelogin
 
 def dashboard():
 
     database = get_database()
-    logs = database.execute("SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
-    return flask.render_template("dashboard.html", username=flask.session["username"], logs=logs)
+    logs     = database.execute("SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
+    user     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    return flask.render_template("dashboard.html", username=flask.session["username"], logs=logs, virus_total_key=user["virus_total_key"] or "")
 
 @server.route("/dashboard/scan", methods=["POST"])
 
@@ -166,7 +166,18 @@ def scan():
 
         if result["mismatch"] and flask.request.form.get("virustotal") == "true":
 
-            virustotal = nyaruhodo.services.virus_total(filepath)
+            key = None
+
+            if "user_id" in flask.session:
+
+                user = get_database().execute("SELECT virus_total_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+                key  = user["virus_total_key"] if user and user["virus_total_key"] else None
+
+            if not key:
+
+                key = os.environ.get("VIRUS_TOTAL_API_KEY")
+
+            virustotal = nyaruhodo.services.virustotal(filepath, key)
             result["virustotal"] = virustotal
 
         if "user_id" in flask.session:
@@ -193,7 +204,6 @@ def scan():
     return flask.jsonify({"error": "Sorry! Processing failed."}), 500
 
 @server.route("/dashboard/delete-account", methods=["POST"])
-
 @requirelogin
 
 def delete_account():
@@ -213,7 +223,6 @@ def delete_account():
     return flask.redirect(flask.url_for("index"))
 
 @server.route("/dashboard/delete-log/<int:log_id>", methods=["POST"])
-
 @requirelogin
 
 def delete_log(log_id):
@@ -226,6 +235,17 @@ def delete_log(log_id):
         return flask.redirect(flask.url_for("dashboard"))
 
     database.execute("DELETE FROM logs WHERE log_id = ?", (log_id,))
+    database.commit()
+    return flask.redirect(flask.url_for("dashboard"))
+
+@server.route("/dashboard/virustotal-key", methods=["POST"])
+@requirelogin
+
+def save_virus_total_key():
+
+    key      = flask.request.form.get("virus_total_key", "").strip()
+    database = get_database()
+    database.execute("UPDATE users SET virus_total_key = ? WHERE user_id = ?", (key, flask.session["user_id"]))
     database.commit()
     return flask.redirect(flask.url_for("dashboard"))
 
