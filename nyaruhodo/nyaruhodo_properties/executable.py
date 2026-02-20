@@ -21,7 +21,7 @@ def pe_timestamp_to_string(timestamp):
 
         exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
         print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
-        return str(timestamp)
+        return f"Invalid Timestamp ({str(timestamp)})"
 
 def read_pe(file_path):
 

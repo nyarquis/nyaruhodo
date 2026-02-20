@@ -84,7 +84,6 @@ def register():
 
         try:
 
-            user = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
             hashed_password = werkzeug.security.generate_password_hash(password)
             cursor = database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             database.commit()
@@ -238,10 +237,10 @@ def delete_log(log_id):
     database.commit()
     return flask.redirect(flask.url_for("dashboard"))
 
-@server.route("/dashboard/virustotal-key", methods=["POST"])
+@server.route("/dashboard/virustotal", methods=["POST"])
 @requirelogin
 
-def save_virus_total_key():
+def virustotal():
 
     key      = flask.request.form.get("virus_total_key", "").strip()
     database = get_database()
@@ -252,6 +251,5 @@ def save_virus_total_key():
 if __name__ == "__main__":
     
     nyaruhodo.init.paint_screen()
-    nyaruhodo.signatures.load_signatures()
     initialise_database()
     server.run(debug=True, host="0.0.0.0", port=5000)
