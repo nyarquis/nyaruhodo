@@ -1,367 +1,367 @@
 [
   {
     "HEX":          "377abcaf271c",
-    "FILETYPE":     "7Z",
+    "FILE_TYPE":     "7Z",
     "DESCRIPTION":  "7-Zip Archive"
   },
   {
     "HEX":          "000100005374616e6461726420414345204442",
-    "FILETYPE":     "ACCDB",
+    "FILE_TYPE":     "ACCDB",
     "DESCRIPTION":  "Microsoft Access 2007+ Database"
   },
   {
     "HEX":          "464f524d",
-    "FILETYPE":     "AIFF",
+    "FILE_TYPE":     "AIFF",
     "DESCRIPTION":  "AIFF Audio"
   },
   {
     "HEX":          "504b030414000800",
-    "FILETYPE":     "APK",
+    "FILE_TYPE":     "APK",
     "DESCRIPTION":  "Android Package"
   },
   {
     "HEX":          "213c617263683e",
-    "FILETYPE":     "AR",
+    "FILE_TYPE":     "AR",
     "DESCRIPTION":  "Unix Archive"
   },
   {
     "HEX":          "424d",
-    "FILETYPE":     "BMP",
+    "FILE_TYPE":     "BMP",
     "DESCRIPTION":  "Bitmap Image"
   },
   {
     "HEX":          "425a68",
-    "FILETYPE":     "BZ2",
+    "FILE_TYPE":     "BZ2",
     "DESCRIPTION":  "Bzip2 Archive"
   },
   {
     "HEX":          "425a68",
-    "FILETYPE":     "BZ2",
+    "FILE_TYPE":     "BZ2",
     "DESCRIPTION":  "Bzip2 Compressed"
   },
   {
     "HEX":          "49545346",
-    "FILETYPE":     "CHM",
+    "FILE_TYPE":     "CHM",
     "DESCRIPTION":  "Compiled HTML Help"
   },
   {
     "HEX":          "43723234",
-    "FILETYPE":     "CRX",
+    "FILE_TYPE":     "CRX",
     "DESCRIPTION":  "Chrome Extension"
   },
   {
     "HEX":          "6465780a",
-    "FILETYPE":     "DEX",
+    "FILE_TYPE":     "DEX",
     "DESCRIPTION":  "Android Dalvik Executable"
   },
   {
     "HEX":          "504b030414000600",
-    "FILETYPE":     "DOCX",
+    "FILE_TYPE":     "DOCX",
     "DESCRIPTION":  "Office Open XML Document"
   },
   {
     "HEX":          "7f454c46",
-    "FILETYPE":     "ELF",
+    "FILE_TYPE":     "ELF",
     "DESCRIPTION":  "Linux/Unix Executable"
   },
   {
     "HEX":          "46726f6d",
-    "FILETYPE":     "EML",
+    "FILE_TYPE":     "EML",
     "DESCRIPTION":  "Email Message"
   },
   {
     "HEX":          "4d5a",
-    "FILETYPE":     "EXE",
+    "FILE_TYPE":     "EXE",
     "DESCRIPTION":  "Windows Executable"
   },
   {
     "HEX":          "664c6143",
-    "FILETYPE":     "FLAC",
+    "FILE_TYPE":     "FLAC",
     "DESCRIPTION":  "FLAC Audio"
   },
   {
     "HEX":          "474946383761",
-    "FILETYPE":     "GIF",
+    "FILE_TYPE":     "GIF",
     "DESCRIPTION":  "GIF Image (87a)"
   },
   {
     "HEX":          "474946383961",
-    "FILETYPE":     "GIF",
+    "FILE_TYPE":     "GIF",
     "DESCRIPTION":  "GIF Image (89a)"
   },
   {
     "HEX":          "1f8b",
-    "FILETYPE":     "GZ",
+    "FILE_TYPE":     "GZ",
     "DESCRIPTION":  "GZIP Archive"
   },
   {
     "HEX":          "1f8b08",
-    "FILETYPE":     "GZ",
+    "FILE_TYPE":     "GZ",
     "DESCRIPTION":  "Gzip Compressed"
   },
   {
     "HEX":          "1f8b0808",
-    "FILETYPE":     "GZ",
+    "FILE_TYPE":     "GZ",
     "DESCRIPTION":  "Gzip Archive"
   },
   {
     "HEX":          "3c21444f4354595045",
-    "FILETYPE":     "HTML",
+    "FILE_TYPE":     "HTML",
     "DESCRIPTION":  "HTML Document"
   },
   {
     "HEX":          "3c68746d6c",
-    "FILETYPE":     "HTML",
+    "FILE_TYPE":     "HTML",
     "DESCRIPTION":  "HTML Document"
   },
   {
     "HEX":          "00000100",
-    "FILETYPE":     "ICO",
+    "FILE_TYPE":     "ICO",
     "DESCRIPTION":  "Icon File"
   },
   {
     "HEX":          "ffd8ff",
-    "FILETYPE":     "JPEG",
+    "FILE_TYPE":     "JPEG",
     "DESCRIPTION":  "JPEG Image"
   },
   {
     "HEX":          "0000000c4a584c200d0a870a",
-    "FILETYPE":     "JXL",
+    "FILE_TYPE":     "JXL",
     "DESCRIPTION":  "JPEG XL Image"
   },
   {
     "HEX":          "cafebabe",
-    "FILETYPE":     "MACHO",
+    "FILE_TYPE":     "MACHO",
     "DESCRIPTION":  "MacOS Universal Binary"
   },
   {
     "HEX":          "cefaedfe",
-    "FILETYPE":     "MACHO",
+    "FILE_TYPE":     "MACHO",
     "DESCRIPTION":  "MacOS Executable (64-bit reverse)"
   },
   {
     "HEX":          "cffaedfe",
-    "FILETYPE":     "MACHO",
+    "FILE_TYPE":     "MACHO",
     "DESCRIPTION":  "MacOS Executable (32-bit reverse)"
   },
   {
     "HEX":          "feedface",
-    "FILETYPE":     "MACHO",
+    "FILE_TYPE":     "MACHO",
     "DESCRIPTION":  "MacOS Executable (32-bit)"
   },
   {
     "HEX":          "feedfacf",
-    "FILETYPE":     "MACHO",
+    "FILE_TYPE":     "MACHO",
     "DESCRIPTION":  "MacOS Executable (64-bit)"
   },
   {
     "HEX":          "000100005374616e64617264204a6574204442",
-    "FILETYPE":     "MDB",
+    "FILE_TYPE":     "MDB",
     "DESCRIPTION":  "Microsoft Access Database"
   },
   {
     "HEX":          "4d546864",
-    "FILETYPE":     "MIDI",
+    "FILE_TYPE":     "MIDI",
     "DESCRIPTION":  "MIDI Audio"
   },
   {
     "HEX":          "1a45dfa3",
-    "FILETYPE":     "MKV",
+    "FILE_TYPE":     "MKV",
     "DESCRIPTION":  "Matroska Video"
   },
   {
     "HEX":          "494433",
-    "FILETYPE":     "MP3",
+    "FILE_TYPE":     "MP3",
     "DESCRIPTION":  "MP3 Audio"
   },
   {
     "HEX":          "fffb",
-    "FILETYPE":     "MP3",
+    "FILE_TYPE":     "MP3",
     "DESCRIPTION":  "MP3 Audio (non-ID3)"
   },
   {
     "HEX":          "000000186674797069736f6d",
-    "FILETYPE":     "MP4",
+    "FILE_TYPE":     "MP4",
     "DESCRIPTION":  "MP4 Video (isom)"
   },
   {
     "HEX":          "00000018667479706d7034",
-    "FILETYPE":     "MP4",
+    "FILE_TYPE":     "MP4",
     "DESCRIPTION":  "MP4 Video"
   },
   {
     "HEX":          "000000206674797069736f6d",
-    "FILETYPE":     "MP4",
+    "FILE_TYPE":     "MP4",
     "DESCRIPTION":  "MP4 Video (isom)"
   },
   {
     "HEX":          "00000020667479706d7034",
-    "FILETYPE":     "MP4",
+    "FILE_TYPE":     "MP4",
     "DESCRIPTION":  "MP4 Video"
   },
   {
     "HEX":          "66747970",
-    "FILETYPE":     "MP4",
+    "FILE_TYPE":     "MP4",
     "DESCRIPTION":  "MP4 Video"
   },
   {
     "HEX":          "4f676753",
-    "FILETYPE":     "OGG",
+    "FILE_TYPE":     "OGG",
     "DESCRIPTION":  "Ogg Media File"
   },
   {
     "HEX":          "d0cf11e0a1b11ae1",
-    "FILETYPE":     "OLE",
+    "FILE_TYPE":     "OLE",
     "DESCRIPTION":  "Microsoft Compound File"
   },
   {
     "HEX":          "4f54544f",
-    "FILETYPE":     "OTF",
+    "FILE_TYPE":     "OTF",
     "DESCRIPTION":  "OpenType Font"
   },
   {
     "HEX":          "0a050101",
-    "FILETYPE":     "PCX",
+    "FILE_TYPE":     "PCX",
     "DESCRIPTION":  "PCX Image"
   },
   {
     "HEX":          "25504446",
-    "FILETYPE":     "PDF",
+    "FILE_TYPE":     "PDF",
     "DESCRIPTION":  "PDF Document"
   },
   {
     "HEX":          "89504e470d0a1a0a",
-    "FILETYPE":     "PNG",
+    "FILE_TYPE":     "PNG",
     "DESCRIPTION":  "PNG Image"
   },
   {
     "HEX":          "252150532d41646f6265",
-    "FILETYPE":     "PS",
+    "FILE_TYPE":     "PS",
     "DESCRIPTION":  "PostScript Document"
   },
   {
     "HEX":          "526172211a07",
-    "FILETYPE":     "RAR",
+    "FILE_TYPE":     "RAR",
     "DESCRIPTION":  "RAR Archive"
   },
   {
     "HEX":          "52494646",
-    "FILETYPE":     "RIFF",
+    "FILE_TYPE":     "RIFF",
     "DESCRIPTION":  "Resource Interchange File Format"
   },
   {
     "HEX":          "7b5c727466",
-    "FILETYPE":     "RTF",
+    "FILE_TYPE":     "RTF",
     "DESCRIPTION":  "Rich Text Format"
   },
   {
     "HEX":          "2321",
-    "FILETYPE":     "SCRIPT",
+    "FILE_TYPE":     "SCRIPT",
     "DESCRIPTION":  "Script with Shebang"
   },
   {
     "HEX":          "23212f",
-    "FILETYPE":     "SCRIPT",
+    "FILE_TYPE":     "SCRIPT",
     "DESCRIPTION":  "Shell Script or Executable Text"
   },
   {
     "HEX":          "53514c69746520666f726d61742033",
-    "FILETYPE":     "SQLITE",
+    "FILE_TYPE":     "SQLITE",
     "DESCRIPTION":  "SQLite Database"
   },
   {
     "HEX":          "53514c69746520666f726d6174203300",
-    "FILETYPE":     "SQLITE",
+    "FILE_TYPE":     "SQLITE",
     "DESCRIPTION":  "SQLite Database v3"
   },
   {
     "HEX":          "3c737667",
-    "FILETYPE":     "SVG",
+    "FILE_TYPE":     "SVG",
     "DESCRIPTION":  "Scalable Vector Graphics"
   },
   {
     "HEX":          "49492a00",
-    "FILETYPE":     "TIFF",
+    "FILE_TYPE":     "TIFF",
     "DESCRIPTION":  "TIFF Image (Little Endian)"
   },
   {
     "HEX":          "4d4d002a",
-    "FILETYPE":     "TIFF",
+    "FILE_TYPE":     "TIFF",
     "DESCRIPTION":  "TIFF Image (Big Endian)"
   },
   {
     "HEX":          "00010000",
-    "FILETYPE":     "TTF",
+    "FILE_TYPE":     "TTF",
     "DESCRIPTION":  "TrueTypeFont"
   },
   {
     "HEX":          "3c3c3c6f7261636c65",
-    "FILETYPE":     "VDI",
+    "FILE_TYPE":     "VDI",
     "DESCRIPTION":  "VirtualBox Disk Image"
   },
   {
     "HEX":          "636f6e6e6563746978",
-    "FILETYPE":     "VHD",
+    "FILE_TYPE":     "VHD",
     "DESCRIPTION":  "Virtual Hard Disk"
   },
   {
     "HEX":          "76686478",
-    "FILETYPE":     "VHDX",
+    "FILE_TYPE":     "VHDX",
     "DESCRIPTION":  "Virtual Hard Disk v2"
   },
   {
     "HEX":          "4b444d56",
-    "FILETYPE":     "VMDK",
+    "FILE_TYPE":     "VMDK",
     "DESCRIPTION":  "VMware Virtual Disk"
   },
   {
     "HEX":          "774f4646",
-    "FILETYPE":     "WOFF",
+    "FILE_TYPE":     "WOFF",
     "DESCRIPTION":  "Web Open Font Format"
   },
   {
     "HEX":          "774f4632",
-    "FILETYPE":     "WOFF2",
+    "FILE_TYPE":     "WOFF2",
     "DESCRIPTION":  "Web Open Font Format 2"
   },
   {
     "HEX":          "78617221",
-    "FILETYPE":     "XAR",
+    "FILE_TYPE":     "XAR",
     "DESCRIPTION":  "XAR Archive"
   },
   {
     "HEX":          "3c3f786d6c",
-    "FILETYPE":     "XML",
+    "FILE_TYPE":     "XML",
     "DESCRIPTION":  "XML Document"
   },
   {
     "HEX":          "fd377a585a00",
-    "FILETYPE":     "XZ",
+    "FILE_TYPE":     "XZ",
     "DESCRIPTION":  "XZ Archive"
   },
   {
     "HEX":          "1f9d",
-    "FILETYPE":     "Z",
+    "FILE_TYPE":     "Z",
     "DESCRIPTION":  "LZW Compressed Archive"
   },
   {
     "HEX":          "1fa0",
-    "FILETYPE":     "Z",
+    "FILE_TYPE":     "Z",
     "DESCRIPTION":  "LZH Compressed Archive"
   },
   {
     "HEX":          "504b0304",
-    "FILETYPE":     "ZIP",
+    "FILE_TYPE":     "ZIP",
     "DESCRIPTION":  "ZIP Archive"
   },
   {
     "HEX":          "504b0506",
-    "FILETYPE":     "ZIP",
+    "FILE_TYPE":     "ZIP",
     "DESCRIPTION":  "Empty ZIP Archive"
   },
   {
     "HEX":          "504b0708",
-    "FILETYPE":     "ZIP",
+    "FILE_TYPE":     "ZIP",
     "DESCRIPTION":  "Spanned ZIP Archive"
   }
 ]

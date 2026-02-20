@@ -1,8 +1,9 @@
 import json
+import os
 
 def lookup_tables():
 
-    with open("data/properties.json", "r", encoding="utf-8") as file:
+    with open(os.path.join(os.path.dirname(__file__), "..", "..", "data", "properties.json"), "r", encoding="utf-8") as file:
 
         properties = json.load(file)
 
@@ -24,11 +25,11 @@ def lookup_tables():
 
         if table_key in key_tables:
 
-            lookup_tables[table_name] = {int(key): value for key, value in table_value.items()}
+            lookup_tables[table_key] = {int(key): value for key, value in table_value.items()}
 
         else:
 
-            lookup_tables[table_name] = table_value
+            lookup_tables[table_key] = table_value
 
     return lookup_tables
 

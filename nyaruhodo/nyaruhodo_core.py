@@ -1,5 +1,13 @@
 import os
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+
 import nyaruhodo_signatures
+
+RESET  = "\033[0m"
+RED    = "\033[91m"
+YELLOW = "\033[93m"
 
 def get_header(file_path, byte_count=32):
 
@@ -11,8 +19,8 @@ def get_header(file_path, byte_count=32):
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return None
 
 def compound_file(file_path, header):
@@ -58,15 +66,15 @@ def compound_file(file_path, header):
 
         except Exception as exception:
 
-            exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-            print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
             return "ZIP", "ZIP Archive"
 
     return None, None
 
 def find_file_type(file_path):
 
-    header = get_header(file_path)
+    header     = get_header(file_path)
     signatures = nyaruhodo_signatures.load_signatures()
 
     if not header:
@@ -83,7 +91,7 @@ def find_file_type(file_path):
 
                 if file_type:
 
-                    return file_path, description
+                    return file_type, description
 
             return file_type, description
 
@@ -97,8 +105,8 @@ def find_file_type(file_path):
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {YELLOW}WARNING{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {YELLOW}WARNING{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return "UNKNOWN", "Unknown File"
 
@@ -109,10 +117,10 @@ def get_file_type(filename):
 
 def scan(file_path, filename):
 
-    original_file_type = get_file_type(filename)
+    original_file_type     = get_file_type(filename)
     file_type, description = find_file_type(file_path)
-    mismatch = False
-    message = "Sorry! File type could not be determined."
+    mismatch               = False
+    message                = "Sorry! File type could not be determined."
 
     if file_type == "UNKNOWN":
 
@@ -120,35 +128,38 @@ def scan(file_path, filename):
 
     elif original_file_type == "NONE":
 
-        message = f"File has no extension; we detected: '{file_type}.'"
+        message  = f"File has no extension; we detected: {file_type}."
         mismatch = True
 
     elif original_file_type == file_type:
 
-        message = f"File type is {original_file_type}; we detected: '{file_type}.'"
+        message = f"File type is {original_file_type}; we detected: {file_type}."
 
     else:
 
         variations = {
-            "JPG": "JPEG", "JPEG": "JPG",
-            "HTM": "HTML", "HTML": "HTM",
-            "TIF": "TIFF", "TIFF": "TIF"
+            "JPG":  "JPEG",
+            "JPEG": "JPG",
+            "HTM":  "HTML",
+            "HTML": "HTM",
+            "TIF":  "TIFF",
+            "TIFF": "TIF"
         }
 
         if variations.get(original_file_type) == file_type:
 
-            message = f"File type is a valid variation of what we detected: '{file_type}.'"
+            message = f"File type is a valid variation of what we detected: {file_type}."
 
         else:
 
-            message = f"File type is not '{original_file_type}'; we detected: '{file_type}.'"
+            message  = f"File type is not {original_file_type}; we detected: {file_type}."
             mismatch = True
 
     return {
-        "filename": filename,
-        "original_file_type": original_file_type,
-        "file_type": file_type,
-        "description": description,
-        "mismatch": mismatch,
-        "message": message
+        "filename":           filename,
+        "extension":          original_file_type,
+        "filetype":           file_type,
+        "description":        description,
+        "mismatch":           mismatch,
+        "message":            message
     }

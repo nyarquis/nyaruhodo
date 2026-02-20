@@ -1,4 +1,5 @@
 import json
+import os
 import time
 
 RESET   = "\033[0m"
@@ -14,14 +15,14 @@ def load_signatures():
 
         signatures_count    = 0
 
-        with open("data/signatures.json", "r", encoding="utf-8") as file:
+        with open(os.path.join(os.path.dirname(__file__), "..", "data", "signatures.json"), "r", encoding="latin-1") as file:
 
             signatures  = json.load(file)
 
         for signature in signatures:
 
             signature_hex           = signature.get("HEX", "")
-            signature_file_type      = signature.get("file_type", "")
+            signature_file_type      = signature.get("FILE_TYPE", "")
             signature_description   = signature.get("DESCRIPTION", "")
 
             if not signature_hex or not signature_file_type:
@@ -39,7 +40,7 @@ def load_signatures():
                 while load_time:
                     
                     print(".", end = "", flush = True)
-                    time.sleep(0.1)
+                    time.sleep(0.0625)
                     load_time  -= 1
 
                 print(f" {GREEN}DONE{RESET}")
@@ -47,7 +48,7 @@ def load_signatures():
             except Exception as exception:
 
                 exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-                print(f"==> {YELLOW}WARNING{RESET}: {exception_string.upper()} ({signature_hex.upper()})")
+                print(f"==> {YELLOW}WARNING{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()} ({signature_hex.upper()})")
                 continue
 
         if signatures_count:
@@ -61,7 +62,7 @@ def load_signatures():
     except Exception as exception:
 
         exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return {}
     
     return SIGNATURES

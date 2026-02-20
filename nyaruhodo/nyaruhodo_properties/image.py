@@ -1,6 +1,14 @@
+import os
 import struct
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+
 import common
 import tables
+
+RESET = "\033[0m"
+RED   = "\033[91m"
 
 FIELD_TYPE_SIZES = {1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8}
 
@@ -11,8 +19,8 @@ def read_rational(tiff_bytes, offset, endian):
 
 def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, endian):
 
-    field_size        = FIELD_TYPE_SIZES.get(type_, 1)
-    total_size        = field_size * count
+    field_size         = FIELD_TYPE_SIZES.get(type_, 1)
+    total_size         = field_size * count
     packed_value_bytes = struct.pack(endian + "I", value_or_offset)[:total_size] if total_size <= 4 else tiff_bytes
 
     try:
@@ -20,12 +28,12 @@ def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, e
         if type_ == 2:
 
             field_bytes = tiff_bytes[value_or_offset:value_or_offset + count] if total_size > 4 else struct.pack(endian + "I", value_or_offset)[:count]
-            return decode(field_bytes)
+            return common.decode(field_bytes)
 
         elif type_ in (3, 4):
 
-            unpack_format   = (endian + "H") if type_ == 3 else (endian + "I")
-            element_size    = 2 if type_ == 3 else 4
+            unpack_format = (endian + "H") if type_ == 3 else (endian + "I")
+            element_size  = 2 if type_ == 3 else 4
 
             if total_size <= 4:
 
@@ -44,12 +52,12 @@ def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, e
         elif type_ == 7:
 
             field_bytes = tiff_bytes[value_or_offset:value_or_offset + count] if total_size > 4 else struct.pack(endian + "I", value_or_offset)[:count]
-            return decode(field_bytes)
+            return common.decode(field_bytes)
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return None
 
@@ -65,7 +73,7 @@ def read_image_file_directory(tiff_bytes, offset, endian, tag_name_map):
         for _ in range(entry_count):
 
             tag, type_, count, value_or_offset = struct.unpack_from(endian + "HHII", tiff_bytes, offset)
-            offset += 12
+            offset  += 12
             tag_name = tag_name_map.get(tag)
 
             if tag_name:
@@ -78,8 +86,8 @@ def read_image_file_directory(tiff_bytes, offset, endian, tag_name_map):
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return tag_values
 
@@ -107,13 +115,13 @@ def gps_degrees_minutes_seconds_to_decimal(coordinate_parts, hemisphere_ref):
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return None
 
 def read_jpeg(file_path):
 
-    file_bytes = read(file_path)
+    file_bytes = common.read(file_path)
     properties = {}
 
     if file_bytes[:2] != b"\xff\xd8":
@@ -175,21 +183,20 @@ def read_jpeg(file_path):
             else:
 
                 offset += 2 + segment_length
-
                 continue
 
             main_directory_offset = struct.unpack_from(endian + "I", tiff_bytes, 4)[0]
-            main_directory        = read_image_file_directory(tiff_bytes, main_directory_offset, endian, EXIF_TAGS)
+            main_directory        = read_image_file_directory(tiff_bytes, main_directory_offset, endian, tables.EXIF_TAGS)
 
             for field_name, value in main_directory.items():
 
                 if field_name == "Orientation":
 
-                    properties[field_name] = ORIENTATION_LABELS.get(value, str(value))
+                    properties[field_name] = tables.ORIENTATION.get(value, str(value))
 
                 elif field_name == "ResolutionUnit":
 
-                    properties[field_name] = RESOLUTION_UNITS.get(value, str(value))
+                    properties[field_name] = tables.RESOLUTION.get(value, str(value))
 
                 elif field_name not in ("ExifIFD", "GPSIFD"):
 
@@ -197,7 +204,7 @@ def read_jpeg(file_path):
 
             if "ExifIFD" in main_directory:
 
-                exif_directory = read_image_file_directory(tiff_bytes, main_directory["ExifIFD"], endian, EXIF_TAGS)
+                exif_directory = read_image_file_directory(tiff_bytes, main_directory["ExifIFD"], endian, tables.EXIF_TAGS)
 
                 for field_name, value in exif_directory.items():
 
@@ -207,22 +214,25 @@ def read_jpeg(file_path):
 
             if "GPSIFD" in main_directory:
 
-                gps_directory = read_image_file_directory(tiff_bytes, main_directory["GPSIFD"], endian, GPS_TAGS)
+                gps_directory = read_image_file_directory(tiff_bytes, main_directory["GPSIFD"], endian, tables.GPS_TAGS)
                 latitude      = gps_degrees_minutes_seconds_to_decimal(gps_directory.get("GPSLatitude", ""), gps_directory.get("GPSLatitudeRef", ""))
                 longitude     = gps_degrees_minutes_seconds_to_decimal(gps_directory.get("GPSLongitude", ""), gps_directory.get("GPSLongitudeRef", ""))
 
                 if latitude is not None:
 
-                    properties["GPSLatitude"]  = f"{latitude} ({gps_directory.get("GPSLatitudeRef", "")})"
+                    lat_ref = gps_directory.get("GPSLatitudeRef", "")
+                    properties["GPSLatitude"] = f"{latitude} ({lat_ref})"
 
                 if longitude is not None:
 
-                    properties["GPSLongitude"] = f"{longitude} ({gps_directory.get("GPSLongitudeRef", "")})"
+                    lon_ref = gps_directory.get("GPSLongitudeRef", "")
+                    properties["GPSLongitude"] = f"{longitude} ({lon_ref})"
 
                 if "GPSAltitude" in gps_directory:
 
                     altitude_reference        = "(below sea level)" if gps_directory.get("GPSAltitudeRef") == 1 else "(above sea level)"
-                    properties["GPSAltitude"] = f"{gps_directory["GPSAltitude"]} m {altitude_reference}"
+                    altitude_value            = gps_directory["GPSAltitude"]
+                    properties["GPSAltitude"] = f"{altitude_value} m {altitude_reference}"
 
                 if "GPSDateStamp" in gps_directory:
 
@@ -271,7 +281,7 @@ def read_jpeg(file_path):
 
 def read_png(file_path):
 
-    file_bytes = read(file_path)
+    file_bytes = common.read(file_path)
     properties = {}
 
     if file_bytes[:8] != b"\x89PNG\r\n\x1a\n":
@@ -292,9 +302,9 @@ def read_png(file_path):
 
                 properties["ImageWidth"]  = struct.unpack_from(">I", chunk_data, 0)[0]
                 properties["ImageHeight"] = struct.unpack_from(">I", chunk_data, 4)[0]
-                bit_depth        = chunk_data[8]
-                color_type       = chunk_data[9]
-                interlaced       = chunk_data[12]
+                bit_depth         = chunk_data[8]
+                color_type        = chunk_data[9]
+                interlaced        = chunk_data[12]
                 color_type_labels = {0: "Grayscale", 2: "RGB", 3: "Indexed", 4: "Grayscale+Alpha", 6: "RGBA"}
                 properties["ColorType"]  = color_type_labels.get(color_type, str(color_type))
                 properties["BitDepth"]   = f"{bit_depth}-bit"
@@ -306,8 +316,8 @@ def read_png(file_path):
 
                 if first_null != -1:
 
-                    key   = decode(chunk_data[:first_null])
-                    value = decode(chunk_data[first_null + 1:])
+                    key   = common.decode(chunk_data[:first_null])
+                    value = common.decode(chunk_data[first_null + 1:])
 
                     if key and value:
 
@@ -319,7 +329,7 @@ def read_png(file_path):
 
                 if first_null != -1:
 
-                    key             = decode(chunk_data[:first_null])
+                    key             = common.decode(chunk_data[:first_null])
                     remaining_bytes = chunk_data[first_null + 1:]
                     second_null     = remaining_bytes.find(b"\x00", 2)
 
@@ -329,7 +339,7 @@ def read_png(file_path):
 
                         if third_null != -1:
 
-                            value = decode(remaining_bytes[third_null + 1:])
+                            value = common.decode(remaining_bytes[third_null + 1:])
 
                             if key and value:
 
@@ -363,15 +373,15 @@ def read_png(file_path):
 
             elif chunk_type == "gAMA" and chunk_length == 4:
 
-                gamma                = struct.unpack_from(">I", chunk_data)[0] / 100000
-                properties["Gamma"]  = f"{gamma:.5f}"
+                gamma               = struct.unpack_from(">I", chunk_data)[0] / 100000
+                properties["Gamma"] = f"{gamma:.5f}"
 
             offset += 12 + chunk_length
 
         except Exception as exception:
 
-            exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-            print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
             break
 
     return properties

@@ -2,11 +2,13 @@ import html.parser
 import re
 import xml.etree.ElementTree
 
+RESET = "\033[0m"
+RED   = "\033[91m"
 
 class HTMLPropertiesParser(html.parser.HTMLParser):
-    
+
     def __init__(self):
-    
+
         super().__init__()
         self.collected_properties = {}
         self.title                = None
@@ -16,22 +18,22 @@ class HTMLPropertiesParser(html.parser.HTMLParser):
 
         attrs = dict(attrs)
 
-        if element == 'meta':
+        if element == "meta":
 
-            name    = attrs.get('name', attrs.get('property', '')).strip()
-            content = attrs.get('content', '').strip()
+            name    = attrs.get("name", attrs.get("property", "")).strip()
+            content = attrs.get("content", "").strip()
 
             if name and content:
 
                 self.collected_properties[name] = content
 
-            charset = attrs.get('charset', '')
+            charset = attrs.get("charset", "")
 
             if charset:
 
-                self.collected_properties['charset'] = charset
+                self.collected_properties["charset"] = charset
 
-        elif element == 'title':
+        elif element == "title":
 
             self.inside_title = True
 
@@ -43,7 +45,7 @@ class HTMLPropertiesParser(html.parser.HTMLParser):
 
     def handle_endtag(self, element):
 
-        if element == 'title':
+        if element == "title":
 
             self.inside_title = False
 
@@ -53,7 +55,7 @@ def read_html(file_path):
 
     try:
 
-        with open(file_path, 'r', encoding='utf-8', errors='replace') as file:
+        with open(file_path, "r", encoding="utf-8", errors="replace") as file:
 
             page_content = file.read(32768)
 
@@ -62,7 +64,7 @@ def read_html(file_path):
 
         if page_parser.title:
 
-            properties['Title'] = page_parser.title
+            properties["Title"] = page_parser.title
 
         for key, value in page_parser.collected_properties.items():
 
@@ -72,8 +74,8 @@ def read_html(file_path):
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return properties
 
@@ -83,19 +85,20 @@ def read_xml(file_path):
 
     try:
 
-        with open(file_path, 'r', encoding='utf-8', errors='replace') as file:
+        with open(file_path, "r", encoding="utf-8", errors="replace") as file:
 
             xml_header = file.read(512)
 
-        declaration_match = re.search(r'<\?xml[^?]*\?>', xml_header)
+        declaration_match = re.search(r"<\?xml[^?]*\?>", xml_header)
 
         if declaration_match:
 
             xml_declaration = declaration_match.group(0)
 
-            for declaration_attribute in ['version', 'encoding', 'standalone']:
+            for declaration_attribute in ["version", "encoding", "standalone"]:
 
-                declaration_attribute_match = re.search(rf'{declaration_attribute}=["\']([^"\']+)["\']', xml_declaration)
+                quote_chars = "\"'"
+                declaration_attribute_match = re.search(rf"{declaration_attribute}=[{quote_chars}]([^{quote_chars}]+)[{quote_chars}]", xml_declaration)
 
                 if declaration_attribute_match:
 
@@ -103,23 +106,23 @@ def read_xml(file_path):
 
         xml_tree                  = xml.etree.ElementTree.parse(file_path)
         xml_root                  = xml_tree.getroot()
-        properties['RootElement'] = xml_root.tag.split('}')[-1]
-        properties['ChildCount']  = len(list(xml_root))
+        properties["RootElement"] = xml_root.tag.split("}")[-1]
+        properties["ChildCount"]  = len(list(xml_root))
 
     except Exception as exception:
 
-        exception_string    = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return properties
 
 def read(file_path, file_type):
 
-    if file_type in ('HTML', 'HTM'):
+    if file_type in ("HTML", "HTM"):
 
         return read_html(file_path)
 
-    if file_type in ('XML', 'SVG'):
+    if file_type in ("XML", "SVG"):
 
         return read_xml(file_path)
 

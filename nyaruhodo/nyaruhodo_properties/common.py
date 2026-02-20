@@ -1,3 +1,6 @@
+RESET = "\033[0m"
+RED   = "\033[91m"
+
 def read(file_path, number_of_bytes=None):
 
     try:
@@ -9,7 +12,7 @@ def read(file_path, number_of_bytes=None):
     except Exception as exception:
 
         exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return b""
 
 def decode(number_of_bytes):
@@ -23,7 +26,7 @@ def decode(number_of_bytes):
         except Exception as exception:
 
             exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-            print(f"==> {RED}ERROR{RESET}: {exception_string.upper()}")
+            print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
             return ""
 
     return str(number_of_bytes).strip()
