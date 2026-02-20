@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="card">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+
+        <h2>
+            
+            Welcome, {{ username }}.
+        
+        </h2>
+
+        <a href="/" class="button">
+            
+            New Scan
+        
+        </a>
+
+    </div>
+
+    <h3>
+        
+        Scan History
+    
+    </h3>
+    
+    <div class="table-container">
+    
+        <table>
+    
+            <thead>
+    
+                <tr>
+    
+                    <th>Time</th>
+                    <th>File Name</th>
+                    <th>File Type</th>
+                    <th>Status</th>
+
+                </tr>
+            
+            </thead>
+
+            <tbody>
+
+                {% for log in logs %}
+
+                <tr>
+
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.filename }}</td>
+                    <td>
+
+                        <code>
+                        
+                            {{ log.filetype }}
+                        
+                        </code>
+                    
+                    </td>
+                    
+                    <td>
+                        <span class="status-badge {% if log.status == 'Unknown' %} badge-unknown {% elif 'Mismatch' in log.status %} badge-mismatch {% else %} badge-clean {% endif %}">
+
+                            {{ log.status }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="4" style="text-align: center;">No history found.</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

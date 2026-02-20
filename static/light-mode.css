@@ -1,0 +1,18 @@
+:root {
+    --primary: #1e66f5;
+    --secondary: #df8e1d;
+    --bg-header: #eff1f5;
+    --bg-canvas: #dce0e8;
+    --bg-card: #eff1f5;
+    --bg-surface: #e6e9ef;
+    --bg-upload: #eff1f5;
+    --bg-upload-hover: #e6e9ef;
+    --bg-hover-glass: rgba(30, 102, 245, 0.1);
+    --text-main: #4c4f69;
+    --text-muted: #6c6f85;
+    --text-muted-light: #5c5f77;
+    --border-light: #ccd0da;
+    --border-dark: #bcc0cc; 
+    --border-dashed: #9ca0b0;
+    --menu-width: 20vw;
+}
