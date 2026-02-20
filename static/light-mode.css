@@ -14,5 +14,8 @@
     --border-light: #ccd0da;
     --border-dark: #bcc0cc; 
     --border-dashed: #9ca0b0;
+    --color-malicious: #d20f39;
+    --color-suspicious: #df8e1d;
+    --color-harmless: #40a02b;
     --menu-width: 20vw;
 }

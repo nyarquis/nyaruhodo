@@ -25,7 +25,7 @@ def pe_timestamp_to_string(timestamp):
 
 def read_pe(file_path):
 
-    file_bytes = common.read(file_path)
+    file_bytes = common.read(file_path, 4096)
     properties = {}
 
     if file_bytes[:2] != b"MZ":

@@ -19,6 +19,8 @@ def load_signatures():
 
             signatures  = json.load(file)
 
+        print("\n")
+        
         for signature in signatures:
 
             signature_hex           = signature.get("HEX", "")
@@ -40,7 +42,7 @@ def load_signatures():
                 while load_time:
                     
                     print(".", end = "", flush = True)
-                    time.sleep(0.0625)
+                    time.sleep(0.033)
                     load_time  -= 1
 
                 print(f" {GREEN}DONE{RESET}")

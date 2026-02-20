@@ -16,15 +16,25 @@ def ID3v1(field_bytes):
 
 def read(file_path, file_type):
 
-    file_bytes = common.read(file_path)
-    properties = {}
+    properties   = {}
+    header_bytes = common.read(file_path, 10)
 
-    if file_bytes[:3] == b"ID3":
+    if len(header_bytes) < 10:
 
-        version_major            = file_bytes[3]
-        version_minor            = file_bytes[4]
+        return properties
+
+    if header_bytes[:3] == b"ID3":
+
+        version_major            = header_bytes[3]
+        version_minor            = header_bytes[4]
         properties["ID3Version"] = f"2.{version_major}.{version_minor}"
-        id3_tag_size    = ((file_bytes[6] & 0x7F) << 21 | (file_bytes[7] & 0x7F) << 14 | (file_bytes[8] & 0x7F) << 7 | (file_bytes[9] & 0x7F))
+        id3_tag_size = (
+            (header_bytes[6] & 0x7F) << 21 |
+            (header_bytes[7] & 0x7F) << 14 |
+            (header_bytes[8] & 0x7F) << 7  |
+            (header_bytes[9] & 0x7F)
+        )
+        file_bytes      = common.read(file_path, 10 + id3_tag_size)
         id3_bytes       = file_bytes[10: 10 + id3_tag_size]
         frame_label_map = tables.ID3v2_FRAMES_v22 if version_major == 2 else tables.ID3v2_FRAMES_v24
         frame_id_size     = 3 if version_major == 2 else 4
@@ -98,11 +108,20 @@ def read(file_path, file_type):
                     exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
                     print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
-    if len(file_bytes) >= 128 and file_bytes[-128:-125] == b"TAG":
+    try:
 
-        tag = file_bytes[-128:]
+        with open(file_path, "rb") as f:
 
-        for field_name, field_bytes in [("Title", tag[3:33]), ("Artist", tag[33:63]), ("Album", tag[63:93]), ("Year", tag[93:97])]:
+            f.seek(-128, 2)
+            tail = f.read(128)
+
+    except OSError:
+
+        tail = b""
+
+    if len(tail) == 128 and tail[:3] == b"TAG":
+
+        for field_name, field_bytes in [("Title", tail[3:33]), ("Artist", tail[33:63]), ("Album", tail[63:93]), ("Year", tail[93:97])]:
 
             if field_name not in properties:
 
@@ -112,7 +131,7 @@ def read(file_path, file_type):
 
                     properties[field_name] = value
 
-        genre = tag[127]
+        genre = tail[127]
 
         if "Genre" not in properties and genre < len(tables.ID3v1_GENRES):
 

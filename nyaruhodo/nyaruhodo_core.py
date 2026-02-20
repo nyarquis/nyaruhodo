@@ -5,9 +5,10 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import nyaruhodo_signatures
 
-RESET  = "\033[0m"
-RED    = "\033[91m"
-YELLOW = "\033[93m"
+RESET      = "\033[0m"
+RED        = "\033[91m"
+YELLOW     = "\033[93m"
+SIGNATURES = nyaruhodo_signatures.load_signatures()
 
 def get_header(file_path, byte_count=32):
 
@@ -75,13 +76,12 @@ def compound_file(file_path, header):
 def find_file_type(file_path):
 
     header     = get_header(file_path)
-    signatures = nyaruhodo_signatures.load_signatures()
 
     if not header:
 
         return None, "Sorry! Unable to read file."
 
-    for signature, (file_type, description) in signatures.items():
+    for signature, (file_type, description) in SIGNATURES.items():
 
         if header.startswith(signature):
 

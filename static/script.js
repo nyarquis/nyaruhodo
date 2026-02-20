@@ -1,5 +1,13 @@
+(function() {
+    const saved = localStorage.getItem("theme") || "light";
+    const link  = document.getElementById("current-theme");
+    if (saved === "night" && link) {
+        link.href = link.href.replace("light-mode", "night-mode");
+    }
+})();
+
 document.addEventListener("DOMContentLoaded", function() {
-    
+
     const menuToggle = document.querySelector(".menu-toggle");
 
     if (menuToggle) {
@@ -19,18 +27,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const uploadForm = document.getElementById("uploadForm");
-    
+
     if (uploadForm) {
-        const fileInput = document.getElementById("fileInput");
-        const dropZone = document.getElementById("dropZone");
-        const fileNameDisplay = document.getElementById("fileNameDisplay");
+        const fileInput        = document.getElementById("fileInput");
+        const dropZone         = document.getElementById("dropZone");
+        const fileNameDisplay  = document.getElementById("fileNameDisplay");
         const loadingIndicator = document.getElementById("loadingIndicator");
         const resultsContainer = document.getElementById("resultsContainer");
-        const resultContent = document.getElementById("resultContent");
+        const resultContent    = document.getElementById("resultContent");
+        const submitButton     = document.getElementById("submitButton");
 
         fileInput.addEventListener("change", function() {
             if (this.files && this.files[0]) {
-                fileNameDisplay.textContent = this.files[0].name;
+                fileNameDisplay.textContent   = this.files[0].name;
                 fileNameDisplay.style.fontWeight = "bold";
             } else {
                 fileNameDisplay.innerHTML = "<strong>Click to upload</strong> or drag and drop";
@@ -61,11 +70,11 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
             dropZone.addEventListener("drop", (event) => {
-                const transfer = event.dataTransfer;
+                const transfer     = event.dataTransfer;
                 const droppedFiles = transfer.files;
                 if (droppedFiles && droppedFiles[0]) {
-                    fileInput.files = droppedFiles;
-                    fileNameDisplay.textContent = droppedFiles[0].name;
+                    fileInput.files                  = droppedFiles;
+                    fileNameDisplay.textContent      = droppedFiles[0].name;
                     fileNameDisplay.style.fontWeight = "bold";
                 }
             });
@@ -73,19 +82,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
         uploadForm.addEventListener("submit", function(event) {
             event.preventDefault();
-            
+
+            submitButton.disabled          = true;
             resultsContainer.style.display = "none";
             loadingIndicator.style.display = "block";
 
-            const formData = new FormData(uploadForm);
-
             fetch("/dashboard/scan", {
                 method: "POST",
-                body: formData
+                body: new FormData(uploadForm)
             })
             .then(response => response.json())
             .then(result => {
                 loadingIndicator.style.display = "none";
+                submitButton.disabled          = false;
                 if (result.error) {
                     displayError(result.error);
                 } else {
@@ -94,71 +103,75 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => {
                 loadingIndicator.style.display = "none";
+                submitButton.disabled          = false;
                 displayError("An error occurred while connecting to the server.");
                 console.error("Error:", error);
             });
         });
     }
 
-    const themeToggleBtn = document.getElementById("theme-toggle-link");
+    const themeToggleBtn  = document.getElementById("theme-toggle-link");
     const themeStylesheet = document.getElementById("current-theme");
 
     if (themeToggleBtn && themeStylesheet) {
-        const savedTheme = localStorage.getItem("theme") || "light";
-        applyTheme(savedTheme);
+        const isNight = themeStylesheet.getAttribute("href").includes("night-mode.css");
+        themeToggleBtn.textContent = isNight ? "Switch to Light Mode" : "Switch to Night Mode";
 
         themeToggleBtn.addEventListener("click", (event) => {
             event.preventDefault();
             const isLight = themeStylesheet.getAttribute("href").includes("light-mode.css");
             const newTheme = isLight ? "night" : "light";
-            applyTheme(newTheme);
             localStorage.setItem("theme", newTheme);
-        });
-
-        function applyTheme(theme) {
-            if (theme === "night") {
-                if (themeStylesheet.href.includes("light-mode")) {
-                    themeStylesheet.href = themeStylesheet.href.replace("light-mode", "night-mode");
-                }
+            if (newTheme === "night") {
+                themeStylesheet.href       = themeStylesheet.href.replace("light-mode", "night-mode");
                 themeToggleBtn.textContent = "Switch to Light Mode";
             } else {
-                if (themeStylesheet.href.includes("night-mode")) {
-                    themeStylesheet.href = themeStylesheet.href.replace("night-mode", "light-mode");
-                }
+                themeStylesheet.href       = themeStylesheet.href.replace("night-mode", "light-mode");
                 themeToggleBtn.textContent = "Switch to Night Mode";
             }
-        }
+        });
     }
+
+    document.querySelectorAll("td[data-ts]").forEach(cell => {
+        const raw = cell.getAttribute("data-ts");
+        if (raw) {
+            const date = new Date(raw.replace(" ", "T") + "Z");
+            cell.textContent = new Intl.DateTimeFormat(undefined, {
+                dateStyle: "medium",
+                timeStyle: "short"
+            }).format(date);
+        }
+    });
 
     function displayResults(result) {
         const container = document.getElementById("resultsContainer");
-        const content = document.getElementById("resultContent");
+        const content   = document.getElementById("resultContent");
         if (!container || !content) return;
 
         container.style.display = "block";
-        
+
         let statusClass, title;
         if (result.filetype === "UNKNOWN") {
             statusClass = "unknown";
-            title = "Unknown File Type";
+            title       = "Unknown File Type";
         } else if (result.mismatch) {
             statusClass = "mismatch";
-            title = "Mismatch Detected";
+            title       = "Mismatch Detected";
         } else {
             statusClass = "match";
-            title = "Extension Matches";
+            title       = "Extension Matches";
         }
-            
+
         let markup = `
             <div class="result-box ${statusClass}">
                 <h3 style="margin-bottom: 1rem;">${title}</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div><strong>File Name:</strong><br><span style="color: #4c4f69;">${escapeHtml(result.filename)}</span></div>
-                    <div><strong>Claimed:</strong><br><span style="color: #4c4f69;">${escapeHtml(result.extension)}</span></div>
-                    <div><strong>Detected:</strong><br><span style="color: #4c4f69;">${escapeHtml(result.filetype)}</span></div>
-                    <div><strong>Type:</strong><br><span style="color: #4c4f69;">${escapeHtml(result.description)}</span></div>
+                    <div><strong>File Name:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filename)}</span></div>
+                    <div><strong>Claimed:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.extension)}</span></div>
+                    <div><strong>Detected:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filetype)}</span></div>
+                    <div><strong>Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
                 </div>
-                <div style="margin-top: 1rem; border-top: 1px solid #e6e9ef; padding-top: 1rem;">
+                <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
                     <strong>Analysis:</strong> ${escapeHtml(result.message)}
                 </div>
             </div>
@@ -199,25 +212,25 @@ document.addEventListener("DOMContentLoaded", function() {
         if (virustotal.error) {
             return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message)}</p></div>`;
         }
-        const isClean = virustotal.malicious === 0 && virustotal.suspicious === 0;
+        const isClean   = virustotal.stats_malicious === 0 && virustotal.stats_suspicious === 0;
         const statusClass = isClean ? "match" : "mismatch";
-        
+
         return `
             <div class="result-box ${statusClass}" style="margin-top: 1rem;">
                 <h4 style="margin-bottom: 0.5rem;">VirusTotal Scan</h4>
                 <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                    <span style="font-weight: bold; color: #d20f39;">Malicious: ${virustotal.malicious}</span>
-                    <span style="font-weight: bold; color: #df8e1d;">Suspicious: ${virustotal.suspicious}</span>
-                    <span style="font-weight: bold; color: #40a02b;">Harmless: ${virustotal.harmless}</span>
+                    <span style="font-weight: bold; color: var(--color-malicious);">Malicious: ${virustotal.stats_malicious}</span>
+                    <span style="font-weight: bold; color: var(--color-suspicious);">Suspicious: ${virustotal.stats_suspicious}</span>
+                    <span style="font-weight: bold; color: var(--color-harmless);">Harmless: ${virustotal.stats_harmless}</span>
                 </div>
-                <a href="${virustotal.permalink}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report</a>
+                <a href="${virustotal.link}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report</a>
             </div>
         `;
     }
 
     function displayError(message) {
         const container = document.getElementById("resultsContainer");
-        const content = document.getElementById("resultContent");
+        const content   = document.getElementById("resultContent");
         if (container && content) {
             container.style.display = "block";
             content.innerHTML = `<div class="result-box mismatch"><h3>Error</h3><p>${escapeHtml(message)}</p></div>`;

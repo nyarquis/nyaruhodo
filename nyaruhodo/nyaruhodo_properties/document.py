@@ -11,7 +11,7 @@ RED   = "\033[91m"
 
 def read(file_path, file_type):
 
-    file_bytes = common.read(file_path)
+    file_bytes = common.read(file_path, 65536)
     properties = {}
 
     try:

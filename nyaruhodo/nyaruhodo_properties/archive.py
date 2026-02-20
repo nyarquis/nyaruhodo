@@ -64,8 +64,9 @@ def microsoft_office(archive, entry_names, properties):
 
 def read_archive(archive, entry_names, properties):
 
-    total_size      = sum(entry.file_size     for entry in archive.infolist())
-    compressed_size = sum(entry.compress_size for entry in archive.infolist())
+    entries         = archive.infolist()
+    total_size      = sum(entry.file_size     for entry in entries)
+    compressed_size = sum(entry.compress_size for entry in entries)
     properties["UncompressedSize"] = f"{total_size:,} bytes"
 
     if total_size > 0:
@@ -75,10 +76,12 @@ def read_archive(archive, entry_names, properties):
 
     if entry_names:
 
-        first_entries                 = entry_names[:8]
-        overflow_suffix               = f" ... (+{len(entry_names) - 8} more)" if len(entry_names) > 8 else ""
+        top_level     = [n for n in entry_names if n.count("/") == 0 or (n.count("/") == 1 and n.endswith("/"))]
+        display_names = top_level if top_level else entry_names
+        first_entries = display_names[:8]
+        overflow_suffix               = f" ... (+{len(display_names) - 8} more)" if len(display_names) > 8 else ""
         properties["TopLevelEntries"] = ", ".join(first_entries) + overflow_suffix
-
+    
 def read(file_path, file_type):
 
     properties = {}
@@ -89,9 +92,8 @@ def read(file_path, file_type):
 
             entry_names             = archive.namelist()
             properties["FileCount"] = len(entry_names)
-            has_office_properties   = file_type in ("DOCX", "XLSX", "PPTX") or "docProps/core.xml" in entry_names
 
-            if has_office_properties:
+            if "docProps/core.xml" in entry_names:
 
                 microsoft_office(archive, entry_names, properties)
 
