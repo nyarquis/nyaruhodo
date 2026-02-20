@@ -13,7 +13,7 @@ DATABASE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "databa
 server = flask.Flask(__name__)
 server.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 server.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
-server.secret_key = os.urandom(24)
+server.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def get_database():
