@@ -18,8 +18,6 @@ def load_signatures():
         with open(os.path.join(os.path.dirname(__file__), "..", "data", "signatures.json"), "r", encoding="latin-1") as file:
 
             signatures  = json.load(file)
-
-        print("\n")
         
         for signature in signatures:
 
@@ -55,11 +53,11 @@ def load_signatures():
 
         if signatures_count:
 
-            print(f"\n==> {GREEN}SUCCESS{RESET}: LOADED {signatures_count} SIGNATURES")
+            print(f"\n==> {GREEN}SUCCESS{RESET}: LOADED {signatures_count} SIGNATURES\n")
         
         else:
 
-            print(f"\n==> {RED}ERROR{RESET}: NO SIGNATURES LOADED")
+            print(f"\n==> {RED}ERROR{RESET}: NO SIGNATURES LOADED\n")
 
     except Exception as exception:
 

@@ -8,7 +8,13 @@ import nyaruhodo_signatures
 RESET      = "\033[0m"
 RED        = "\033[91m"
 YELLOW     = "\033[93m"
-SIGNATURES = nyaruhodo_signatures.load_signatures()
+SIGNATURES = None
+
+def signatures():
+    global SIGNATURES
+    if SIGNATURES is None:
+        SIGNATURES = nyaruhodo_signatures.load_signatures()
+    return SIGNATURES
 
 def get_header(file_path, byte_count=32):
 
@@ -81,7 +87,7 @@ def find_file_type(file_path):
 
         return None, "Sorry! Unable to read file."
 
-    for signature, (file_type, description) in SIGNATURES.items():
+    for signature, (file_type, description) in signatures().items():
 
         if header.startswith(signature):
 

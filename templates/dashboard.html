@@ -62,11 +62,25 @@
                     </td>
                     
                     <td>
-                        <span class="status-badge {% if log.status == 'Unknown' %} badge-unknown {% elif 'Mismatch' in log.status %} badge-mismatch {% else %} badge-clean {% endif %}">
+                        <span class="status-badge {% if log.status == 'Unknown' %} badge-unknown {% elif 'Mismatch' in log.status %} badge-mismatch {% else %} badge-match {% endif %}">
 
                             {{ log.status }}
 
                         </span>
+
+                    </td>
+
+                    <td>
+    
+                        <form method="post" action="{{ url_for('delete_log', log_id=log.log_id) }}">
+        
+                            <button type="submit" class="button-delete">
+    
+                                Delete
+
+                            </button>
+    
+                        </form>
 
                     </td>
 
@@ -97,6 +111,44 @@
             </tbody>
 
         </table>
+
+    </div>
+
+    <div class="card" style="margin-top: 2rem; border: 1px solid var(--color-danger);">
+
+        <h3 style="margin-bottom: 1rem;">
+            
+            Delete Account
+        
+        </h3>
+    
+        {% if error %}
+    
+        <div style="color: var(--color-danger); margin-bottom: 1rem;">
+            
+            {{ error }}
+        
+        </div>
+
+        {% endif %}
+
+        <p style="margin-bottom: 1rem; color: var(--text-muted);">
+            
+            This will permanently delete your account and all scan history. Enter your password to confirm.
+        
+        </p>
+
+        <form method="post" action="{{ url_for('delete_account') }}">
+
+            <input type="password" name="password" class="form-input" placeholder="Enter your password" required>
+
+            <button type="submit" class="button" style="background: var(--color-danger); color: var(--bg-header);">
+            
+                Delete Account
+        
+            </button>
+
+        </form>
 
     </div>
 

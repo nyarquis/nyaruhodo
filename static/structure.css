@@ -24,6 +24,15 @@ button, input, textarea, select {
     font-family: 'Fira Code', 'Fira Mono', monospace;
 }
 
+.button-delete {
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
 .navbar {
     background: var(--bg-header);
     height: 6.25vh; 
@@ -195,6 +204,15 @@ body.menu-open .footer-content {
     text-align: center;
 }
 
+.button-delete {
+    background: none;
+    border: none;
+    color: var(--color-danger);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+}
+
 .form-input {
     width: 100%;
     padding: 0.75rem;
@@ -234,16 +252,16 @@ th {
     margin-top: 2rem;
 }
 
-.result-box.mismatch { 
-    border-color: #f38ba8;
+.result-box.mismatch {
+    border-color: var(--color-danger);
 }
 
 .result-box.match {
-    border-color: #a6e3a1;
+    border-color: var(--color-match);
 }
 
 .result-box.unknown {
-    border-color: #f9e2af;
+    border-color: var(--color-unknown);
 }
 
 .status-badge {
@@ -257,15 +275,18 @@ th {
 }
 
 .badge-mismatch {
-    background: #f38ba8; color: #d20f39;
+    background: var(--color-danger);
+    color: var(--color-danger-fg);
 }
 
-.badge-clean {
-    background: #a6e3a1; color: #40a02b;
+.badge-match {
+    background: var(--color-match);
+    color: var(--color-match-fg);
 }
 
 .badge-unknown {
-    background: #f9e2af; color: #df8e1d;
+    background: var(--color-unknown);
+    color: var(--color-unknown-fg);
 }
 
 .footer {
@@ -285,7 +306,6 @@ th {
     margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr 0fr;
-    
     gap: 0;
     transition: grid-template-columns 0.3s ease-in-out;
 }

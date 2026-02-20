@@ -84,11 +84,13 @@ def register():
 
         try:
 
+            user = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
             hashed_password = werkzeug.security.generate_password_hash(password)
             database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             database.commit()
-
-            return flask.redirect(flask.url_for("login"))
+            flask.session["user_id"]  = user["user_id"]
+            flask.session["username"] = user["username"]
+            return flask.redirect(flask.url_for("dashboard"))
 
         except sqlite3.IntegrityError:
 
@@ -190,8 +192,46 @@ def scan():
 
     return flask.jsonify({"error": "Sorry! Processing failed."}), 500
 
-if __name__ == "__main__":
+@server.route("/dashboard/delete-account", methods=["POST"])
 
+@requirelogin
+
+def delete_account():
+
+    password = flask.request.form.get("password")
+    database = get_database()
+    user     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+
+    if not user or not werkzeug.security.check_password_hash(user["password"], password):
+
+        return flask.render_template("dashboard.html", username=flask.session["username"], logs=database.execute("SELECT * FROM logs WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall(), error="Sorry! Password is incorrect.")
+
+    database.execute("DELETE FROM logs WHERE user_id = ?", (flask.session["user_id"],))
+    database.execute("DELETE FROM users WHERE user_id = ?", (flask.session["user_id"],))
+    database.commit()
+    flask.session.clear()
+    return flask.redirect(flask.url_for("index"))
+
+@server.route("/dashboard/delete-log/<int:log_id>", methods=["POST"])
+
+@requirelogin
+
+def delete_log(log_id):
+
+    database = get_database()
+    log      = database.execute("SELECT * FROM logs WHERE log_id = ? AND user_id = ?", (log_id, flask.session["user_id"])).fetchone()
+
+    if not log:
+
+        return flask.redirect(flask.url_for("dashboard"))
+
+    database.execute("DELETE FROM logs WHERE log_id = ?", (log_id,))
+    database.commit()
+    return flask.redirect(flask.url_for("dashboard"))
+
+if __name__ == "__main__":
+    
     nyaruhodo.init.paint_screen()
+    nyaruhodo.signatures.load_signatures()
     initialise_database()
     server.run(debug=True, host="0.0.0.0", port=5000)
