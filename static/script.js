@@ -110,6 +110,30 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    const deleteAccountBtn    = document.getElementById("deleteAccountBtn");
+    const deleteAccountModal  = document.getElementById("deleteAccountModal");
+    const cancelDeleteAccount = document.getElementById("cancelDeleteAccount");
+
+    if (deleteAccountBtn && deleteAccountModal) {
+        deleteAccountBtn.addEventListener("click", () => {
+            deleteAccountModal.style.display = "flex";
+        });
+
+        cancelDeleteAccount.addEventListener("click", () => {
+            deleteAccountModal.style.display = "none";
+        });
+
+        deleteAccountModal.addEventListener("click", (event) => {
+            if (event.target === deleteAccountModal) {
+                deleteAccountModal.style.display = "none";
+            }
+        });
+        
+        if (deleteAccountModal && deleteAccountModal.getAttribute("data-open") === "true") {
+            deleteAccountModal.style.display = "flex";
+        }
+    }
+
     const themeToggleBtn  = document.getElementById("theme-toggle-link");
     const themeStylesheet = document.getElementById("current-theme");
 

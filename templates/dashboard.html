@@ -7,40 +7,47 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
 
         <h2>
-            
+
             Welcome, {{ username }}.
-        
+
         </h2>
 
-        <a href="/" class="button">
-            
-            New Scan
-        
-        </a>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+
+            <button class="button-icon-danger" id="deleteAccountBtn" title="Delete Account">&#x2715;</button>
+
+            <a href="/" class="button" style="width: auto;">
+
+                New Scan
+
+            </a>
+
+        </div>
 
     </div>
 
     <h3>
-        
+
         Scan History
-    
+
     </h3>
-    
+
     <div class="table-container">
-    
+
         <table>
-    
+
             <thead>
-    
+
                 <tr>
-    
+
                     <th>Time</th>
                     <th>File Name</th>
                     <th>File Type</th>
                     <th>Status</th>
+                    <th></th>
 
                 </tr>
-            
+
             </thead>
 
             <tbody>
@@ -54,14 +61,15 @@
                     <td>
 
                         <code>
-                        
+
                             {{ log.filetype }}
-                        
+
                         </code>
-                    
+
                     </td>
-                    
+
                     <td>
+
                         <span class="status-badge {% if log.status == 'Unknown' %} badge-unknown {% elif 'Mismatch' in log.status %} badge-mismatch {% else %} badge-match {% endif %}">
 
                             {{ log.status }}
@@ -71,15 +79,11 @@
                     </td>
 
                     <td>
-    
-                        <form method="post" action="{{ url_for('delete_log', log_id=log.log_id) }}">
-        
-                            <button type="submit" class="button-delete">
-    
-                                Delete
 
-                            </button>
-    
+                        <form method="post" action="{{ url_for('delete_log', log_id=log.log_id) }}">
+
+                            <button type="submit" class="button-delete" title="Delete log">&#x2715;</button>
+
                         </form>
 
                     </td>
@@ -90,20 +94,20 @@
 
                 <tr>
 
-                    <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-        
-                        No scans yet. 
-                        
+                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+
+                        No scans yet.
+
                         <a href="/" style="color: var(--primary);">
-                            
+
                             Analyse a file
-                        
+
                         </a>
-                        
+
                         to get started.
-                    
+
                     </td>
-                
+
                 </tr>
 
                 {% endfor %}
@@ -114,39 +118,49 @@
 
     </div>
 
-    <div class="card" style="margin-top: 2rem; border: 1px solid var(--color-danger);">
+</div>
 
-        <h3 style="margin-bottom: 1rem;">
-            
-            Delete Account
-        
-        </h3>
-    
+<div id="deleteAccountModal" class="modal-overlay" style="display: none;" {% if error %}data-open="true"{% endif %}>
+
+    <div class="modal-box">
+
+        <h3 style="margin-bottom: 1rem;">Delete Account</h3>
+
         {% if error %}
-    
+
         <div style="color: var(--color-danger); margin-bottom: 1rem;">
-            
+
             {{ error }}
-        
+
         </div>
 
         {% endif %}
 
         <p style="margin-bottom: 1rem; color: var(--text-muted);">
-            
+
             This will permanently delete your account and all scan history. Enter your password to confirm.
-        
+
         </p>
 
         <form method="post" action="{{ url_for('delete_account') }}">
 
             <input type="password" name="password" class="form-input" placeholder="Enter your password" required>
 
-            <button type="submit" class="button" style="background: var(--color-danger); color: var(--bg-header);">
-            
-                Delete Account
-        
-            </button>
+            <div style="display: flex; gap: 0.75rem;">
+
+                <button type="button" id="cancelDeleteAccount" class="button" style="background: var(--bg-surface); color: var(--text-main);">
+
+                    Cancel
+
+                </button>
+
+                <button type="submit" class="button" style="background: var(--color-danger); color: var(--bg-header);">
+
+                    Delete Account
+
+                </button>
+
+            </div>
 
         </form>
 

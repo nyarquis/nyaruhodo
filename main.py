@@ -86,10 +86,10 @@ def register():
 
             user = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
             hashed_password = werkzeug.security.generate_password_hash(password)
-            database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+            cursor = database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             database.commit()
-            flask.session["user_id"]  = user["user_id"]
-            flask.session["username"] = user["username"]
+            flask.session["user_id"]  = cursor.lastrowid
+            flask.session["username"] = username
             return flask.redirect(flask.url_for("dashboard"))
 
         except sqlite3.IntegrityError:
