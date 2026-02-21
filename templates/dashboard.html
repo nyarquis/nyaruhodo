@@ -4,23 +4,24 @@
 
 <div class="card">
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div style="margin-bottom: 2rem;">
 
-        <h2>
+        <h2 style="margin-bottom: 1rem;">
 
             Welcome, {{ username }}.
 
         </h2>
 
-        <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <div style="display: flex; gap: 0.75rem; align-items: stretch;">
 
-            <button class="button-icon-danger" id="deleteAccountBtn" title="Delete Account">&#x2715;</button>
-
-            <a href="/" class="button" style="width: auto;">
+            <a href="/" class="button" style="flex: 1;">
 
                 New Scan
 
             </a>
+
+            <button class="button-icon-danger" id="deleteAccountBtn" title="Delete Account"
+                style="aspect-ratio: 1 / 1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">&#x2715;</button>
 
         </div>
 
