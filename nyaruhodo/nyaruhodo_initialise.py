@@ -23,6 +23,9 @@ def paint_screen():
     try:
 
         os.system("cls" if platform.system() == "Windows" else "clear")
+        os.makedirs(os.path.join(os.path.dirname(__file__), "..", "data", "files"), exist_ok=True)
+        os.makedirs(os.path.join(os.path.dirname(__file__), "..", "data", "telemetry"), exist_ok=True)
+
         columns = os.get_terminal_size().columns
 
     except Exception as exception:

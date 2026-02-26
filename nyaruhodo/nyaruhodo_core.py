@@ -168,7 +168,7 @@ def scan(file_path, filename):
     return {
         "filename":           filename,
         "extension":          original_file_type,
-        "filetype":           file_type,
+        "file_type":           file_type,
         "description":        description,
         "mismatch":           mismatch,
         "message":            message
