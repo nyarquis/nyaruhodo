@@ -25,11 +25,6 @@ def get_database():
 
     return database
 
-def active_user():
-    """Return the username for the current session, or 'anonymous'."""
-
-    return flask.session.get("username", "anonymous")
-
 @server.route("/favicon.ico")
 
 def favicon():
@@ -51,7 +46,7 @@ def initialise_database():
     with server.app_context():
 
         database = get_database()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virus_total_key TEXT)")
+        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_key TEXT)")
         database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, file_name TEXT NOT NULL, file_type TEXT, status TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
         database.commit()
 
@@ -63,7 +58,7 @@ def requirelogin(f):
 
         if "user_id" not in flask.session:
 
-            nyaruhodo.telemetry.warning("anonymous", f"Unauthenticated request to protected route '{flask.request.path}'; redirecting to login.")
+            nyaruhodo.telemetry.warning("anonymous", f"Unauthenticated Request '{flask.request.path}'")
             return flask.redirect(flask.url_for("login"))
 
         return f(*args, **kwargs)
@@ -130,7 +125,7 @@ def login():
 
 def logout():
 
-    nyaruhodo.telemetry.info(username, f"Account Log Out '{active_user()}'")
+    nyaruhodo.telemetry.info(flask.session.get("username", "anonymous"), f"Account Log Out '{flask.session.get("username", "anonymous")}'")
     flask.session.clear()
 
     return flask.redirect(flask.url_for("index"))
@@ -143,14 +138,14 @@ def dashboard():
     database = get_database()
     records  = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
     user     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
-    nyaruhodo.telemetry.info(active_user(), f"Dashboard Access '{active_user()}'")
-    return flask.render_template("dashboard.html", username=flask.session["username"], logs=records, virus_total_key=user["virus_total_key"] or "")
+    nyaruhodo.telemetry.info(flask.session.get("username", "anonymous"), f"Dashboard Access '{flask.session.get("username", "anonymous")}'")
+    return flask.render_template("dashboard.html", username=flask.session["username"], logs=records, virustotal_key=user["virustotal_key"] or "")
 
 @server.route("/dashboard/scan", methods=["POST"])
 
 def scan():
 
-    user = active_user()
+    user = flask.session.get("username", "anonymous")
 
     if "file" not in flask.request.files:
 
@@ -159,15 +154,15 @@ def scan():
 
     file = flask.request.files["file"]
 
-    if file.file_name == "":
+    if file.filename == "":
 
         nyaruhodo.telemetry.error(user, "Scan Failed (Empty File Name)")
         return flask.jsonify({"error": "Sorry! No file was selected."}), 400
 
     if file:
 
-        file_name  = werkzeug.utils.secure_file_name(file.file_name)
-        file_path  = os.path.join(server.config["UPLOAD_FOLDER"], file_name)
+        file_name  = werkzeug.utils.secure_filename(file.filename)
+        file_path  = os.path.join(server.config["FILES"], file_name)
         file.save(file_path)
         nyaruhodo.telemetry.info(user, f"Scan Started '{file_name}'")
         result        = nyaruhodo.core.scan(file_path, file_name)
@@ -196,12 +191,12 @@ def scan():
 
             if "user_id" in flask.session:
 
-                db_user = get_database().execute("SELECT virus_total_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
-                key     = db_user["virus_total_key"] if db_user and db_user["virus_total_key"] else None
+                db_user = get_database().execute("SELECT virustotal_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+                key     = db_user["virustotal_key"] if db_user and db_user["virustotal_key"] else None
 
             if not key:
 
-                key = os.environ.get("VIRUS_TOTAL_API_KEY")
+                key = os.environ.get("VIRUSTOTAL_API_KEY")
 
             nyaruhodo.telemetry.info(user, f"VirusTotal '{file_name}'")
 
@@ -246,7 +241,7 @@ def scan():
 
 def delete_account():
 
-    user     = active_user()
+    user     = flask.session.get("username", "anonymous")
     password = flask.request.form.get("password")
     database = get_database()
     db_user  = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
@@ -266,24 +261,24 @@ def delete_account():
     flask.session.clear()
     return flask.redirect(flask.url_for("index"))
 
-@server.route("/dashboard/delete-log/<int:log_id>", methods=["POST"])
+@server.route("/dashboard/delete-log/<int:record_id>", methods=["POST"])
 @requirelogin
 
-def delete_log(log_id):
+def delete_record(record_id):
 
-    user     = active_user()
+    user     = flask.session.get("username", "anonymous")
     database = get_database()
-    entry    = database.execute("SELECT * FROM records WHERE record_id = ? AND user_id = ?", (log_id, flask.session["user_id"])).fetchone()
+    entry    = database.execute("SELECT * FROM records WHERE record_id = ? AND user_id = ?", (record_id, flask.session["user_id"])).fetchone()
 
     if not entry:
 
-        nyaruhodo.telemetry.warning(user, f"Record Delete Failed '{user}', '{log_id}': Entry Not Found or Not Owned by User")
+        nyaruhodo.telemetry.warning(user, f"Record Delete Failed '{user}', '{record_id}': Entry Not Found or Not Owned by User")
         return flask.redirect(flask.url_for("dashboard"))
 
-    database.execute("DELETE FROM records WHERE record_id = ?", (log_id,))
+    database.execute("DELETE FROM records WHERE record_id = ?", (record_id,))
     database.commit()
 
-    nyaruhodo.telemetry.info(user, f"Record Delete '{user}', '{log_id}' ('{entry['file_name']}')")
+    nyaruhodo.telemetry.info(user, f"Record Delete '{user}', '{record_id}' ('{entry['file_name']}')")
 
     return flask.redirect(flask.url_for("dashboard"))
 
@@ -292,11 +287,11 @@ def delete_log(log_id):
 
 def virustotal():
 
-    user = active_user()
+    user = flask.session.get("username", "anonymous")
     key  = flask.request.form.get("virustotal_key", "").strip()
 
     database = get_database()
-    database.execute("UPDATE users SET virus_total_key = ? WHERE user_id = ?", (key, flask.session["user_id"]))
+    database.execute("UPDATE users SET virustotal_key = ? WHERE user_id = ?", (key, flask.session["user_id"]))
     database.commit()
 
     if key:

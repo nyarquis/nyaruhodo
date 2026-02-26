@@ -25,25 +25,25 @@ def handle(identifier):
 
 def write(identifier, level, message):
 
-    handle(identifier).write(f"{timestamp()} [{level:<8}] {message}\n").upper()
+    handle(identifier).write(f"[{timestamp()}][{level:<8}] {message}\n")
     handle(identifier).flush()
 
 def debug(identifier, message):
 
-    write(identifier, "DEBUG", message)
-    print(f"==> DEBUG [{timestamp()}]: {message}").upper()
+    write(identifier, "DEBUG", message.upper())
+    print(f"==> DEBUG [{timestamp()}]: {message.upper()}\n")
 
 def info(identifier, message):
 
-    write(identifier, "INFO", message)
-    print(f"==> {BLUE}INFO{RESET} [{timestamp()}]: {message}").upper()
+    write(identifier, "INFO", message.upper())
+    print(f"==> {BLUE}INFO{RESET} [{timestamp()}]: {message.upper()}\n")
 
 def warning(identifier, message):
 
-    write(identifier, "WARNING", message)
-    print(f"==> {YELLOW}WARN{RESET} [{timestamp()}]: {message}").upper()
+    write(identifier, "WARN", message.upper())
+    print(f"==> {YELLOW}WARN{RESET} [{timestamp()}]: {message.upper()}\n")
 
 def error(identifier, message):
 
-    write(identifier, "ERROR", message)
-    print(f"==> {RED}ERROR{RESET} [{timestamp()}]: {message}").upper()
+    write(identifier, "ERROR", message.upper())
+    print(f"==> {RED}ERROR{RESET} [{timestamp()}]: {message.upper()}\n")
