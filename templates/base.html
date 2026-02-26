@@ -7,10 +7,26 @@
             Nyaruhodo!
         </title>
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='structure.css') }}">
+        <script>
+            (function() {
+                var ua = navigator.userAgent || "";
+                var isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+                var structureFile = isMobile ? "structure-mobile.css" : "structure.css";
+                document.write('<link rel="stylesheet" href="{{ url_for("static", filename="") }}' + structureFile + '">');
+            })();
+        </script>
         <link id="current-theme" rel="stylesheet" href="{{ url_for('static', filename='light-mode.css') }}">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playwrite+IN&display=swap">
+        <script>
+            (function() {
+                var saved = localStorage.getItem("theme") || "light";
+                var link  = document.getElementById("current-theme");
+                if (saved === "night" && link) {
+                    link.href = link.href.replace("light-mode", "night-mode");
+                }
+            })();
+        </script>
     </head>
     <body>
         <nav class="navbar">
