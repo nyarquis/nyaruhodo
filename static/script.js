@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => {
                 loadingIndicator.style.display = "none";
                 submitButton.disabled          = false;
-                displayError("An error occurred while connecting to the server.");
+                displayError("A connection error occurred. Please check your network and try again.");
                 console.error("Error:", error);
             });
         });
@@ -177,13 +177,13 @@ document.addEventListener("DOMContentLoaded", function() {
         let statusClass, title;
         if (result.file_type === "UNKNOWN") {
             statusClass = "unknown";
-            title       = "Unknown File Type";
+            title       = "File Type Unknown";
         } else if (result.mismatch) {
             statusClass = "mismatch";
-            title       = "Mismatch Detected";
+            title       = "Extension Mismatch";
         } else {
             statusClass = "match";
-            title       = "Extension Matches";
+            title       = "Extension Match";
         }
 
         let markup = `
@@ -191,9 +191,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h3 style="margin-bottom: 1rem;">${title}</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                     <div><strong>File Name:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filename)}</span></div>
-                    <div><strong>Claimed:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.extension)}</span></div>
-                    <div><strong>Detected:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.file_type)}</span></div>
-                    <div><strong>Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
+                    <div><strong>Declared Extension:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.extension)}</span></div>
+                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.file_type)}</span></div>
+                    <div><strong>Description:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
                 </div>
                 <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
                     <strong>Analysis:</strong> ${escapeHtml(result.message)}
@@ -234,22 +234,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function formatVirusTotal(virustotal) {
         if (virustotal.error) {
-            return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message)}</p></div>`;
+            return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An error occurred during the VirusTotal query.")}</p></div>`;
+        }
+        if (virustotal.message && !virustotal.stats_malicious && virustotal.stats_malicious !== 0) {
+            return `<div class="result-box unknown" style="margin-top: 1rem;"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
         }
         const isClean   = virustotal.stats_malicious === 0 && virustotal.stats_suspicious === 0;
         const statusClass = isClean ? "match" : "mismatch";
 
         return `
             <div class="result-box ${statusClass}" style="margin-top: 1rem;">
-                <h4 style="margin-bottom: 0.5rem;">VirusTotal Scan</h4>
+                <h4 style="margin-bottom: 0.5rem;">Scan Results</h4>
                 <div style="display: flex; gap: 15px; margin-bottom: 10px;">
                     <span style="font-weight: bold; color: var(--color-malicious);">Malicious: ${virustotal.stats_malicious}</span>
                     <span style="font-weight: bold; color: var(--color-suspicious);">Suspicious: ${virustotal.stats_suspicious}</span>
                     <span style="font-weight: bold; color: var(--color-harmless);">Harmless: ${virustotal.stats_harmless}</span>
                 </div>
-                <a href="${virustotal.link}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report</a>
+                <a href="${virustotal.link}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report on VirusTotal</a>
             </div>
-        `;
+        `;  
     }
 
     function displayError(message) {
@@ -257,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const content   = document.getElementById("resultContent");
         if (container && content) {
             container.style.display = "block";
-            content.innerHTML = `<div class="result-box mismatch"><h3>Error</h3><p>${escapeHtml(message)}</p></div>`;
+            content.innerHTML = `<div class="result-box mismatch"><h3>Analysis Error</h3><p>${escapeHtml(message)}</p></div>`;
         }
     }
 

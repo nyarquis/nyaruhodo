@@ -9,7 +9,7 @@ from . import image
 from . import markup
 
 RESET = "\033[0m"
-RED   = "\033[91m"
+RED = "\033[91m"
 
 READERS = {
     "APK":    archive.read,
@@ -32,10 +32,11 @@ READERS = {
     "ZIP":    archive.read,
 }
 
+
 def read(file_path, file_type):
 
     file_type = (file_type or "").upper()
-    reader    = READERS.get(file_type)
+    reader = READERS.get(file_type)
 
     if not reader:
 
@@ -48,6 +49,8 @@ def read(file_path, file_type):
 
     except Exception as exception:
 
-        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split(
+            "]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(
+            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return {}

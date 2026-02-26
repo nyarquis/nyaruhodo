@@ -13,14 +13,17 @@ body {
     color: var(--text-main);
     display: flex;
     flex-direction: column;
-    font-family: "Fira Code", "Fira Mono", monospace;    
+    font-family: "Fira Code", "Fira Mono", monospace;
     min-height: 100vh;
     overflow-x: hidden;
-    padding-top: 6.25vh; 
+    padding-top: 6.25vh;
     transition: padding-right 0.3s ease-in-out;
 }
 
-button, input, textarea, select {
+button,
+input,
+textarea,
+select {
     font-family: "Fira Code", "Fira Mono", monospace;
 }
 
@@ -28,21 +31,21 @@ button, input, textarea, select {
     align-items: center;
     background: var(--bg-header);
     border-bottom: 1px solid var(--border-dark);
-    box-shadow: none; 
+    box-shadow: none;
     display: flex;
-    height: 6.25vh; 
+    height: 6.25vh;
     justify-content: space-between;
     left: 0;
     padding: 0 1.5rem;
-    position: fixed; 
+    position: fixed;
     top: 0;
     width: 100%;
-    z-index: 10010; 
+    z-index: 10010;
 }
 
 .nav-icon {
-    align-self: flex-end; 
-    height: 80%; 
+    align-self: flex-end;
+    height: 80%;
     width: auto;
 }
 
@@ -52,7 +55,7 @@ button, input, textarea, select {
     display: flex;
     font-family: "Playwrite IN", cursive;
     font-size: 1.5rem;
-    font-weight: 400; 
+    font-weight: 400;
     gap: 12px;
     height: 100%;
     text-decoration: none;
@@ -92,7 +95,7 @@ button, input, textarea, select {
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    padding: calc(1rem + 1px) 2rem 2rem 2rem;    
+    padding: calc(1rem + 1px) 2rem 2rem 2rem;
     position: fixed;
     right: 0;
     top: calc(6.25vh - 1px);
@@ -102,7 +105,8 @@ button, input, textarea, select {
     z-index: 10000;
 }
 
-.nav-links.active, body.menu-open .nav-links {
+.nav-links.active,
+body.menu-open .nav-links {
     transform: translateX(0);
 }
 
@@ -111,7 +115,7 @@ button, input, textarea, select {
     border: none;
     color: var(--text-muted-light);
     font-size: 1.1rem;
-    padding: 0.75rem 1rem;    
+    padding: 0.75rem 1rem;
     text-align: left;
     text-decoration: none;
     transition: background 0.2s, transform 0.2s;
@@ -138,9 +142,9 @@ body.menu-open .footer {
 }
 
 body.menu-open .theme-column {
-        opacity: 1;
-        pointer-events: auto;
-        transition-delay: 0.1s;
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0.1s;
 }
 
 
@@ -150,7 +154,7 @@ body.menu-open .footer-content {
 
 .main-wrapper {
     flex: 1;
-    margin: 0 auto; 
+    margin: 0 auto;
     max-width: 1600px;
     padding: 2rem;
     width: 100%;
@@ -262,7 +266,8 @@ table {
     width: 100%;
 }
 
-th, td {
+th,
+td {
     border-bottom: 1px solid var(--border-light);
     padding: 1rem;
     text-align: left;
@@ -321,13 +326,13 @@ th {
 .footer {
     background: var(--bg-header);
     border-top: 1px solid var(--border-dark);
-    margin-top: auto; 
+    margin-top: auto;
     min-width: 100vw;
-    padding: 3rem 0; 
+    padding: 3rem 0;
     position: relative;
     transition: margin-right 0.3s ease-in-out;
     width: 100vw;
-    z-index: 10005; 
+    z-index: 10005;
 }
 
 .footer-content {
@@ -357,7 +362,7 @@ th {
     color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.5;
-    min-height: 4.5em; 
+    min-height: 4.5em;
 }
 
 .footer-label {
@@ -403,10 +408,10 @@ th {
 }
 
 .theme-column {
-    align-items: flex-start; 
+    align-items: flex-start;
     border-left: none;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     justify-content: flex-start;
     opacity: 0;
     pointer-events: none;

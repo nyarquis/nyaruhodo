@@ -1,77 +1,40 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <div class="card">
-
-    <h2>Analyze File</h2>
-
+    <h2>Analyse File</h2>
     <p style="margin-bottom: 20px;">
-
-        Upload a file. Nyaruhodo! analyses binary signatures (magic numbers) to detect misleading file extensions.
-
+        Upload a file to analyse its binary signature (magic bytes) and detect any mismatch between its true format and declared extension.
     </p>
-
     <form id="uploadForm">
-
         <div class="upload-area" id="dropZone">
-
             <input type="file" id="fileInput" name="file" hidden required>
-
             <label for="fileInput" class="file-trigger">
-
-                <span id="fileNameDisplay">
-                    
-                    <strong>
-                        
-                        Click to upload
-                    
-                    </strong>
-                    
-                    or drag and drop
-                
-                </span>
-
+            <span id="fileNameDisplay">
+            <strong>
+            Click to upload
+            </strong>
+            or drag and drop a file.
+            </span>
             </label>
-
         </div>
-
         <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 10px;">
-
             <input type="checkbox" id="virusTotalCheckbox" name="virustotal" value="true">
-
             <label for="virusTotalCheckbox">
-                
-                Check with VirusTotal
-            
+            Check with VirusTotal
             </label>
-
         </div>
-
         <button type="submit" id="submitButton" class="button" style="margin-top: 1.5rem; width: 100%;">
-            
-            Analyze File
-        
+        Analyse File
         </button>
-
     </form>
-
     <div id="loadingIndicator" class="loading hidden" style="display:none; margin-top: 20px; text-align: center;">
         <div class="spinner"></div>
         <p>
-            
             Processing...
-        
         </p>
-
     </div>
-
 </div>
-
 <div id="resultsContainer" class="hidden" style="display:none;">
-
     <div id="resultContent"></div>
-
 </div>
-
 {% endblock %}

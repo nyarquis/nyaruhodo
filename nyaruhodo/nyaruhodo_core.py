@@ -1,14 +1,15 @@
+import nyaruhodo_signatures
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-import nyaruhodo_signatures
 
-RESET      = "\033[0m"
-RED        = "\033[91m"
-YELLOW     = "\033[93m"
+RESET = "\033[0m"
+RED = "\033[91m"
+YELLOW = "\033[93m"
 SIGNATURES = None
+
 
 def signatures():
 
@@ -20,6 +21,7 @@ def signatures():
 
     return SIGNATURES
 
+
 def get_header(file_path, byte_count=32):
 
     try:
@@ -30,9 +32,12 @@ def get_header(file_path, byte_count=32):
 
     except Exception as exception:
 
-        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split(
+            "]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(
+            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return None
+
 
 def compound_file(file_path, header):
 
@@ -77,19 +82,22 @@ def compound_file(file_path, header):
 
         except Exception as exception:
 
-            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-            print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+            exception_string = str(exception).split(
+                "]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(
+                f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
             return "ZIP", "ZIP Archive"
 
     return None, None
 
+
 def find_file_type(file_path):
 
-    header     = get_header(file_path)
+    header = get_header(file_path)
 
     if not header:
 
-        return None, "Sorry! Unable to read file."
+        return None, "The file could not be read."
 
     for signature, (file_type, description) in signatures().items():
 
@@ -115,35 +123,39 @@ def find_file_type(file_path):
 
     except Exception as exception:
 
-        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {YELLOW}WARNING{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split(
+            "]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(
+            f"==> {YELLOW}WARNING{RESET} [{os.path.basename(__file__)}]: COULD NOT READ FILE AS UTF-8. CLASSIFYING AS 'UNKNOWN.' {exception_string.upper()}")
 
     return "UNKNOWN", "Unknown File"
+
 
 def get_file_type(filename):
 
     _, extension = os.path.splitext(filename)
     return extension[1:].upper() if extension else "NONE"
 
+
 def scan(file_path, filename):
 
-    original_file_type     = get_file_type(filename)
+    original_file_type = get_file_type(filename)
     file_type, description = find_file_type(file_path)
-    mismatch               = False
-    message                = "Sorry! File type could not be determined."
+    mismatch = False
+    message = "The file type could not be determined."
 
     if file_type == "UNKNOWN":
 
-        message = "Sorry! File type is not in our database."
+        message = "The binary signature of this file does not match any entry in the signature database."
 
     elif original_file_type == "NONE":
 
-        message  = f"File has no extension; we detected: {file_type}."
+        message = f"This file has no extension. The detected file type is {file_type}."
         mismatch = True
 
     elif original_file_type == file_type:
 
-        message = f"File type is {original_file_type}; we detected: {file_type}."
+        message = f"The declared extension ({original_file_type}) matches the detected file type ({file_type})."
 
     else:
 
@@ -158,11 +170,11 @@ def scan(file_path, filename):
 
         if variations.get(original_file_type) == file_type:
 
-            message = f"File type is a valid variation of what we detected: {file_type}."
+            message = f"The declared extension ({original_file_type}) is a recognised variant of the detected file type ({file_type})."
 
         else:
 
-            message  = f"File type is not {original_file_type}; we detected: {file_type}."
+            message = f"The declared extension is {original_file_type}, but the binary signature identifies this file as {file_type}."
             mismatch = True
 
     return {

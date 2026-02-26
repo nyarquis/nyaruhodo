@@ -1,13 +1,14 @@
+import common
 import os
 import re
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-import common
 
 RESET = "\033[0m"
-RED   = "\033[91m"
+RED = "\033[91m"
+
 
 def read(file_path, file_type):
 
@@ -20,8 +21,10 @@ def read(file_path, file_type):
 
     except Exception as exception:
 
-        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split(
+            "]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(
+            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return properties
 
     version_match = re.search(r"%PDF-(\d+\.\d+)", filetext)
@@ -38,7 +41,8 @@ def read(file_path, file_type):
 
         for field_name in ["Title", "Author", "Subject", "Keywords", "Creator", "Producer", "CreationDate", "ModDate"]:
 
-            field_match = re.search(rf"/{field_name}\s*\(([^)]*)\)", info_block)
+            field_match = re.search(
+                rf"/{field_name}\s*\(([^)]*)\)", info_block)
 
             if field_match:
 

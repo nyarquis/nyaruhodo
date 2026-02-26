@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def lookup_tables():
 
     with open(os.path.join(os.path.dirname(__file__), "..", "..", "data", "properties.json"), "r", encoding="utf-8") as file:
@@ -25,7 +26,8 @@ def lookup_tables():
 
         if table_key in key_tables:
 
-            lookup_tables[table_key] = {int(key): value for key, value in table_value.items()}
+            lookup_tables[table_key] = {
+                int(key): value for key, value in table_value.items()}
 
         else:
 
@@ -33,18 +35,19 @@ def lookup_tables():
 
     return lookup_tables
 
-LOOKUP_TABLES       = lookup_tables()
-EXIF_TAGS           = LOOKUP_TABLES["EXIF TAGS"]
-GPS_TAGS            = LOOKUP_TABLES["GPS TAGS"]
-ORIENTATION         = LOOKUP_TABLES["ORIENTATION"]
-RESOLUTION          = LOOKUP_TABLES["RESOLUTION"]
-ID3v2_FRAMES_v24    = LOOKUP_TABLES["ID3v2 FRAMES v24"]
-ID3v2_FRAMES_v22    = LOOKUP_TABLES["ID3v2 FRAMES v22"]
-ID3v1_GENRES        = LOOKUP_TABLES["ID3v1 GENRES"]
-PE_MACHINES         = LOOKUP_TABLES["PE MACHINES"]
-PE_SUBSYSTEMS       = LOOKUP_TABLES["PE SUBSYSTEMS"]
-PE_CHARACTERISTICS  = LOOKUP_TABLES["PE CHARACTERISTICS"]
-ELF_TYPES           = LOOKUP_TABLES["ELF TYPES"]
-ELF_MACHINES        = LOOKUP_TABLES["ELF MACHINES"]
-ELF_OSABI           = LOOKUP_TABLES["ELF OSABI"]
-XML_NAMESPACES      = LOOKUP_TABLES["XML NAMESPACES"]
+
+LOOKUP_TABLES = lookup_tables()
+EXIF_TAGS = LOOKUP_TABLES["EXIF TAGS"]
+GPS_TAGS = LOOKUP_TABLES["GPS TAGS"]
+ORIENTATION = LOOKUP_TABLES["ORIENTATION"]
+RESOLUTION = LOOKUP_TABLES["RESOLUTION"]
+ID3v2_FRAMES_v24 = LOOKUP_TABLES["ID3v2 FRAMES v24"]
+ID3v2_FRAMES_v22 = LOOKUP_TABLES["ID3v2 FRAMES v22"]
+ID3v1_GENRES = LOOKUP_TABLES["ID3v1 GENRES"]
+PE_MACHINES = LOOKUP_TABLES["PE MACHINES"]
+PE_SUBSYSTEMS = LOOKUP_TABLES["PE SUBSYSTEMS"]
+PE_CHARACTERISTICS = LOOKUP_TABLES["PE CHARACTERISTICS"]
+ELF_TYPES = LOOKUP_TABLES["ELF TYPES"]
+ELF_MACHINES = LOOKUP_TABLES["ELF MACHINES"]
+ELF_OSABI = LOOKUP_TABLES["ELF OSABI"]
+XML_NAMESPACES = LOOKUP_TABLES["XML NAMESPACES"]

@@ -4,21 +4,22 @@ import os
 import urllib
 
 RESET = "\033[0m"
-RED   = "\033[91m"
+RED = "\033[91m"
 
 VIRUS_TOTAL = "https://www.virustotal.com/api/v3/files/"
 
-def virustotal(file_path, key=None):
 
-    if not key:
+def virustotal(file_path, virustotal_key=None):
 
-        key = os.environ.get("VIRUS_TOTAL_API_KEY")
+    if not virustotal_key:
 
-        if not key:
+        virustotal_key = os.environ.get("VIRUSTOTAL_API_KEY")
+
+        if not virustotal_key:
 
             return {
-                "error":   "Sorry! Configuration error.",
-                "message": "VIRUS_TOTAL_API_KEY (environment variable) is missing."
+                "error":   "Configuration error.",
+                "message": "No VirusTotal API key is configured. Set the VIRUSTOTAL_API_KEY environment variable or save a personal key in your account settings."
             }
 
     try:
@@ -31,9 +32,10 @@ def virustotal(file_path, key=None):
 
                 file_hash.update(block)
 
-        file_hash   = file_hash.hexdigest()
-        headers     = {"x-apikey": key}
-        api_request = urllib.request.Request(VIRUS_TOTAL + file_hash, headers=headers)
+        file_hash = file_hash.hexdigest()
+        headers = {"x-apikey": virustotal_key}
+        api_request = urllib.request.Request(
+            VIRUS_TOTAL + file_hash, headers=headers)
 
         try:
 
@@ -58,7 +60,7 @@ def virustotal(file_path, key=None):
 
                 return {
                     "file_hash": file_hash,
-                    "message":   "Sorry! File was not found in the VirusTotal database. You can upload it manually.",
+                    "message":   "This file has not previously been submitted to VirusTotal and no analysis results are available. You may submit it for analysis manually.",
                     "link":      "https://www.virustotal.com/gui/home/upload"
                 }
 
@@ -66,9 +68,11 @@ def virustotal(file_path, key=None):
 
     except Exception as exception:
 
-        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split(
+            "]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(
+            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
         return {
-            "error":   "Sorry! Scan failed.",
+            "error":   "SVirusTotal scan failed.",
             "details": str(exception)
         }

@@ -7,12 +7,16 @@ import werkzeug.utils
 
 import nyaruhodo
 
-DATABASE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.sqlite3")
+DATABASE_FILE = os.path.join(os.path.dirname(
+    os.path.abspath(__file__)), "db.sqlite3")
 server = flask.Flask(__name__)
-server.config["FILES"] = os.path.join(os.path.dirname(__file__), "data", "files")
+server.config["FILES"] = os.path.join(
+    os.path.dirname(__file__), "data", "files")
 server.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
 server.secret_key = os.environ.get("SECRET_KEY") or os.urandom(24)
-os.makedirs(os.path.join(os.path.dirname(__file__), "data", "files"), exist_ok=True)
+os.makedirs(os.path.join(os.path.dirname(
+    __file__), "data", "files"), exist_ok=True)
+
 
 def get_database():
 
@@ -25,14 +29,14 @@ def get_database():
 
     return database
 
-@server.route("/favicon.ico")
 
+@server.route("/favicon.ico")
 def favicon():
 
     return flask.send_from_directory(os.path.join(server.root_path, "static"), "favicon.png", mimetype="image/png")
 
-@server.teardown_appcontext
 
+@server.teardown_appcontext
 def close_connection(exception):
 
     database = getattr(flask.g, "_database", None)
@@ -41,38 +45,41 @@ def close_connection(exception):
 
         database.close()
 
+
 def initialise_database():
 
     with server.app_context():
 
         database = get_database()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_key TEXT)")
+        database.execute(
+            "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_key TEXT)")
         database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, file_name TEXT NOT NULL, file_type TEXT, status TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
         database.commit()
+
 
 def requirelogin(f):
 
     @functools.wraps(f)
-
     def decorated_function(*args, **kwargs):
 
         if "user_id" not in flask.session:
 
-            nyaruhodo.telemetry.warning("anonymous", f"Unauthenticated Request '{flask.request.path}'")
+            nyaruhodo.telemetry.warning(
+                "anonymous", f"Unauthenticated Request '{flask.request.path}'")
             return flask.redirect(flask.url_for("login"))
 
         return f(*args, **kwargs)
 
     return decorated_function
 
-@server.route("/")
 
+@server.route("/")
 def index():
 
     return flask.render_template("index.html", user=flask.session.get("user_id"))
 
-@server.route("/dashboard/register", methods=["GET", "POST"])
 
+@server.route("/dashboard/register", methods=["GET", "POST"])
 def register():
 
     if flask.request.method == "POST":
@@ -83,23 +90,27 @@ def register():
 
         try:
 
-            hashed_password = werkzeug.security.generate_password_hash(password)
-            cursor = database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
+            hashed_password = werkzeug.security.generate_password_hash(
+                password)
+            cursor = database.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed_password))
             database.commit()
-            flask.session["user_id"]  = cursor.lastrowid
+            flask.session["user_id"] = cursor.lastrowid
             flask.session["username"] = username
-            nyaruhodo.telemetry.info(username, f"Account Created '{username}' ({cursor.lastrowid})")
+            nyaruhodo.telemetry.info(
+                username, f"Account Created '{username}' ({cursor.lastrowid})")
             return flask.redirect(flask.url_for("dashboard"))
 
         except sqlite3.IntegrityError:
 
-            nyaruhodo.telemetry.warning("anonymous", f"Registration Failed '{username}'")
-            return flask.render_template("register.html", error="Sorry! Username is already taken.")
+            nyaruhodo.telemetry.warning(
+                "anonymous", f"Registration Failed '{username}'")
+            return flask.render_template("register.html", error="Registration failed. The username you entered is already in use.")
 
     return flask.render_template("register.html")
 
-@server.route("/dashboard/login", methods=["GET", "POST"])
 
+@server.route("/dashboard/login", methods=["GET", "POST"])
 def login():
 
     if flask.request.method == "POST":
@@ -107,22 +118,24 @@ def login():
         username = flask.request.form["username"]
         password = flask.request.form["password"]
         database = get_database()
-        user     = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+        user = database.execute(
+            "SELECT * FROM users WHERE username = ?", (username,)).fetchone()
 
         if user and werkzeug.security.check_password_hash(user["password"], password):
 
-            flask.session["user_id"]  = user["user_id"]
+            flask.session["user_id"] = user["user_id"]
             flask.session["username"] = user["username"]
             nyaruhodo.telemetry.info(username, f"Account Log In '{username}'")
             return flask.redirect(flask.url_for("dashboard"))
 
-        nyaruhodo.telemetry.warning("anonymous", f"Log In Failed: '{username}'")
-        return flask.render_template("login.html", error="Sorry! Username or password is incorrect.")
+        nyaruhodo.telemetry.warning(
+            "anonymous", f"Log In Failed: '{username}'")
+        return flask.render_template("login.html", error="Authentication failed. The username or password you entered is incorrect.")
 
     return flask.render_template("login.html")
 
-@server.route("/dashboard/logout")
 
+@server.route("/dashboard/logout")
 def logout():
 
     nyaruhodo.telemetry.info(flask.session.get("username", "anonymous"), f"Account Log Out '{flask.session.get("username", "anonymous")}'")
@@ -130,19 +143,21 @@ def logout():
 
     return flask.redirect(flask.url_for("index"))
 
+
 @server.route("/dashboard")
 @requirelogin
-
 def dashboard():
 
     database = get_database()
-    records  = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
-    user     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    records = database.execute(
+        "SELECT * FROM records WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
+    user = database.execute(
+        "SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
     nyaruhodo.telemetry.info(flask.session.get("username", "anonymous"), f"Dashboard Access '{flask.session.get("username", "anonymous")}'")
     return flask.render_template("dashboard.html", username=flask.session["username"], logs=records, virustotal_key=user["virustotal_key"] or "")
 
-@server.route("/dashboard/scan", methods=["POST"])
 
+@server.route("/dashboard/scan", methods=["POST"])
 def scan():
 
     user = flask.session.get("username", "anonymous")
@@ -150,24 +165,24 @@ def scan():
     if "file" not in flask.request.files:
 
         nyaruhodo.telemetry.error(user, "Scan Failed (No File)")
-        return flask.jsonify({"error": "Sorry! No file was uploaded."}), 400
+        return flask.jsonify({"error": "The request did not include a file. Please select a file before submitting."}), 400
 
     file = flask.request.files["file"]
 
     if file.filename == "":
 
         nyaruhodo.telemetry.error(user, "Scan Failed (Empty File Name)")
-        return flask.jsonify({"error": "Sorry! No file was selected."}), 400
+        return flask.jsonify({"error": "No file was selected. Please choose a file and try again."}), 400
 
     if file:
 
-        file_name  = werkzeug.utils.secure_filename(file.filename)
-        file_path  = os.path.join(server.config["FILES"], file_name)
+        file_name = werkzeug.utils.secure_filename(file.filename)
+        file_path = os.path.join(server.config["FILES"], file_name)
         file.save(file_path)
         nyaruhodo.telemetry.info(user, f"Scan Started '{file_name}'")
-        result        = nyaruhodo.core.scan(file_path, file_name)
+        result = nyaruhodo.core.scan(file_path, file_name)
         detected_type = result.get("file_type")
-        metadata      = nyaruhodo.properties.read(file_path, detected_type)
+        metadata = nyaruhodo.properties.read(file_path, detected_type)
 
         if metadata:
 
@@ -175,15 +190,18 @@ def scan():
 
         if result["file_type"] == "UNKNOWN":
 
-            nyaruhodo.telemetry.warning(user, f"Scan Completed: '{file_name}' (UNKNOWN)")
+            nyaruhodo.telemetry.warning(
+                user, f"Scan Completed: '{file_name}' (UNKNOWN)")
 
         elif result["mismatch"]:
 
-            nyaruhodo.telemetry.warning(user, f"Scan Completed: '{file_name}', ({result.get('extension')}, {detected_type}, MISMATCH)")
+            nyaruhodo.telemetry.warning(
+                user, f"Scan Completed: '{file_name}', ({result.get('extension')}, {detected_type}, MISMATCH)")
 
         else:
 
-            nyaruhodo.telemetry.info(user, f"Scan Completed: '{file_name}', ({detected_type}, MATCH)")
+            nyaruhodo.telemetry.info(
+                user, f"Scan Completed: '{file_name}', ({detected_type}, MATCH)")
 
         if result["mismatch"] and flask.request.form.get("virustotal") == "true":
 
@@ -191,8 +209,9 @@ def scan():
 
             if "user_id" in flask.session:
 
-                db_user = get_database().execute("SELECT virustotal_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
-                key     = db_user["virustotal_key"] if db_user and db_user["virustotal_key"] else None
+                db_user = get_database().execute("SELECT virustotal_key FROM users WHERE user_id = ?",
+                                                 (flask.session["user_id"],)).fetchone()
+                key = db_user["virustotal_key"] if db_user and db_user["virustotal_key"] else None
 
             if not key:
 
@@ -204,11 +223,13 @@ def scan():
 
             if "error" in virustotal_result:
 
-                nyaruhodo.telemetry.error(user, f"VirusTotal Failed '{file_name}', ({virustotal_result.get('message') or virustotal_result.get('details', 'Unknown Error')})")
+                nyaruhodo.telemetry.error(
+                    user, f"VirusTotal Failed '{file_name}', ({virustotal_result.get('message') or virustotal_result.get('details', 'Unknown Error')})")
 
             else:
 
-                nyaruhodo.telemetry.info(user, f"VirusTotal Completed '{file_name}', (M={virustotal_result.get('stats_malicious', 0)}, S={virustotal_result.get('stats_suspicious', 0)}, H={virustotal_result.get('stats_harmless', 0)})")
+                nyaruhodo.telemetry.info(
+                    user, f"VirusTotal Completed '{file_name}', (M={virustotal_result.get('stats_malicious', 0)}, S={virustotal_result.get('stats_suspicious', 0)}, H={virustotal_result.get('stats_harmless', 0)})")
 
             result["virustotal"] = virustotal_result
 
@@ -228,32 +249,38 @@ def scan():
 
                 summary = "Match"
 
-            database.execute("INSERT INTO records (user_id, file_name, file_type, status) VALUES (?, ?, ?, ?)", (flask.session["user_id"], file_name, result["file_type"], summary))
+            database.execute("INSERT INTO records (user_id, file_name, file_type, status) VALUES (?, ?, ?, ?)",
+                             (flask.session["user_id"], file_name, result["file_type"], summary))
             database.commit()
 
         return flask.jsonify(result)
 
     nyaruhodo.telemetry.error(user, "Scan Failed (Unhandled Reason)")
-    return flask.jsonify({"error": "Sorry! Processing failed."}), 500
+    return flask.jsonify({"error": "File processing failed due to an unexpected error. Please try again."}), 500
+
 
 @server.route("/dashboard/delete-account", methods=["POST"])
 @requirelogin
-
 def delete_account():
 
-    user     = flask.session.get("username", "anonymous")
+    user = flask.session.get("username", "anonymous")
     password = flask.request.form.get("password")
     database = get_database()
-    db_user  = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    db_user = database.execute(
+        "SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
 
     if not db_user or not werkzeug.security.check_password_hash(db_user["password"], password):
 
-        nyaruhodo.telemetry.warning(user, f"Account Deletion Failed: '{user}' (Incorrect Password)")
-        records = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
-        return flask.render_template("dashboard.html", username=flask.session["username"], logs=records, error="Sorry! Password is incorrect.")
+        nyaruhodo.telemetry.warning(
+            user, f"Account Deletion Failed: '{user}' (Incorrect Password)")
+        records = database.execute(
+            "SELECT * FROM records WHERE user_id = ? ORDER BY timestamp DESC", (flask.session["user_id"],)).fetchall()
+        return flask.render_template("dashboard.html", username=flask.session["username"], logs=records, error="Account deletion failed. The password you entered is incorrect.")
 
-    database.execute("DELETE FROM records WHERE user_id = ?", (flask.session["user_id"],))
-    database.execute("DELETE FROM users WHERE user_id = ?", (flask.session["user_id"],))
+    database.execute("DELETE FROM records WHERE user_id = ?",
+                     (flask.session["user_id"],))
+    database.execute("DELETE FROM users WHERE user_id = ?",
+                     (flask.session["user_id"],))
     database.commit()
 
     nyaruhodo.telemetry.info(user, f"Account Deleted '{user}'")
@@ -261,48 +288,55 @@ def delete_account():
     flask.session.clear()
     return flask.redirect(flask.url_for("index"))
 
+
 @server.route("/dashboard/delete-log/<int:record_id>", methods=["POST"])
 @requirelogin
-
 def delete_record(record_id):
 
-    user     = flask.session.get("username", "anonymous")
+    user = flask.session.get("username", "anonymous")
     database = get_database()
-    entry    = database.execute("SELECT * FROM records WHERE record_id = ? AND user_id = ?", (record_id, flask.session["user_id"])).fetchone()
+    entry = database.execute("SELECT * FROM records WHERE record_id = ? AND user_id = ?",
+                             (record_id, flask.session["user_id"])).fetchone()
 
     if not entry:
 
-        nyaruhodo.telemetry.warning(user, f"Record Delete Failed '{user}', '{record_id}': Entry Not Found or Not Owned by User")
+        nyaruhodo.telemetry.warning(
+            user, f"Record Delete Failed '{user}', '{record_id}': Entry Not Found or Not Owned by User")
         return flask.redirect(flask.url_for("dashboard"))
 
     database.execute("DELETE FROM records WHERE record_id = ?", (record_id,))
     database.commit()
 
-    nyaruhodo.telemetry.info(user, f"Record Delete '{user}', '{record_id}' ('{entry['file_name']}')")
+    nyaruhodo.telemetry.info(
+        user, f"Record Delete '{user}', '{record_id}' ('{entry['file_name']}')")
 
     return flask.redirect(flask.url_for("dashboard"))
 
+
 @server.route("/dashboard/virustotal", methods=["POST"])
 @requirelogin
-
 def virustotal():
 
     user = flask.session.get("username", "anonymous")
-    key  = flask.request.form.get("virustotal_key", "").strip()
+    key = flask.request.form.get("virustotal_key", "").strip()
 
     database = get_database()
-    database.execute("UPDATE users SET virustotal_key = ? WHERE user_id = ?", (key, flask.session["user_id"]))
+    database.execute("UPDATE users SET virustotal_key = ? WHERE user_id = ?",
+                     (key, flask.session["user_id"]))
     database.commit()
 
     if key:
 
-        nyaruhodo.telemetry.info(user, f"Account '{user}' Saved VirusTotal API Key")
+        nyaruhodo.telemetry.info(
+            user, f"Account '{user}' Saved VirusTotal API Key")
 
     else:
 
-        nyaruhodo.telemetry.info(user, f"Account '{user}' Removed VirusTotal API Key")
+        nyaruhodo.telemetry.info(
+            user, f"Account '{user}' Removed VirusTotal API Key")
 
     return flask.redirect(flask.url_for("dashboard"))
+
 
 if __name__ == "__main__":
 
