@@ -79,6 +79,7 @@ parts/
 pip-delete-this-directory.txt
 pip-log.txt
 profile_default/    
+samples/
 sdist/
 share/python-wheels/
 target/

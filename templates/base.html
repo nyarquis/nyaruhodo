@@ -20,7 +20,7 @@
     <a href="/" class="brand">Nyaruhodo!</a>
 </nav>
 <div class="nav-links">
-    {% if session.get('userid') %}
+    {% if session.get('user_id') %}
     <a href="{{ url_for('Dashboard') }}">Dashboard</a>
     <a href="{{ url_for('SignOut') }}">Logout</a>
     {% else %}

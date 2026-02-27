@@ -1,4 +1,3 @@
-import tables
 import os
 import sys
 import xml.etree.ElementTree
@@ -6,12 +5,11 @@ import zipfile
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+import nyaruhodo_tables as tables
 
-RESET = "\033[0m"
-RED = "\033[91m"
-
-NAMESPACE = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
-
+RESET       = "\033[0m"
+RED         = "\033[91m"
+NAMESPACE   = "http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"
 CORE_FIELDS = {
     "dc:title":          ("Title",          "dc"),
     "dc:creator":        ("Author",         "dc"),
@@ -24,14 +22,15 @@ CORE_FIELDS = {
     "dcterms:created":   ("Created",        "dcterms"),
     "dcterms:modified":  ("Modified",       "dcterms"),
 }
-
-APP_FIELDS = [
-    ("Application", "Application"), ("AppVersion", "AppVersion"),
-    ("Pages", "PageCount"),         ("Words", "WordCount"),
-    ("Characters", "CharacterCount"), ("Slides", "SlideCount"),
-    ("Company", "Company"),
+APP_FIELDS  = [
+    ("Application", "Application"),
+    ("AppVersion",  "AppVersion"),
+    ("Pages",       "PageCount"),
+    ("Words",       "WordCount"),
+    ("Characters",  "CharacterCount"),
+    ("Slides",      "SlideCount"),
+    ("Company",     "Company"),
 ]
-
 
 def ReadMicrosoftOffice(archive, entry_names, properties):
 
@@ -63,40 +62,35 @@ def ReadMicrosoftOffice(archive, entry_names, properties):
 
                     properties[field_label] = element.text.strip()
 
-
 def ReadArchive(archive, entry_names, properties):
 
-    entries = archive.infolist()
-    total_size = sum(entry.file_size for entry in entries)
-    compressed_size = sum(entry.compress_size for entry in entries)
+    entries                        = archive.infolist()
+    total_size                     = sum(entry.file_size for entry in entries)
+    compressed_size                = sum(entry.compress_size for entry in entries)
     properties["UncompressedSize"] = f"{total_size:,} bytes"
 
     if total_size > 0:
 
-        compression_percentage = (1 - compressed_size / total_size) * 100
+        compression_percentage         = (1 - compressed_size / total_size) * 100
         properties["CompressionRatio"] = f"{compression_percentage:.1f}%"
 
     if entry_names:
 
-        top_level = [n for n in entry_names if n.count(
-            "/") == 0 or (n.count("/") == 1 and n.endswith("/"))]
-        display_names = top_level if top_level else entry_names
-        first_entries = display_names[:8]
-        overflow_suffix = f" ... (+{len(display_names) - 8} more)" if len(
-            display_names) > 8 else ""
-        properties["TopLevelEntries"] = ", ".join(
-            first_entries) + overflow_suffix
+        top_level                     = [n for n in entry_names if n.count("/") == 0 or (n.count("/") == 1 and n.endswith("/"))]
+        display_names                 = top_level if top_level else entry_names
+        first_entries                 = display_names[:8]
+        overflow_suffix               = f" ... (+{len(display_names) - 8} more)" if len(display_names) > 8 else ""
+        properties["TopLevelEntries"] = ", ".join(first_entries) + overflow_suffix
 
-
-def Read(file_path, file_type):
+def Read(filepath, filetype):
 
     properties = {}
 
     try:
 
-        with zipfile.ZipFile(file_path, "r") as archive:
+        with zipfile.ZipFile(filepath, "r") as archive:
 
-            entry_names = archive.namelist()
+            entry_names             = archive.namelist()
             properties["FileCount"] = len(entry_names)
 
             if "docProps/core.xml" in entry_names:
@@ -109,12 +103,9 @@ def Read(file_path, file_type):
 
     except Exception as exception:
 
-        exception_string = str(exception).split(
-            "]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(
-            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
 
     return properties
-
 
 read = Read

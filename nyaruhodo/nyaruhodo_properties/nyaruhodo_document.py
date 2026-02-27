@@ -1,30 +1,28 @@
-import common
 import os
 import re
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+import nyaruhodo_common as common
 
 RESET = "\033[0m"
-RED = "\033[91m"
+RED   = "\033[91m"
 
+def Read(filepath, filetype):
 
-def Read(file_path, file_type):
-
-    file_bytes = common.read(file_path, 65536)
+    filebytes = common.read(filepath, 65536)
     properties = {}
 
     try:
 
-        filetext = file_bytes.decode("latin1", errors="replace")
+        filetext = filebytes.decode("latin1", errors="replace")
 
     except Exception as exception:
 
-        exception_string = str(exception).split(
-            "]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(
-            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+      
         return properties
 
     version_match = re.search(r"%PDF-(\d+\.\d+)", filetext)
@@ -41,8 +39,7 @@ def Read(file_path, file_type):
 
         for field_name in ["Title", "Author", "Subject", "Keywords", "Creator", "Producer", "CreationDate", "ModDate"]:
 
-            field_match = re.search(
-                rf"/{field_name}\s*\(([^)]*)\)", info_block)
+            field_match = re.search(rf"/{field_name}\s*\(([^)]*)\)", info_block)
 
             if field_match:
 
@@ -63,6 +60,5 @@ def Read(file_path, file_type):
         properties["Encrypted"] = "Yes"
 
     return properties
-
 
 read = Read

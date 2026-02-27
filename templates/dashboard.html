@@ -7,12 +7,12 @@
         <tbody>
             {% for entry in entries %}
             <tr>
-                <td data-ts="{{ entry.createdat }}"></td>
+                <td data-ts="{{ entry.created }}"></td>
                 <td>{{ entry.filename }}</td>
                 <td>{{ entry.filetype }}</td>
                 <td>{{ entry.status }}</td>
                 <td>
-                    <form method="post" action="{{ url_for('DeleteRecord', recordid=entry.recordid) }}">
+                    <form method="post" action="{{ url_for('DeleteRecord', record_id=entry.record_id) }}">
                         <button type="submit">Delete</button>
                     </form>
                 </td>
@@ -20,8 +20,8 @@
             {% endfor %}
         </tbody>
     </table>
-    {% if ErrorMessage %}<div>{{ ErrorMessage }}</div>{% endif %}
+    {% if message %}<div>{{ message }}</div>{% endif %}
     <form method="post" action="{{ url_for('DeleteAccount') }}"><input type="password" name="password"><button type="submit">Delete Account</button></form>
-    <form method="post" action="{{ url_for('VirusTotal') }}"><input type="password" name="virustotalkey" value="{{ virustotalkey }}"><button type="submit">Save Key</button></form>
+    <form method="post" action="{{ url_for('VirusTotal') }}"><input type="password" name="virustotal_api_key" value="{{ virustotal_api_key }}"><button type="submit">Save Key</button></form>
 </div>
 {% endblock %}

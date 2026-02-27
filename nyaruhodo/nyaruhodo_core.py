@@ -1,107 +1,160 @@
-import nyaruhodo_signatures
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-RESET = "\033[0m"
-RED = "\033[91m"
-YELLOW = "\033[93m"
+import nyaruhodo_signatures as signatures
+
+RESET      = "\033[0m"
+RED        = "\033[91m"
+YELLOW     = "\033[93m"
 SIGNATURES = None
 
-
 def Signatures():
+
     global SIGNATURES
+    
     if SIGNATURES is None:
-        SIGNATURES = nyaruhodo_signatures.LoadSignatures()
+    
+        SIGNATURES = signatures.LoadSignatures()
+    
     return SIGNATURES
 
-
 def GetHeader(filepath, bytecount=32):
+
     try:
-        with open(filepath, "rb") as filerecord:
-            return filerecord.read(bytecount)
+
+        with open(filepath, "rb") as file:
+
+            return file.read(bytecount)
+
     except Exception as exception:
-        exceptionstring = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exceptionstring.upper()}")
+
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+
         return None
 
+def ComposeCompoundFile(filepath, header):
 
-def ComposeCompoundFile(filepath, headerbytes):
-    if headerbytes[:4] == b"RIFF":
-        if headerbytes[8:12] == b"WEBP":
+    if header[:4] == b"RIFF":
+
+        if header[8:12] == b"WEBP":
+
             return "WEBP", "WebP Image"
-        if headerbytes[8:12] == b"AVI ":
+
+        if header[8:12] == b"AVI ":
+
             return "AVI", "Audio Video Interleave Video"
-        if headerbytes[8:12] == b"WAVE":
+
+        if header[8:12] == b"WAVE":
+
             return "WAV", "Waveform Audio"
 
-    if headerbytes[:4] == b"PK\x03\x04":
+    if header[:4] == b"PK\x03\x04":
+
         try:
-            with open(filepath, "rb") as filerecord:
-                filerecord.seek(0)
-                filebeginning = filerecord.read(2048)
-                if b"word/" in filebeginning:
+
+            with open(filepath, "rb") as file:
+
+                file.seek(0)
+                file_content = file.read(2048)
+
+                if b"word/" in file_content:
+
                     return "DOCX", "Microsoft Word Document"
-                if b"xl/" in filebeginning:
+
+                if b"xl/" in file_content:
+
                     return "XLSX", "Microsoft Excel Spreadsheet"
-                if b"ppt/" in filebeginning:
+
+                if b"ppt/" in file_content:
+
                     return "PPTX", "Microsoft PowerPoint Presentation"
+
                 return "ZIP", "Zip Archive"
-        except Exception:
+
+        except Exception as exception:
+
+            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(f"==> {RED}WARN{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+    
             return "ZIP", "Zip Archive"
+
     return None, None
 
-
 def FindFileType(filepath):
-    headerbytes = GetHeader(filepath)
-    if not headerbytes:
+
+    header = GetHeader(filepath)
+
+    if not header:
+
         return None, "The file could not be read."
 
-    for signaturebytes, (filetype, description) in Signatures().items():
-        if headerbytes.startswith(signaturebytes):
-            if signaturebytes in [b"RIFF", b"PK\x03\x04"]:
-                compoundfiletype, compounddescription = ComposeCompoundFile(filepath, headerbytes)
-                if compoundfiletype:
-                    return compoundfiletype, compounddescription
+    for signature, (filetype, description) in Signatures().items():
+
+        if header.startswith(signature):
+
+            if signature in [b"RIFF", b"PK\x03\x04"]:
+
+                compound_filetype, compound_description = ComposeCompoundFile(filepath, header)
+
+                if compound_filetype:
+
+                    return compound_filetype, compound_description
+
             return filetype, description
 
     try:
-        with open(filepath, "r", encoding="utf-8") as filerecord:
-            filerecord.read(1024)
+
+        with open(filepath, "r", encoding="utf-8") as file:
+
+            file.read(1024)
+
         return "TXT", "Text Document"
+
     except Exception as exception:
-        exceptionstring = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(f"==> {YELLOW}WARNING{RESET} [{os.path.basename(__file__)}]: {exceptionstring.upper()}")
+
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {YELLOW}WARNING{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+
     return "UNKNOWN", "Unknown File"
 
-
 def GetFileType(filename):
+
     _, extension = os.path.splitext(filename)
+
     return extension[1:].upper() if extension else "NONE"
 
-
 def AnalyseFile(filepath, filename):
-    originalfiletype = GetFileType(filename)
-    detectedfiletype, description = FindFileType(filepath)
-    mismatch = False
 
-    if detectedfiletype == "UNKNOWN":
+    original_filetype              = GetFileType(filename)
+    detected_filetype, description = FindFileType(filepath)
+    mismatch                       = False
+
+    if detected_filetype == "UNKNOWN":
+
         message = "The binary signature of this file does not match any entry in the signature database."
-    elif originalfiletype == "NONE":
-        message = f"This file has no extension. The detected file type is {detectedfiletype}."
+
+    elif original_filetype == "NONE":
+
+        message  = f"This file has no extension. The detected file type is {detected_filetype}."
         mismatch = True
-    elif originalfiletype == detectedfiletype:
-        message = f"The declared extension ({originalfiletype}) matches the detected file type ({detectedfiletype})."
+
+    elif original_filetype == detected_filetype:
+
+        message = f"The declared extension ({original_filetype}) matches the detected file type ({detected_filetype})."
+
     else:
-        message = f"The declared extension is {originalfiletype}, but the binary signature identifies this file as {detectedfiletype}."
+
+        message  = f"The declared extension is {original_filetype}, but the binary signature identifies this file as {detected_filetype}."
         mismatch = True
 
     return {
-        "filename": filename,
-        "extension": originalfiletype,
-        "file_type": detectedfiletype,
-        "description": description,
-        "mismatch": mismatch,
-        "message": message,
+        "filename":          filename,
+        "original_filetype": original_filetype,
+        "detected_filetype": detected_filetype,
+        "description":       description,
+        "mismatch":          mismatch,
+        "message":           message,
     }

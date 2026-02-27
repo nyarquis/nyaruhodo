@@ -1,16 +1,15 @@
 import os
 import platform
 
-RESET = "\033[0m"
-RED = "\033[91m"
-GREEN = "\033[92m"
+RESET  = "\033[0m"
+RED    = "\033[91m"
+GREEN  = "\033[92m"
 YELLOW = "\033[93m"
 
 
 def PaintScreen():
 
     lines = [
-        "\n",
         "  ▄▄     ▄▄▄                                              ▄▄",
         "  ██▄   ██▀                       █▄             █▄       ██",
         "  ███▄  ██             ▄          ██             ██       ██",
@@ -23,34 +22,19 @@ def PaintScreen():
 
     try:
 
-        os.system("cls" if platform.system() == "Windows" else "clear")
-        os.makedirs(os.path.join(os.path.dirname(__file__),
-                    "..", "data", "files"), exist_ok=True)
-        os.makedirs(os.path.join(os.path.dirname(__file__),
-                    "..", "data", "telemetry"), exist_ok=True)
-
         columns = os.get_terminal_size().columns
+        os.system("cls" if platform.system() == "Windows" else "clear")
+        os.makedirs(os.path.join(os.path.dirname(__file__), "..", "data", "files"), exist_ok=True)
+        os.makedirs(os.path.join(os.path.dirname(__file__), "..", "data", "telemetry"), exist_ok=True)
+        
+        print(f"\nSystem: {platform.system()} {platform.release()} ({platform.machine()})\nPython: {platform.python_version()}\n")
 
     except Exception as exception:
 
-        exception_string = str(exception).split(
-            "]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(
-            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
+        exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+        print(f"==> {RED}ERROR{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
         columns = 80
 
     for line in lines:
 
         print(line.center(columns))
-
-    try:
-
-        print(
-            f"\nSystem: {platform.system()} {platform.release()} ({platform.machine()})\nPython: {platform.python_version()}\n")
-
-    except Exception as exception:
-
-        exception_string = str(exception).split(
-            "]")[-1].strip() if "]" in str(exception) else str(exception)
-        print(
-            f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")

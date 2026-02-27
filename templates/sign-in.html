@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card" style="max-width: 500px; margin: 0 auto;">
-    <h2>Register</h2>
-    {% if ErrorMessage %}<div style="color: var(--danger);">{{ ErrorMessage }}</div>{% endif %}
+    <h2>Login</h2>
+    {% if message %}<div style="color: var(--danger);">{{ message }}</div>{% endif %}
     <form method="post">
         <input type="text" name="username" class="form-input" required>
         <input type="password" name="password" class="form-input" required>
-        <button type="submit" class="button" style="width: 100%;">Register</button>
+        <button type="submit" class="button" style="width: 100%;">Login</button>
     </form>
-    <a href="{{ url_for('SignIn') }}">Log in</a>
+    <a href="{{ url_for('Register') }}">Register</a>
 </div>
 {% endblock %}

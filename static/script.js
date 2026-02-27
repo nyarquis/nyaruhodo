@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
             resultsContainer.style.display = "none";
             loadingIndicator.style.display = "block";
 
-            fetch("/dashboard/analyse", {
+            fetch("/analyse", {
                 method: "POST",
                 body: new FormData(uploadForm)
             })
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function() {
         container.style.display = "block";
 
         let statusClass, title;
-        if (result.file_type === "UNKNOWN") {
+        if (result.filetype === "UNKNOWN") {
             statusClass = "unknown";
             title       = "File Type Unknown";
         } else if (result.mismatch) {
@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                     <div><strong>File Name:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filename)}</span></div>
                     <div><strong>Declared Extension:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.extension)}</span></div>
-                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.file_type)}</span></div>
+                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filetype)}</span></div>
                     <div><strong>Description:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
                 </div>
                 <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">

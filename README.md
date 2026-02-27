@@ -79,7 +79,7 @@ nyaruhodo/
     ├── index.html                   # File upload and result display page
     ├── dashboard.html               # Scan history, account management, and API key storage
     ├── login.html                   # Login form
-    └── register.html                # Registration form
+    └── create-account.html                # Registration form
 ```
 
 ---
