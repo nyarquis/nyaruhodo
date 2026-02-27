@@ -1,5 +1,15 @@
 [
   {
+    "signature":             "504b030414000800",
+    "signature_filetype":    "APK",
+    "signature_description": "Android Package"
+  },
+  {
+    "signature":             "504b030414000600",
+    "signature_filetype":    "DOCX",
+    "signature_description": "Office Open XML Document"
+  },
+  {
     "signature":             "504b0304",
     "signature_filetype":    "ZIP",
     "signature_description": "ZIP Archive"
@@ -13,16 +23,6 @@
     "signature":             "504b0708",
     "signature_filetype":    "ZIP",
     "signature_description": "Spanned ZIP Archive"
-  },
-  {
-    "signature":             "504b030414000800",
-    "signature_filetype":    "APK",
-    "signature_description": "Android Package"
-  },
-  {
-    "signature":             "504b030414000600",
-    "signature_filetype":    "DOCX",
-    "signature_description": "Office Open XML Document"
   },
   {
     "signature":             "ffd8ff",

@@ -21,6 +21,9 @@
 </nav>
 <div class="nav-links">
     {% if session.get('user_id') %}
+    {% if session.get('is_admin') %}
+    <a href="{{ url_for('AdminDashboard') }}">Admin Dashboard</a>
+    {% endif %}
     <a href="{{ url_for('Dashboard') }}">Dashboard</a>
     <a href="{{ url_for('SignOut') }}">Logout</a>
     {% else %}

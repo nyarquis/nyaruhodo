@@ -43,8 +43,9 @@ def InitialiseDatabase():
     with server.app_context():
 
         database = GetDatabase()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT)")
-        database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
+        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0)")
+        database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER  NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
+        database.execute("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, filename TEXT, outcome TEXT NOT NULL, created DATETIME DEFAULT CURRENT_TIMESTAMP)")
         database.commit()
 
 def RequireSignIn(authfunction):
@@ -59,6 +60,27 @@ def RequireSignIn(authfunction):
             return flask.redirect(flask.url_for("SignIn"))
 
         return authfunction(*arguments, **keywordarguments)
+
+    return DecoratedFunction
+
+def RequireAdmin(adminfunction):
+
+    @functools.wraps(adminfunction)
+    def DecoratedFunction(*arguments, **keywordarguments):
+
+        if "user_id" not in flask.session:
+
+            nyaruhodo.telemetry.Warn("anonymous", f"Unauthenticated admin request '{flask.request.path}'")
+
+            return flask.redirect(flask.url_for("SignIn"))
+
+        if not flask.session.get("priviledge"):
+
+            nyaruhodo.telemetry.Warn(flask.session.get("username", "anonymous"), f"Unauthorised admin request '{flask.request.path}'")
+
+            return flask.abort(403)
+
+        return adminfunction(*arguments, **keywordarguments)
 
     return DecoratedFunction
 
@@ -78,12 +100,19 @@ def CreateAccount():
 
         try:
 
+            admin_users               = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
+            primary_admin            = (admin_users == 0)
             password                  = werkzeug.security.generate_password_hash(password)
-            cursor                    = database.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
+            cursor                    = database.execute("INSERT INTO users (username, password, priviledge) VALUES (?, ?, ?)", (username, password, 1 if primary_admin else 0))
             database.commit()
             flask.session["user_id"]  = cursor.lastrowid
             flask.session["username"] = username
-            nyaruhodo.telemetry.Info(username, f"Account created '{username}' ({cursor.lastrowid})")
+            flask.session["priviledge"] = primary_admin
+            nyaruhodo.telemetry.Info(username, f"Account created '{username}' ({cursor.lastrowid}){' [admin]' if primary_admin else ''}")
+
+            if primary_admin:
+
+                return flask.redirect(flask.url_for("AdminDashboard"))
 
             return flask.redirect(flask.url_for("Dashboard"))
 
@@ -109,7 +138,12 @@ def SignIn():
 
             flask.session["user_id"]  = userdata["user_id"]
             flask.session["username"] = userdata["username"]
+            flask.session["priviledge"] = bool(userdata["priviledge"])
             nyaruhodo.telemetry.Info(username, f"Account sign in '{username}'")
+
+            if userdata["priviledge"]:
+
+                return flask.redirect(flask.url_for("AdminDashboard"))
 
             return flask.redirect(flask.url_for("Dashboard"))
 
@@ -132,9 +166,13 @@ def SignOut():
 def AnalyseFile():
 
     username = flask.session.get("username", "anonymous")
+    user_id  = flask.session.get("user_id")
+    database = GetDatabase()
 
     if "file" not in flask.request.files:
 
+        database.execute("INSERT INTO events (user_id, filename, outcome) VALUES (?, ?, ?)", (user_id, "", "failed"))
+        database.commit()
         nyaruhodo.telemetry.Error(username, "Analysis failed (no file)")
 
         return flask.jsonify({"error": "The request did not include a file. Please select a file before submitting."}), 400
@@ -143,13 +181,18 @@ def AnalyseFile():
 
     if file.filename == "":
 
+        database.execute("INSERT INTO events (user_id, filename, outcome) VALUES (?, ?, ?)", (user_id, "", "failed"))
+        database.commit()
         nyaruhodo.telemetry.Error(username, "Analysis failed (empty filename)")
 
         return flask.jsonify({"error": "No file was selected. Please choose a file and try again."}), 400
 
-    filename          = werkzeug.utils.secure_filename(file.filename)
+    filename = werkzeug.utils.secure_filename(file.filename)
 
     if not filename:
+
+        database.execute("INSERT INTO events (user_id, filename, outcome) VALUES (?, ?, ?)", (user_id, file.filename or "", "failed"))
+        database.commit()
 
         return flask.jsonify({"error": "The filename contains no valid characters."}), 400
 
@@ -171,7 +214,7 @@ def AnalyseFile():
 
         if "user_id" in flask.session:
 
-            userdata           = GetDatabase().execute("SELECT virustotal_api_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+            userdata           = database.execute("SELECT virustotal_api_key FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
             virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else None
 
         if not virustotal_api_key:
@@ -183,9 +226,11 @@ def AnalyseFile():
     if "user_id" in flask.session:
 
         file_status = "Unknown" if analysis["detected_filetype"] == "UNKNOWN" else ("Mismatch" if analysis["mismatch"] else "Match")
-        database    = GetDatabase()
-        database.execute("INSERT INTO records (user_id, filename, filetype, status) VALUES (?, ?, ?, ?)", (flask.session["user_id"], filename, analysis["detected_filetype"], file_status),)
+        database.execute("INSERT INTO records (user_id, filename, filetype, status) VALUES (?, ?, ?, ?)", (flask.session["user_id"], filename, analysis["detected_filetype"], file_status))
         database.commit()
+
+    database.execute("INSERT INTO events (user_id, filename, outcome) VALUES (?, ?, ?)", (user_id, filename, "completed"))
+    database.commit()
 
     return flask.jsonify(analysis)
 
@@ -249,6 +294,86 @@ def VirusTotal():
     database.commit()
 
     return flask.redirect(flask.url_for("Dashboard"))
+
+@server.route("/dashboard/admin")
+@RequireAdmin
+def AdminDashboard():
+
+    database     = GetDatabase()
+    normal_users = database.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    admin_users  = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
+    events       = database.execute("SELECT outcome, COUNT(*) AS cnt FROM events GROUP BY outcome").fetchall()
+    event_data   = {event["outcome"]: event["cnt"] for event in events}
+    records      = database.execute("SELECT status, COUNT(*) AS cnt FROM records GROUP BY status").fetchall()
+    record_data  = {record["status"]: record["cnt"] for record in records}
+    users        = database.execute("SELECT u.user_id, u.username, u.priviledge, COUNT(r.record_id) AS file_count, COALESCE(SUM(CASE WHEN r.status = 'Mismatch' THEN 1 ELSE 0 END), 0) AS mismatch_count, COALESCE(SUM(CASE WHEN r.status = 'Unknown'  THEN 1 ELSE 0 END), 0) AS unknown_count, MAX(r.created) AS last_scan FROM users u LEFT JOIN records r ON u.user_id = r.user_id GROUP BY u.user_id ORDER BY u.username COLLATE NOCASE").fetchall()
+    user_records = {}
+
+    for user in users:
+
+        user_records[user["user_id"]] = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (user["user_id"],)).fetchall()
+
+    scans           = event_data.get("completed", 0) + event_data.get("failed", 0)
+    scans_completed = event_data.get("completed", 0)
+    scans_failed    = event_data.get("failed", 0)
+    nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), "Admin dashboard access")
+
+    return flask.render_template("admin-dashboard.html", username = flask.session["username"], normal_users = normal_users, admin_users = admin_users, scans = scans, scans_completed = scans_completed, scans_failed = scans_failed, record_data = record_data, users = users, user_records = user_records, current_user_id = flask.session["user_id"],)
+
+@server.route("/dashboard/admin/toggle-admin/<int:user_id>", methods = ["POST"])
+@RequireAdmin
+def AdminToggleAdmin(user_id):
+
+    if user_id == flask.session["user_id"]:
+
+        return flask.redirect(flask.url_for("AdminDashboard"))
+
+    database = GetDatabase()
+    userdata = database.execute("SELECT * FROM users WHERE user_id = ?", (user_id,)).fetchone()
+
+    if not userdata:
+
+        return flask.redirect(flask.url_for("AdminDashboard"))
+
+    priviledge = 0 if userdata["priviledge"] else 1
+    database.execute("UPDATE users SET priviledge = ? WHERE user_id = ?", (priviledge, user_id))
+    database.commit()
+    nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), f"Admin {'granted to' if priviledge else 'revoked from'} '{userdata['username']}'")
+
+    return flask.redirect(flask.url_for("AdminDashboard"))
+
+@server.route("/dashboard/admin/delete-user/<int:user_id>", methods = ["POST"])
+@RequireAdmin
+def AdminDeleteUser(user_id):
+
+    if user_id == flask.session["user_id"]:
+
+        return flask.redirect(flask.url_for("AdminDashboard"))
+
+    database = GetDatabase()
+    userdata   = database.execute("SELECT * FROM users WHERE user_id = ?", (user_id,)).fetchone()
+
+    if not userdata:
+
+        return flask.redirect(flask.url_for("AdminDashboard"))
+
+    database.execute("DELETE FROM records WHERE user_id = ?", (user_id,))
+    database.execute("DELETE FROM users WHERE user_id = ?", (user_id,))
+    database.commit()
+    nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), f"User deleted '{userdata['username']}' by admin")
+
+    return flask.redirect(flask.url_for("AdminDashboard"))
+
+@server.route("/admin/delete-events", methods = ["POST"])
+@RequireAdmin
+def AdminDeleteEvents():
+
+    database = GetDatabase()
+    database.execute("DELETE FROM events")
+    database.commit()
+    nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), "Event log cleared by admin")
+
+    return flask.redirect(flask.url_for("AdminDashboard"))
 
 if __name__ == "__main__":
 
