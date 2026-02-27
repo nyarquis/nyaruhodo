@@ -33,7 +33,7 @@ APP_FIELDS = [
 ]
 
 
-def microsoft_office(archive, entry_names, properties):
+def ReadMicrosoftOffice(archive, entry_names, properties):
 
     if "docProps/core.xml" in entry_names:
 
@@ -64,7 +64,7 @@ def microsoft_office(archive, entry_names, properties):
                     properties[field_label] = element.text.strip()
 
 
-def read_archive(archive, entry_names, properties):
+def ReadArchive(archive, entry_names, properties):
 
     entries = archive.infolist()
     total_size = sum(entry.file_size for entry in entries)
@@ -88,7 +88,7 @@ def read_archive(archive, entry_names, properties):
             first_entries) + overflow_suffix
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     properties = {}
 
@@ -101,11 +101,11 @@ def read(file_path, file_type):
 
             if "docProps/core.xml" in entry_names:
 
-                microsoft_office(archive, entry_names, properties)
+                ReadMicrosoftOffice(archive, entry_names, properties)
 
             else:
 
-                read_archive(archive, entry_names, properties)
+                ReadArchive(archive, entry_names, properties)
 
     except Exception as exception:
 
@@ -115,3 +115,6 @@ def read(file_path, file_type):
             f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return properties
+
+
+read = Read

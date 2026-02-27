@@ -11,7 +11,7 @@ RESET = "\033[0m"
 RED = "\033[91m"
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     properties = {}
 
@@ -73,3 +73,6 @@ def read(file_path, file_type):
             f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
 
     return properties
+
+
+read = Read

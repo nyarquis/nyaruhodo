@@ -52,7 +52,7 @@ class HTMLPropertiesParser(html.parser.HTMLParser):
             self.inside_title = False
 
 
-def read_html(file_path):
+def ReadHtml(file_path):
 
     properties = {}
 
@@ -85,7 +85,7 @@ def read_html(file_path):
     return properties
 
 
-def read_xml(file_path):
+def ReadXml(file_path):
 
     properties = {}
 
@@ -127,14 +127,17 @@ def read_xml(file_path):
     return properties
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     if file_type in ("HTML", "HTM"):
 
-        return read_html(file_path)
+        return ReadHtml(file_path)
 
     if file_type in ("XML", "SVG"):
 
-        return read_xml(file_path)
+        return ReadXml(file_path)
 
     return {}
+
+
+read = Read

@@ -4,7 +4,7 @@ RESET = "\033[0m"
 RED = "\033[91m"
 
 
-def read(file_path, number_of_bytes=None):
+def Read(file_path, number_of_bytes=None):
 
     try:
 
@@ -21,7 +21,7 @@ def read(file_path, number_of_bytes=None):
         return b""
 
 
-def decode(number_of_bytes):
+def DecodeBytes(number_of_bytes):
 
     if isinstance(number_of_bytes, (bytes, bytearray)):
 
@@ -38,3 +38,6 @@ def decode(number_of_bytes):
             return ""
 
     return str(number_of_bytes).strip()
+
+
+read = Read
