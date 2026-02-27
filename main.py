@@ -151,7 +151,7 @@ def AnalyseFile():
     file.save(filepath)
     nyaruhodo.telemetry.Info(username, f"Analysis started '{filename}'")
     analysis          = nyaruhodo.core.AnalyseFile(filepath, filename)
-    detected_filetype = analysis.get("filetype")
+    detected_filetype = analysis.get("detected_filetype")
     metadata          = nyaruhodo.properties.Read(filepath, detected_filetype)
 
     if metadata:
@@ -175,9 +175,9 @@ def AnalyseFile():
 
     if "user_id" in flask.session:
 
-        file_status = "Unknown" if analysis["filetype"] == "UNKNOWN" else ("Mismatch" if analysis["mismatch"] else "Match")
+        file_status = "Unknown" if analysis["detected_filetype"] == "UNKNOWN" else ("Mismatch" if analysis["mismatch"] else "Match")
         database    = GetDatabase()
-        database.execute("INSERT INTO records (user_id, filename, filetype, status) VALUES (?, ?, ?, ?)", (flask.session["user_id"], filename, analysis["filetype"], file_status),)
+        database.execute("INSERT INTO records (user_id, filename, filetype, status) VALUES (?, ?, ?, ?)", (flask.session["user_id"], filename, analysis["detected_filetype"], file_status),)
         database.commit()
 
     return flask.jsonify(analysis)

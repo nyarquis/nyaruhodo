@@ -191,8 +191,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h3 style="margin-bottom: 1rem;">${title}</h3>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
                     <div><strong>File Name:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filename)}</span></div>
-                    <div><strong>Declared Extension:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.extension)}</span></div>
-                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filetype)}</span></div>
+                    <div><strong>Declared Extension:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.original_filetype)}</span></div>
+                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.detected_filetype)}</span></div>
                     <div><strong>Description:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
                 </div>
                 <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
@@ -233,22 +233,22 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function formatVirusTotal(virustotal) {
-        if (virustotal.Error) {
+        if (virustotal.error) {
             return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An Error occurred during the VirusTotal query.")}</p></div>`;
         }
-        if (virustotal.message && !virustotal.stats_malicious && virustotal.stats_malicious !== 0) {
+        if (virustotal.message && !virustotal.virustotal_malicious && virustotal.virustotal_malicious !== 0) {
             return `<div class="result-box unknown" style="margin-top: 1rem;"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
         }
-        const isClean   = virustotal.stats_malicious === 0 && virustotal.stats_suspicious === 0;
+        const isClean   = virustotal.virustotal_malicious === 0 && virustotal.virustotal_suspicious === 0;
         const statusClass = isClean ? "match" : "mismatch";
 
         return `
             <div class="result-box ${statusClass}" style="margin-top: 1rem;">
                 <h4 style="margin-bottom: 0.5rem;">Scan Results</h4>
                 <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                    <span style="font-weight: bold; color: var(--color-malicious);">Malicious: ${virustotal.stats_malicious}</span>
-                    <span style="font-weight: bold; color: var(--color-suspicious);">Suspicious: ${virustotal.stats_suspicious}</span>
-                    <span style="font-weight: bold; color: var(--color-harmless);">Harmless: ${virustotal.stats_harmless}</span>
+                    <span style="font-weight: bold; color: var(--color-malicious);">Malicious: ${virustotal.virustotal_malicious}</span>
+                    <span style="font-weight: bold; color: var(--color-suspicious);">Suspicious: ${virustotal.virustotal_suspicious}</span>
+                    <span style="font-weight: bold; color: var(--color-harmless);">Harmless: ${virustotal.virustotal_harmless}</span>
                 </div>
                 <a href="${virustotal.link}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report on VirusTotal</a>
             </div>

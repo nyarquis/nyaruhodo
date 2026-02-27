@@ -105,10 +105,10 @@ def ReadELF(filepath):
         word_size_class            = filebytes[4]
         byte_order_code            = filebytes[5]
         osabi_code                 = filebytes[6]
+        endian                     = "<" if byte_order_code == 1 else ">"
         elf_filetype              = struct.unpack_from(endian + "H", filebytes, 16)[0]
         machine_code               = struct.unpack_from(endian + "H", filebytes, 18)[0]
         elf_version                = struct.unpack_from(endian + "I", filebytes, 20)[0]
-        endian                     = "<" if byte_order_code == 1 else ">"
         properties["Class"]        = "64-bit" if word_size_class == 2 else "32-bit"
         properties["Endianness"]   = "Little-endian" if byte_order_code == 1 else "Big-endian"
         properties["OS/ABI"]       = tables.ELF_OSABI.get(osabi_code, f"0x{osabi_code:02X}")

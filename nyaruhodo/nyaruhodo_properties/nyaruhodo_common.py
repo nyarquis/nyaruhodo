@@ -35,4 +35,5 @@ def DecodeBytes(number_ofbytes):
 
     return str(number_ofbytes).strip()
 
-read = Read
+decode = DecodeBytes
+read   = Read

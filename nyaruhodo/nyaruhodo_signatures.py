@@ -1,6 +1,9 @@
 import json
 import os
 
+RESET = "\033[0m"
+RED   = "\033[91m"
+
 def LoadSignatures():
 
     try:
