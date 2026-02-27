@@ -1,18 +1,18 @@
 [
   {
-    "signature":             "377abcaf271c",
-    "signature_filetype":    "7Z",
-    "signature_description": "7-Zip Archive"
+    "signature":             "504b0304",
+    "signature_filetype":    "ZIP",
+    "signature_description": "ZIP Archive"
   },
   {
-    "signature":             "000100005374616e6461726420414345204442",
-    "signature_filetype":    "ACCDB",
-    "signature_description": "Microsoft Access 2007+ Database"
+    "signature":             "504b0506",
+    "signature_filetype":    "ZIP",
+    "signature_description": "Empty ZIP Archive"
   },
   {
-    "signature":             "464f524d",
-    "signature_filetype":    "AIFF",
-    "signature_description": "AIFF Audio"
+    "signature":             "504b0708",
+    "signature_filetype":    "ZIP",
+    "signature_description": "Spanned ZIP Archive"
   },
   {
     "signature":             "504b030414000800",
@@ -20,104 +20,9 @@
     "signature_description": "Android Package"
   },
   {
-    "signature":             "213c617263683e",
-    "signature_filetype":    "AR",
-    "signature_description": "Unix Archive"
-  },
-  {
-    "signature":             "424d",
-    "signature_filetype":    "BMP",
-    "signature_description": "Bitmap Image"
-  },
-  {
-    "signature":             "425a68",
-    "signature_filetype":    "BZ2",
-    "signature_description": "Bzip2 Archive"
-  },
-  {
-    "signature":             "425a68",
-    "signature_filetype":    "BZ2",
-    "signature_description": "Bzip2 Compressed"
-  },
-  {
-    "signature":             "49545346",
-    "signature_filetype":    "CHM",
-    "signature_description": "Compiled HTML Help"
-  },
-  {
-    "signature":             "43723234",
-    "signature_filetype":    "CRX",
-    "signature_description": "Chrome Extension"
-  },
-  {
-    "signature":             "6465780a",
-    "signature_filetype":    "DEX",
-    "signature_description": "Android Dalvik Executable"
-  },
-  {
     "signature":             "504b030414000600",
     "signature_filetype":    "DOCX",
     "signature_description": "Office Open XML Document"
-  },
-  {
-    "signature":             "7f454c46",
-    "signature_filetype":    "ELF",
-    "signature_description": "Linux/Unix Executable"
-  },
-  {
-    "signature":             "46726f6d",
-    "signature_filetype":    "EML",
-    "signature_description": "Email Message"
-  },
-  {
-    "signature":             "4d5a",
-    "signature_filetype":    "EXE",
-    "signature_description": "Windows Executable"
-  },
-  {
-    "signature":             "664c6143",
-    "signature_filetype":    "FLAC",
-    "signature_description": "FLAC Audio"
-  },
-  {
-    "signature":             "474946383761",
-    "signature_filetype":    "GIF",
-    "signature_description": "GIF Image (87a)"
-  },
-  {
-    "signature":             "474946383961",
-    "signature_filetype":    "GIF",
-    "signature_description": "GIF Image (89a)"
-  },
-  {
-    "signature":             "1f8b",
-    "signature_filetype":    "GZ",
-    "signature_description": "GZIP Archive"
-  },
-  {
-    "signature":             "1f8b08",
-    "signature_filetype":    "GZ",
-    "signature_description": "Gzip Compressed"
-  },
-  {
-    "signature":             "1f8b0808",
-    "signature_filetype":    "GZ",
-    "signature_description": "Gzip Archive"
-  },
-  {
-    "signature":             "3c21444f4354595045",
-    "signature_filetype":    "HTML",
-    "signature_description": "HTML Document"
-  },
-  {
-    "signature":             "3c68746d6c",
-    "signature_filetype":    "HTML",
-    "signature_description": "HTML Document"
-  },
-  {
-    "signature":             "00000100",
-    "signature_filetype":    "ICO",
-    "signature_description": "Icon File"
   },
   {
     "signature":             "ffd8ff",
@@ -125,9 +30,104 @@
     "signature_description": "JPEG Image"
   },
   {
-    "signature":             "0000000c4a584c200d0a870a",
-    "signature_filetype":    "JXL",
-    "signature_description": "JPEG XL Image"
+    "signature":             "89504e470d0a1a0a",
+    "signature_filetype":    "PNG",
+    "signature_description": "PNG Image"
+  },
+  {
+    "signature":             "474946383961",
+    "signature_filetype":    "GIF",
+    "signature_description": "GIF Image (89a)"
+  },
+  {
+    "signature":             "474946383761",
+    "signature_filetype":    "GIF",
+    "signature_description": "GIF Image (87a)"
+  },
+  {
+    "signature":             "424d",
+    "signature_filetype":    "BMP",
+    "signature_description": "Bitmap Image"
+  },
+  {
+    "signature":             "25504446",
+    "signature_filetype":    "PDF",
+    "signature_description": "PDF Document"
+  },
+  {
+    "signature":             "52494646",
+    "signature_filetype":    "RIFF",
+    "signature_description": "Resource Interchange File Format"
+  },
+  {
+    "signature":             "494433",
+    "signature_filetype":    "MP3",
+    "signature_description": "MP3 Audio"
+  },
+  {
+    "signature":             "fffb",
+    "signature_filetype":    "MP3",
+    "signature_description": "MP3 Audio (non-ID3)"
+  },
+  {
+    "signature":             "000000186674797069736f6d",
+    "signature_filetype":    "MP4",
+    "signature_description": "MP4 Video (isom)"
+  },
+  {
+    "signature":             "000000206674797069736f6d",
+    "signature_filetype":    "MP4",
+    "signature_description": "MP4 Video (isom)"
+  },
+  {
+    "signature":             "00000018667479706d7034",
+    "signature_filetype":    "MP4",
+    "signature_description": "MP4 Video"
+  },
+  {
+    "signature":             "00000020667479706d7034",
+    "signature_filetype":    "MP4",
+    "signature_description": "MP4 Video"
+  },
+  {
+    "signature":             "66747970",
+    "signature_filetype":    "MP4",
+    "signature_description": "MP4 Video"
+  },
+  {
+    "signature":             "1a45dfa3",
+    "signature_filetype":    "MKV",
+    "signature_description": "Matroska Video"
+  },
+  {
+    "signature":             "4f676753",
+    "signature_filetype":    "OGG",
+    "signature_description": "Ogg Media File"
+  },
+  {
+    "signature":             "664c6143",
+    "signature_filetype":    "FLAC",
+    "signature_description": "FLAC Audio"
+  },
+  {
+    "signature":             "464f524d",
+    "signature_filetype":    "AIFF",
+    "signature_description": "AIFF Audio"
+  },
+  {
+    "signature":             "4d546864",
+    "signature_filetype":    "MIDI",
+    "signature_description": "MIDI Audio"
+  },
+  {
+    "signature":             "4d5a",
+    "signature_filetype":    "EXE",
+    "signature_description": "Windows Executable"
+  },
+  {
+    "signature":             "7f454c46",
+    "signature_filetype":    "ELF",
+    "signature_description": "Linux/Unix Executable"
   },
   {
     "signature":             "cafebabe",
@@ -155,114 +155,34 @@
     "signature_description": "MacOS Executable (64-bit)"
   },
   {
-    "signature":             "000100005374616e64617264204a6574204442",
-    "signature_filetype":    "MDB",
-    "signature_description": "Microsoft Access Database"
-  },
-  {
-    "signature":             "4d546864",
-    "signature_filetype":    "MIDI",
-    "signature_description": "MIDI Audio"
-  },
-  {
-    "signature":             "1a45dfa3",
-    "signature_filetype":    "MKV",
-    "signature_description": "Matroska Video"
-  },
-  {
-    "signature":             "494433",
-    "signature_filetype":    "MP3",
-    "signature_description": "MP3 Audio"
-  },
-  {
-    "signature":             "fffb",
-    "signature_filetype":    "MP3",
-    "signature_description": "MP3 Audio (non-ID3)"
-  },
-  {
-    "signature":             "000000186674797069736f6d",
-    "signature_filetype":    "MP4",
-    "signature_description": "MP4 Video (isom)"
-  },
-  {
-    "signature":             "00000018667479706d7034",
-    "signature_filetype":    "MP4",
-    "signature_description": "MP4 Video"
-  },
-  {
-    "signature":             "000000206674797069736f6d",
-    "signature_filetype":    "MP4",
-    "signature_description": "MP4 Video (isom)"
-  },
-  {
-    "signature":             "00000020667479706d7034",
-    "signature_filetype":    "MP4",
-    "signature_description": "MP4 Video"
-  },
-  {
-    "signature":             "66747970",
-    "signature_filetype":    "MP4",
-    "signature_description": "MP4 Video"
-  },
-  {
-    "signature":             "4f676753",
-    "signature_filetype":    "OGG",
-    "signature_description": "Ogg Media File"
-  },
-  {
     "signature":             "d0cf11e0a1b11ae1",
     "signature_filetype":    "OLE",
     "signature_description": "Microsoft Compound File"
   },
   {
-    "signature":             "4f54544f",
-    "signature_filetype":    "OTF",
-    "signature_description": "OpenType Font"
+    "signature":             "3c21444f4354595045",
+    "signature_filetype":    "HTML",
+    "signature_description": "HTML Document"
   },
   {
-    "signature":             "0a050101",
-    "signature_filetype":    "PCX",
-    "signature_description": "PCX Image"
+    "signature":             "3c68746d6c",
+    "signature_filetype":    "HTML",
+    "signature_description": "HTML Document"
   },
   {
-    "signature":             "25504446",
-    "signature_filetype":    "PDF",
-    "signature_description": "PDF Document"
+    "signature":             "3c3f786d6c",
+    "signature_filetype":    "XML",
+    "signature_description": "XML Document"
   },
   {
-    "signature":             "89504e470d0a1a0a",
-    "signature_filetype":    "PNG",
-    "signature_description": "PNG Image"
-  },
-  {
-    "signature":             "252150532d41646f6265",
-    "signature_filetype":    "PS",
-    "signature_description": "PostScript Document"
-  },
-  {
-    "signature":             "526172211a07",
-    "signature_filetype":    "RAR",
-    "signature_description": "RAR Archive"
-  },
-  {
-    "signature":             "52494646",
-    "signature_filetype":    "RIFF",
-    "signature_description": "Resource Interchange File Format"
+    "signature":             "3c737667",
+    "signature_filetype":    "SVG",
+    "signature_description": "Scalable Vector Graphics"
   },
   {
     "signature":             "7b5c727466",
     "signature_filetype":    "RTF",
     "signature_description": "Rich Text Format"
-  },
-  {
-    "signature":             "2321",
-    "signature_filetype":    "SCRIPT",
-    "signature_description": "Script with Shebang"
-  },
-  {
-    "signature":             "23212f",
-    "signature_filetype":    "SCRIPT",
-    "signature_description": "Shell Script or Executable Text"
   },
   {
     "signature":             "53514c69746520666f726d61742033",
@@ -275,9 +195,89 @@
     "signature_description": "SQLite Database v3"
   },
   {
-    "signature":             "3c737667",
-    "signature_filetype":    "SVG",
-    "signature_description": "Scalable Vector Graphics"
+    "signature":             "1f8b0808",
+    "signature_filetype":    "GZ",
+    "signature_description": "Gzip Archive"
+  },
+  {
+    "signature":             "1f8b08",
+    "signature_filetype":    "GZ",
+    "signature_description": "Gzip Compressed"
+  },
+  {
+    "signature":             "1f8b",
+    "signature_filetype":    "GZ",
+    "signature_description": "GZIP Archive"
+  },
+  {
+    "signature":             "377abcaf271c",
+    "signature_filetype":    "7Z",
+    "signature_description": "7-Zip Archive"
+  },
+  {
+    "signature":             "526172211a07",
+    "signature_filetype":    "RAR",
+    "signature_description": "RAR Archive"
+  },
+  {
+    "signature":             "425a68",
+    "signature_filetype":    "BZ2",
+    "signature_description": "Bzip2 Archive"
+  },
+  {
+    "signature":             "fd377a585a00",
+    "signature_filetype":    "XZ",
+    "signature_description": "XZ Archive"
+  },
+  {
+    "signature":             "213c617263683e",
+    "signature_filetype":    "AR",
+    "signature_description": "Unix Archive"
+  },
+  {
+    "signature":             "46726f6d",
+    "signature_filetype":    "EML",
+    "signature_description": "Email Message"
+  },
+  {
+    "signature":             "23212f",
+    "signature_filetype":    "SCRIPT",
+    "signature_description": "Shell Script or Executable Text"
+  },
+  {
+    "signature":             "2321",
+    "signature_filetype":    "SCRIPT",
+    "signature_description": "Script with Shebang"
+  },
+  {
+    "signature":             "252150532d41646f6265",
+    "signature_filetype":    "PS",
+    "signature_description": "PostScript Document"
+  },
+  {
+    "signature":             "6465780a",
+    "signature_filetype":    "DEX",
+    "signature_description": "Android Dalvik Executable"
+  },
+  {
+    "signature":             "43723234",
+    "signature_filetype":    "CRX",
+    "signature_description": "Chrome Extension"
+  },
+  {
+    "signature":             "49545346",
+    "signature_filetype":    "CHM",
+    "signature_description": "Compiled HTML Help"
+  },
+  {
+    "signature":             "000100005374616e6461726420414345204442",
+    "signature_filetype":    "ACCDB",
+    "signature_description": "Microsoft Access 2007+ Database"
+  },
+  {
+    "signature":             "000100005374616e64617264204a6574204442",
+    "signature_filetype":    "MDB",
+    "signature_description": "Microsoft Access Database"
   },
   {
     "signature":             "49492a00",
@@ -290,34 +290,19 @@
     "signature_description": "TIFF Image (Big Endian)"
   },
   {
-    "signature":             "00010000",
-    "signature_filetype":    "TTF",
-    "signature_description": "TrueTypeFont"
+    "signature":             "0000000c4a584c200d0a870a",
+    "signature_filetype":    "JXL",
+    "signature_description": "JPEG XL Image"
   },
   {
-    "signature":             "3c3c3c6f7261636c65",
-    "signature_filetype":    "VDI",
-    "signature_description": "VirtualBox Disk Image"
+    "signature":             "00000100",
+    "signature_filetype":    "ICO",
+    "signature_description": "Icon File"
   },
   {
-    "signature":             "636f6e6e6563746978",
-    "signature_filetype":    "VHD",
-    "signature_description": "Virtual Hard Disk"
-  },
-  {
-    "signature":             "76686478",
-    "signature_filetype":    "VHDX",
-    "signature_description": "Virtual Hard Disk v2"
-  },
-  {
-    "signature":             "4b444d56",
-    "signature_filetype":    "VMDK",
-    "signature_description": "VMware Virtual Disk"
-  },
-  {
-    "signature":             "774f4646",
-    "signature_filetype":    "WOFF",
-    "signature_description": "Web Open Font Format"
+    "signature":             "0a050101",
+    "signature_filetype":    "PCX",
+    "signature_description": "PCX Image"
   },
   {
     "signature":             "774f4632",
@@ -325,19 +310,44 @@
     "signature_description": "Web Open Font Format 2"
   },
   {
+    "signature":             "774f4646",
+    "signature_filetype":    "WOFF",
+    "signature_description": "Web Open Font Format"
+  },
+  {
+    "signature":             "4f54544f",
+    "signature_filetype":    "OTF",
+    "signature_description": "OpenType Font"
+  },
+  {
+    "signature":             "00010000",
+    "signature_filetype":    "TTF",
+    "signature_description": "TrueTypeFont"
+  },
+  {
+    "signature":             "4b444d56",
+    "signature_filetype":    "VMDK",
+    "signature_description": "VMware Virtual Disk"
+  },
+  {
+    "signature":             "76686478",
+    "signature_filetype":    "VHDX",
+    "signature_description": "Virtual Hard Disk v2"
+  },
+  {
+    "signature":             "636f6e6e6563746978",
+    "signature_filetype":    "VHD",
+    "signature_description": "Virtual Hard Disk"
+  },
+  {
+    "signature":             "3c3c3c6f7261636c65",
+    "signature_filetype":    "VDI",
+    "signature_description": "VirtualBox Disk Image"
+  },
+  {
     "signature":             "78617221",
     "signature_filetype":    "XAR",
     "signature_description": "XAR Archive"
-  },
-  {
-    "signature":             "3c3f786d6c",
-    "signature_filetype":    "XML",
-    "signature_description": "XML Document"
-  },
-  {
-    "signature":             "fd377a585a00",
-    "signature_filetype":    "XZ",
-    "signature_description": "XZ Archive"
   },
   {
     "signature":             "1f9d",
@@ -348,20 +358,5 @@
     "signature":             "1fa0",
     "signature_filetype":    "Z",
     "signature_description": "LZH Compressed Archive"
-  },
-  {
-    "signature":             "504b0304",
-    "signature_filetype":    "ZIP",
-    "signature_description": "ZIP Archive"
-  },
-  {
-    "signature":             "504b0506",
-    "signature_filetype":    "ZIP",
-    "signature_description": "Empty ZIP Archive"
-  },
-  {
-    "signature":             "504b0708",
-    "signature_filetype":    "ZIP",
-    "signature_description": "Spanned ZIP Archive"
   }
 ]

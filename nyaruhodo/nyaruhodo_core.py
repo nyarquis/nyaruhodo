@@ -1,3 +1,6 @@
+import csv
+import io
+import json
 import os
 import sys
 
@@ -88,6 +91,39 @@ def ComposeCompoundFile(filepath, header):
 
     return None, None
 
+def DetectTextType(file_content):
+
+    file_content = file_content.strip()
+
+    if file_content.startswith(("{", "[")):
+
+        try:
+
+            json.loads(file_content)
+
+            return "JSON", "JavaScript Object Notation File"
+
+        except (json.JSONDecodeError, ValueError) as exception:
+
+            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(f"==> {RED}WARN{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+
+    try:
+
+        sample  = csv.reader(io.StringIO(file_content[:4096]), csv.Sniffer().sniff(file_content[:4096], delimiters=",\t;|"))
+        rows    = [row for row in sample if row]
+
+        if len(rows) >= 2 and len(rows[0]) >= 2:
+
+            return "CSV", "Comma-Separated Values File"
+
+    except csv.Error as exception:
+
+            exception_string = str(exception).split("]")[-1].strip() if "]" in str(exception) else str(exception)
+            print(f"==> {RED}WARN{RESET} [ {os.path.basename(__file__)} ]: {exception_string.upper()}")
+
+    return "TXT", "Text Document"
+
 def FindFileType(filepath):
 
     header = GetHeader(filepath)
@@ -114,9 +150,9 @@ def FindFileType(filepath):
 
         with open(filepath, "r", encoding="utf-8") as file:
 
-            file.read(1024)
+            file_content = file.read(1024)
 
-        return "TXT", "Text Document"
+        return DetectTextType(file_content)
 
     except Exception as exception:
 
