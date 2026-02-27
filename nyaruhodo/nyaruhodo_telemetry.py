@@ -8,50 +8,40 @@ BLUE = "\033[94m"
 HANDLES = {}
 
 
-def timestamp():
-
+def Timestamp():
     return datetime.datetime.now().strftime(" %Y-%m-%d %H:%M:%S ")
 
 
-def handle(identifier):
-
-    identifier = identifier.lower().strip() or "anonymous"
-
-    if identifier in HANDLES:
-
-        return HANDLES[identifier]
-
-    handle = open(os.path.join(os.path.join(os.path.dirname(
-        __file__), "..", "data", "telemetry"), f"{identifier}.log"), "a", encoding="utf-8")
-    HANDLES[identifier] = handle
-    return handle
+def Handle(identifier):
+    username = identifier.lower().strip() or "anonymous"
+    if username in HANDLES:
+        return HANDLES[username]
+    handlerecord = open(os.path.join(os.path.dirname(__file__), "..", "data", "telemetry", f"{username}.txt"), "a", encoding="utf-8")
+    HANDLES[username] = handlerecord
+    return handlerecord
 
 
-def write(identifier, level, message):
-
-    handle(identifier).write(f"[{timestamp()}][{level:<8}] {message}\n")
-    handle(identifier).flush()
-
-
-def debug(identifier, message):
-
-    write(identifier, " DEBUG", message.upper())
-    print(f"==> DEBUG [{timestamp()}]: {message.upper()}\n")
+def Write(identifier, levelname, message):
+    handlerecord = Handle(identifier)
+    handlerecord.write(f"[{Timestamp()}][{levelname:<8}] {message}\n")
+    handlerecord.flush()
 
 
-def info(identifier, message):
-
-    write(identifier, " INFO", message.upper())
-    print(f"==> {BLUE}INFO{RESET} [{timestamp()}]: {message.upper()}\n")
-
-
-def warning(identifier, message):
-
-    write(identifier, " WARN", message.upper())
-    print(f"==> {YELLOW}WARN{RESET} [{timestamp()}]: {message.upper()}\n")
+def Debug(identifier, message):
+    Write(identifier, "DEBUG", message.upper())
+    print(f"==> DEBUG [{Timestamp()}]: {message.upper()}\n")
 
 
-def error(identifier, message):
+def Info(identifier, message):
+    Write(identifier, "INFO", message.upper())
+    print(f"==> {BLUE}INFO{RESET} [{Timestamp()}]: {message.upper()}\n")
 
-    write(identifier, " ERROR", message.upper())
-    print(f"==> {RED}ERROR{RESET} [{timestamp()}]: {message.upper()}\n")
+
+def Warning(identifier, message):
+    Write(identifier, "WARNING", message.upper())
+    print(f"==> {YELLOW}WARN{RESET} [{Timestamp()}]: {message.upper()}\n")
+
+
+def Error(identifier, message):
+    Write(identifier, "ERROR", message.upper())
+    print(f"==> {RED}ERROR{RESET} [{Timestamp()}]: {message.upper()}\n")

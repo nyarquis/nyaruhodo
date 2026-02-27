@@ -12,11 +12,11 @@ RESET = "\033[0m"
 RED = "\033[91m"
 
 
-def pe_timestamp_to_string(timestamp):
+def ConvertPortableExecutableTimestampToString(Timestamp):
 
     try:
 
-        return datetime.datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S UTC")
+        return datetime.datetime.utcfromtimestamp(Timestamp).strftime("%Y-%m-%d %H:%M:%S UTC")
 
     except Exception as exception:
 
@@ -24,10 +24,10 @@ def pe_timestamp_to_string(timestamp):
             "]")[-1].strip() if "]" in str(exception) else str(exception)
         print(
             f"==> {RED}ERROR{RESET} [{os.path.basename(__file__)}]: {exception_string.upper()}")
-        return f"Invalid Timestamp ({str(timestamp)})"
+        return f"Invalid Timestamp ({str(Timestamp)})"
 
 
-def read_pe(file_path):
+def ReadPortableExecutable(file_path):
 
     file_bytes = common.read(file_path, 4096)
     properties = {}
@@ -48,7 +48,7 @@ def read_pe(file_path):
             "<H", file_bytes, pe_header_offset + 4)[0]
         section_count = struct.unpack_from(
             "<H", file_bytes, pe_header_offset + 6)[0]
-        timestamp = struct.unpack_from(
+        Timestamp = struct.unpack_from(
             "<I", file_bytes, pe_header_offset + 8)[0]
         optional_header_size = struct.unpack_from(
             "<H", file_bytes, pe_header_offset + 20)[0]
@@ -56,7 +56,7 @@ def read_pe(file_path):
             "<H", file_bytes, pe_header_offset + 22)[0]
         properties["Architecture"] = tables.PE_MACHINES.get(
             machine_code, f"0x{machine_code:04X}")
-        properties["CompileTime"] = pe_timestamp_to_string(timestamp)
+        properties["CompileTime"] = ConvertPortableExecutableTimestampToString(Timestamp)
         properties["SectionCount"] = section_count
         characteristic_labels = [label for flag, label in tables.PE_CHARACTERISTICS.items(
         ) if characteristics_flags & flag]
@@ -109,7 +109,7 @@ def read_pe(file_path):
     return properties
 
 
-def read_elf(file_path):
+def ReadExecutableAndLinkableFormat(file_path):
 
     file_bytes = common.read(file_path, 64)
     properties = {}
@@ -157,14 +157,17 @@ def read_elf(file_path):
     return properties
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     if file_type in ("EXE", "DLL"):
 
-        return read_pe(file_path)
+        return ReadPortableExecutable(file_path)
 
     if file_type == "ELF":
 
-        return read_elf(file_path)
+        return ReadExecutableAndLinkableFormat(file_path)
 
     return {}
+
+
+read = Read

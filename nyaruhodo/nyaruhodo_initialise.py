@@ -7,7 +7,7 @@ GREEN = "\033[92m"
 YELLOW = "\033[93m"
 
 
-def paint_screen():
+def PaintScreen():
 
     lines = [
         "\n",

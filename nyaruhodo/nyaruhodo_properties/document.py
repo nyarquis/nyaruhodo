@@ -10,7 +10,7 @@ RESET = "\033[0m"
 RED = "\033[91m"
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     file_bytes = common.read(file_path, 65536)
     properties = {}
@@ -63,3 +63,6 @@ def read(file_path, file_type):
         properties["Encrypted"] = "Yes"
 
     return properties
+
+
+read = Read

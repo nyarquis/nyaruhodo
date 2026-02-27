@@ -2,13 +2,13 @@ import json
 import os
 
 
-def lookup_tables():
+def LookupTables():
 
     with open(os.path.join(os.path.dirname(__file__), "..", "..", "data", "properties.json"), "r", encoding="utf-8") as file:
 
         properties = json.load(file)
 
-    lookup_tables = {}
+    LookupTables = {}
     key_tables = [
         "EXIF TAGS",
         "GPS TAGS",
@@ -26,24 +26,24 @@ def lookup_tables():
 
         if table_key in key_tables:
 
-            lookup_tables[table_key] = {
+            LookupTables[table_key] = {
                 int(key): value for key, value in table_value.items()}
 
         else:
 
-            lookup_tables[table_key] = table_value
+            LookupTables[table_key] = table_value
 
-    return lookup_tables
+    return LookupTables
 
 
-LOOKUP_TABLES = lookup_tables()
+LOOKUP_TABLES = LookupTables()
 EXIF_TAGS = LOOKUP_TABLES["EXIF TAGS"]
 GPS_TAGS = LOOKUP_TABLES["GPS TAGS"]
 ORIENTATION = LOOKUP_TABLES["ORIENTATION"]
 RESOLUTION = LOOKUP_TABLES["RESOLUTION"]
 ID3v2_FRAMES_v24 = LOOKUP_TABLES["ID3v2 FRAMES v24"]
 ID3v2_FRAMES_v22 = LOOKUP_TABLES["ID3v2 FRAMES v22"]
-ID3v1_GENRES = LOOKUP_TABLES["ID3v1 GENRES"]
+ID3v1_GENRES = LOOKUP_TABLES["ReadIdentifierTagVersionOne GENRES"]
 PE_MACHINES = LOOKUP_TABLES["PE MACHINES"]
 PE_SUBSYSTEMS = LOOKUP_TABLES["PE SUBSYSTEMS"]
 PE_CHARACTERISTICS = LOOKUP_TABLES["PE CHARACTERISTICS"]

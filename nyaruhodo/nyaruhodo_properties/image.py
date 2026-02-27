@@ -14,14 +14,14 @@ FIELD_TYPE_SIZES = {1: 1, 2: 1, 3: 2, 4: 4, 5: 8,
                     6: 1, 7: 1, 8: 2, 9: 4, 10: 8, 11: 4, 12: 8}
 
 
-def read_rational(tiff_bytes, offset, endian):
+def ReadRational(tiff_bytes, offset, endian):
 
     numerator, denominator = struct.unpack_from(
         endian + "II", tiff_bytes, offset)
     return f"{numerator}/{denominator}" if denominator != 0 else str(numerator)
 
 
-def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, endian):
+def ReadDirectoryFieldValue(tiff_bytes, tag, type_, count, value_or_offset, endian):
 
     field_size = FIELD_TYPE_SIZES.get(type_, 1)
     total_size = field_size * count
@@ -55,7 +55,7 @@ def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, e
 
         elif type_ == 5:
 
-            return read_rational(tiff_bytes, value_or_offset, endian)
+            return ReadRational(tiff_bytes, value_or_offset, endian)
 
         elif type_ == 7:
 
@@ -73,7 +73,7 @@ def read_directory_field_value(tiff_bytes, tag, type_, count, value_or_offset, e
     return None
 
 
-def read_image_file_directory(tiff_bytes, offset, endian, tag_name_map):
+def ReadImageFileDirectory(tiff_bytes, offset, endian, tag_name_map):
 
     tag_values = {}
 
@@ -91,7 +91,7 @@ def read_image_file_directory(tiff_bytes, offset, endian, tag_name_map):
 
             if tag_name:
 
-                value = read_directory_field_value(
+                value = ReadDirectoryFieldValue(
                     tiff_bytes, tag, type_, count, value_or_offset, endian)
 
                 if value is not None:
@@ -108,7 +108,7 @@ def read_image_file_directory(tiff_bytes, offset, endian, tag_name_map):
     return tag_values
 
 
-def gps_degrees_minutes_seconds_to_decimal(coordinate_parts, hemisphere_ref):
+def ConvertGpsDegreesMinutesSecondsToDecimal(coordinate_parts, hemisphere_ref):
 
     try:
 
@@ -143,7 +143,7 @@ def gps_degrees_minutes_seconds_to_decimal(coordinate_parts, hemisphere_ref):
         return None
 
 
-def read_jpeg(file_path):
+def ReadJpeg(file_path):
 
     file_bytes = common.read(file_path)
     properties = {}
@@ -213,7 +213,7 @@ def read_jpeg(file_path):
 
             main_directory_offset = struct.unpack_from(
                 endian + "I", tiff_bytes, 4)[0]
-            main_directory = read_image_file_directory(
+            main_directory = ReadImageFileDirectory(
                 tiff_bytes, main_directory_offset, endian, tables.EXIF_TAGS)
 
             for field_name, value in main_directory.items():
@@ -234,7 +234,7 @@ def read_jpeg(file_path):
 
             if "ExifIFD" in main_directory:
 
-                exif_directory = read_image_file_directory(
+                exif_directory = ReadImageFileDirectory(
                     tiff_bytes, main_directory["ExifIFD"], endian, tables.EXIF_TAGS)
 
                 for field_name, value in exif_directory.items():
@@ -245,11 +245,11 @@ def read_jpeg(file_path):
 
             if "GPSIFD" in main_directory:
 
-                gps_directory = read_image_file_directory(
+                gps_directory = ReadImageFileDirectory(
                     tiff_bytes, main_directory["GPSIFD"], endian, tables.GPS_TAGS)
-                latitude = gps_degrees_minutes_seconds_to_decimal(gps_directory.get(
+                latitude = ConvertGpsDegreesMinutesSecondsToDecimal(gps_directory.get(
                     "GPSLatitude", ""), gps_directory.get("GPSLatitudeRef", ""))
-                longitude = gps_degrees_minutes_seconds_to_decimal(gps_directory.get(
+                longitude = ConvertGpsDegreesMinutesSecondsToDecimal(gps_directory.get(
                     "GPSLongitude", ""), gps_directory.get("GPSLongitudeRef", ""))
 
                 if latitude is not None:
@@ -316,7 +316,7 @@ def read_jpeg(file_path):
     return properties
 
 
-def read_png(file_path):
+def ReadPortableNetworkGraphic(file_path):
 
     file_bytes = common.read(file_path)
     properties = {}
@@ -433,14 +433,17 @@ def read_png(file_path):
     return properties
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     if file_type in ("JPEG", "JPG"):
 
-        return read_jpeg(file_path)
+        return ReadJpeg(file_path)
 
     if file_type == "PNG":
 
-        return read_png(file_path)
+        return ReadPortableNetworkGraphic(file_path)
 
     return {}
+
+
+read = Read

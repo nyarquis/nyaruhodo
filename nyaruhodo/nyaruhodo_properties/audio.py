@@ -11,12 +11,12 @@ RESET = "\033[0m"
 RED = "\033[91m"
 
 
-def ID3v1(field_bytes):
+def ReadIdentifierTagVersionOne(field_bytes):
 
     return field_bytes.split(b"\x00")[0].decode("latin1", errors="replace").strip()
 
 
-def read(file_path, file_type):
+def Read(file_path, file_type):
 
     properties = {}
     header_bytes = common.read(file_path, 10)
@@ -136,7 +136,7 @@ def read(file_path, file_type):
 
             if field_name not in properties:
 
-                value = ID3v1(field_bytes)
+                value = ReadIdentifierTagVersionOne(field_bytes)
 
                 if value:
 
@@ -149,3 +149,6 @@ def read(file_path, file_type):
             properties["Genre"] = tables.ID3v1_GENRES[genre]
 
     return {field_name: value for field_name, value in properties.items() if value}
+
+
+read = Read

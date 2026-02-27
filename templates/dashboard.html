@@ -1,109 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card">
-    <div style="margin-bottom: 2rem;">
-        <h2 style="margin-bottom: 1rem;">
-            Welcome, {{ username }}.
-        </h2>
-        <div style="display: flex; gap: 0.75rem; align-items: stretch;">
-            <a href="/" class="button" style="flex: 1;">
-            New Scan
-            </a>
-            <button class="button-icon-danger" id="deleteAccountBtn" title="Delete Account"
-                style="aspect-ratio: 1 / 1; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">&#x2715;</button>
-        </div>
-    </div>
-    <h3>
-        Scan History
-    </h3>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Time</th>
-                    <th>File Name</th>
-                    <th>File Type</th>
-                    <th>Status</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for log in logs %}
-                <tr>
-                    <td data-ts="{{ log.timestamp }}"></td>
-                    <td>{{ log.filename }}</td>
-                    <td>
-                        <code>
-                        {{ log.file_type }}
-                        </code>
-                    </td>
-                    <td>
-                        <span class="status-badge {% if log.status == 'Unknown' %} badge-unknown {% elif 'Mismatch' in log.status %} badge-mismatch {% else %} badge-match {% endif %}">
-                        {{ log.status }}
-                        </span>
-                    </td>
-                    <td>
-                        <form method="post" action="{{ url_for('delete_record', record_id=log.record_id) }}">
-                            <button type="submit" class="button-delete" title="Delete log">&#x2715;</button>
-                        </form>
-                    </td>
-                </tr>
-                {% else %}
-                <tr>
-                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                        No scans have been recorded yet.
-                        <a href="/" style="color: var(--primary);">
-                        Analyse a file
-                        </a>
-                        to get started.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-<div id="deleteAccountModal" class="modal-overlay" style="display: none;" {% if error %}data-open="true"{% endif %}>
-<div class="modal-box">
-    <h3 style="margin-bottom: 1rem;">Delete Account</h3>
-    {% if error %}
-    <div style="color: var(--color-danger); margin-bottom: 1rem;">
-        {{ error }}
-    </div>
-    {% endif %}
-    <p style="margin-bottom: 1rem; color: var(--text-muted);">
-        This action is permanent and cannot be undone. All scan history associated with this account will be deleted. Enter your password to confirm.
-    </p>
-    <form method="post" action="{{ url_for('delete_account') }}">
-        <input type="password" name="password" class="form-input" placeholder="Enter your current password." required>
-        <div style="display: flex; gap: 0.75rem;">
-            <button type="button" id="cancelDeleteAccount" class="button" style="background: var(--bg-surface); color: var(--text-main);">
-            Cancel
-            </button>
-            <button type="submit" class="button" style="background: var(--color-danger); color: var(--bg-header);">
-            Delete Account
-            </button>
-        </div>
-    </form>
-</div>
-</div>
-<div class="card" style="margin-top: 2rem;">
-    <h3 style="margin-bottom: 1rem;">
-        VirusTotal API Key
-    </h3>
-    <p style="margin-bottom: 1rem; color: var(--text-muted);">
-        Your API key is stored per-account and used automatically when VirusTotal scanning is enabled and a mismatch is detected.
-    </p>
-    <form method="post" action="{{ url_for('virustotal') }}">
-        <input type="password" name="virustotal_key" class="form-input" placeholder="Enter your VirusTotal API key" value="{{ virustotal_key }}">
-        <button type="submit" class="button" style="width: auto;">
-        Save Key
-        </button>
-        {% if virustotal_key %}
-        <button type="submit" name="virustotal_key" value="" class="button" style="width: auto; background: var(--bg-surface); color: var(--text-main); margin-left: 0.75rem;">
-        Remove Key
-        </button>
-        {% endif %}
-    </form>
+    <h2>Welcome, {{ username }}.</h2>
+    <h3>History</h3>
+    <table>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td data-ts="{{ entry.createdat }}"></td>
+                <td>{{ entry.filename }}</td>
+                <td>{{ entry.filetype }}</td>
+                <td>{{ entry.status }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('DeleteRecord', recordid=entry.recordid) }}">
+                        <button type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if ErrorMessage %}<div>{{ ErrorMessage }}</div>{% endif %}
+    <form method="post" action="{{ url_for('DeleteAccount') }}"><input type="password" name="password"><button type="submit">Delete Account</button></form>
+    <form method="post" action="{{ url_for('VirusTotal') }}"><input type="password" name="virustotalkey" value="{{ virustotalkey }}"><button type="submit">Save Key</button></form>
 </div>
 {% endblock %}

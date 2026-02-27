@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
             resultsContainer.style.display = "none";
             loadingIndicator.style.display = "block";
 
-            fetch("/dashboard/scan", {
+            fetch("/dashboard/analyse", {
                 method: "POST",
                 body: new FormData(uploadForm)
             })
@@ -233,8 +233,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function formatVirusTotal(virustotal) {
-        if (virustotal.error) {
-            return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An error occurred during the VirusTotal query.")}</p></div>`;
+        if (virustotal.Error) {
+            return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An Error occurred during the VirusTotal query.")}</p></div>`;
         }
         if (virustotal.message && !virustotal.stats_malicious && virustotal.stats_malicious !== 0) {
             return `<div class="result-box unknown" style="margin-top: 1rem;"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
