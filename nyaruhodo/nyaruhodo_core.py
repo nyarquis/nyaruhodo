@@ -9,6 +9,11 @@ RESET      = "\033[0m"
 RED        = "\033[91m"
 YELLOW     = "\033[93m"
 SIGNATURES = None
+EXTENSIONS = {
+    frozenset({"JPG", "JPEG"}),
+    frozenset({"HTM", "HTML"}),
+    frozenset({"TIF", "TIFF"}),
+}
 
 def Signatures():
 
@@ -126,6 +131,14 @@ def GetFileType(filename):
 
     return extension[1:].upper() if extension else "NONE"
 
+def ExtensionsMatch(variant_one, variant_two):
+
+    if variant_one == variant_two:
+
+        return True
+
+    return any(frozenset({variant_one, variant_two}) == item for item in EXTENSIONS)
+
 def AnalyseFile(filepath, filename):
 
     original_filetype              = GetFileType(filename)
@@ -141,8 +154,8 @@ def AnalyseFile(filepath, filename):
         message  = f"This file has no extension. The detected file type is {detected_filetype}."
         mismatch = True
 
-    elif original_filetype == detected_filetype:
-
+    elif ExtensionsMatch(original_filetype, detected_filetype):
+    
         message = f"The declared extension ({original_filetype}) matches the detected file type ({detected_filetype})."
 
     else:

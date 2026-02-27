@@ -2,6 +2,7 @@ import flask
 import functools
 import os
 import sqlite3
+import uuid
 import werkzeug.security
 import werkzeug.utils
 
@@ -147,7 +148,13 @@ def AnalyseFile():
         return flask.jsonify({"error": "No file was selected. Please choose a file and try again."}), 400
 
     filename          = werkzeug.utils.secure_filename(file.filename)
-    filepath          = os.path.join(server.config["FILES"], filename)
+
+    if not filename:
+
+        return flask.jsonify({"error": "The filename contains no valid characters."}), 400
+
+    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    filepath          = os.path.join(server.config["FILES"], unique_filename)
     file.save(filepath)
     nyaruhodo.telemetry.Info(username, f"Analysis started '{filename}'")
     analysis          = nyaruhodo.core.AnalyseFile(filepath, filename)

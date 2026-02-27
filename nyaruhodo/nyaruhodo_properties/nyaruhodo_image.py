@@ -18,24 +18,24 @@ def ReadRational(tiffbytes, offset, endian):
     return f"{numerator}/{denominator}" if denominator != 0 else str(numerator)
 
 
-def ReadDirectoryFieldValue(tiffbytes, tag, type_, count, value_or_offset, endian):
+def ReadDirectoryFieldValue(tiffbytes, tag, field_type, count, value_or_offset, endian):
 
-    field_size         = FIELD_TYPE_SIZES.get(type_, 1)
+    field_size         = FIELD_TYPE_SIZES.get(field_type, 1)
     total_size         = field_size * count
     packed_valuebytes = struct.pack(endian + "I", value_or_offset)[:total_size] if total_size <= 4 else tiffbytes
 
     try:
 
-        if type_ == 2:
+        if field_type == 2:
 
             fieldbytes = tiffbytes[value_or_offset:value_or_offset + count] if total_size > 4 else struct.pack(endian + "I", value_or_offset)[:count]
         
             return common.decode(fieldbytes)
 
-        elif type_ in (3, 4):
+        elif field_type in (3, 4):
 
-            unpack_format = (endian + "H") if type_ == 3 else (endian + "I")
-            element_size  = 2 if type_ == 3 else 4
+            unpack_format = (endian + "H") if field_type == 3 else (endian + "I")
+            element_size  = 2 if field_type == 3 else 4
 
             if total_size <= 4:
 
@@ -47,11 +47,21 @@ def ReadDirectoryFieldValue(tiffbytes, tag, type_, count, value_or_offset, endia
 
             return unpacked_values[0] if count == 1 else unpacked_values
 
-        elif type_ == 5:
+        elif field_type == 5:
 
-            return ReadRational(tiffbytes, value_or_offset, endian)
+            if count == 1:
 
-        elif type_ == 7:
+               return ReadRational(tiffbytes, value_or_offset, endian)
+
+            rationals = []
+
+            for item in range(count):
+
+                rationals.append(ReadRational(tiffbytes, value_or_offset + item * 8, endian))
+
+            return rationals
+
+        elif field_type == 7:
 
             fieldbytes = tiffbytes[value_or_offset:value_or_offset + count] if total_size > 4 else struct.pack(endian + "I", value_or_offset)[:count]
          
@@ -75,13 +85,13 @@ def ReadImageFileDirectory(tiffbytes, offset, endian, tag_name_map):
 
         for _ in range(entry_count):
 
-            tag, type_, count, value_or_offset = struct.unpack_from(endian + "HHII", tiffbytes, offset)
+            tag, field_type, count, value_or_offset = struct.unpack_from(endian + "HHII", tiffbytes, offset)
             offset                            += 12
             tag_name                           = tag_name_map.get(tag)
 
             if tag_name:
 
-                value = ReadDirectoryFieldValue(tiffbytes, tag, type_, count, value_or_offset, endian)
+                value = ReadDirectoryFieldValue(tiffbytes, tag, field_type, count, value_or_offset, endian)
 
                 if value is not None:
 
