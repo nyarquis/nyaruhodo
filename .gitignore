@@ -53,6 +53,8 @@ celerybeat.pid
 cover/
 coverage.xml
 cython_debug/
+data/files/
+data/telemetry/
 db.sqlite3
 db.sqlite3-journal
 develop-eggs/
@@ -80,7 +82,6 @@ profile_default/
 sdist/
 share/python-wheels/
 target/
-uploads/
 var/
 venv.bak/
 venv/
