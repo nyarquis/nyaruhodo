@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         fileInput.addEventListener("change", function() {
             if (this.files && this.files[0]) {
-                fileNameDisplay.textContent   = this.files[0].name;
+                fileNameDisplay.textContent      = this.files[0].name;
                 fileNameDisplay.style.fontWeight = "bold";
             } else {
                 fileNameDisplay.innerHTML = "<strong>Click to upload</strong> or drag and drop";
@@ -83,9 +83,10 @@ document.addEventListener("DOMContentLoaded", function() {
         uploadForm.addEventListener("submit", function(event) {
             event.preventDefault();
 
-            submitButton.disabled          = true;
-            resultsContainer.style.display = "none";
-            loadingIndicator.style.display = "block";
+            submitButton.disabled    = true;
+            submitButton.textContent = "Analysing...";
+            resultsContainer.classList.add("is-hidden");
+            loadingIndicator.classList.remove("is-hidden");
 
             fetch("/analyse", {
                 method: "POST",
@@ -93,8 +94,9 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .then(response => response.json())
             .then(result => {
-                loadingIndicator.style.display = "none";
-                submitButton.disabled          = false;
+                loadingIndicator.classList.add("is-hidden");
+                submitButton.disabled    = false;
+                submitButton.textContent = "Analyse File";
                 if (result.error) {
                     displayError(result.error);
                 } else {
@@ -102,8 +104,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             })
             .catch(error => {
-                loadingIndicator.style.display = "none";
-                submitButton.disabled          = false;
+                loadingIndicator.classList.add("is-hidden");
+                submitButton.disabled    = false;
+                submitButton.textContent = "Analyse File";
                 displayError("A connection error occurred. Please check your network and try again.");
                 console.error("Error:", error);
             });
@@ -116,21 +119,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (deleteAccountBtn && deleteAccountModal) {
         deleteAccountBtn.addEventListener("click", () => {
-            deleteAccountModal.style.display = "flex";
+            deleteAccountModal.classList.remove("is-hidden");
         });
 
         cancelDeleteAccount.addEventListener("click", () => {
-            deleteAccountModal.style.display = "none";
+            deleteAccountModal.classList.add("is-hidden");
         });
 
         deleteAccountModal.addEventListener("click", (event) => {
             if (event.target === deleteAccountModal) {
-                deleteAccountModal.style.display = "none";
+                deleteAccountModal.classList.add("is-hidden");
             }
         });
-        
+
         if (deleteAccountModal && deleteAccountModal.getAttribute("data-open") === "true") {
-            deleteAccountModal.style.display = "flex";
+            deleteAccountModal.classList.remove("is-hidden");
         }
     }
 
@@ -143,23 +146,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
         themeToggleBtn.addEventListener("click", (event) => {
             event.preventDefault();
-            const isLight = themeStylesheet.getAttribute("href").includes("light-mode.css");
-            const newTheme = isLight ? "night" : "light";
-            localStorage.setItem("theme", newTheme);
-            if (newTheme === "night") {
-                themeStylesheet.href       = themeStylesheet.href.replace("light-mode", "night-mode");
-                themeToggleBtn.textContent = "Switch to Light Mode";
-            } else {
-                themeStylesheet.href       = themeStylesheet.href.replace("night-mode", "light-mode");
+            const currentlyNight = themeStylesheet.getAttribute("href").includes("night-mode.css");
+            if (currentlyNight) {
+                themeStylesheet.href = themeStylesheet.href.replace("night-mode", "light-mode");
                 themeToggleBtn.textContent = "Switch to Night Mode";
+                localStorage.setItem("theme", "light");
+            } else {
+                themeStylesheet.href = themeStylesheet.href.replace("light-mode", "night-mode");
+                themeToggleBtn.textContent = "Switch to Light Mode";
+                localStorage.setItem("theme", "night");
             }
         });
     }
 
-    document.querySelectorAll("td[data-ts]").forEach(cell => {
-        const raw = cell.getAttribute("data-ts");
+    document.querySelectorAll("td[data-ts], span[data-ts]").forEach(function(cell) {
+        var raw = cell.getAttribute("data-ts");
         if (raw) {
-            const date = new Date(raw.replace(" ", "T") + "Z");
+            var date = new Date(raw.replace(" ", "T") + "Z");
             cell.textContent = new Intl.DateTimeFormat(undefined, {
                 dateStyle: "medium",
                 timeStyle: "short"
@@ -172,12 +175,12 @@ document.addEventListener("DOMContentLoaded", function() {
         const content   = document.getElementById("resultContent");
         if (!container || !content) return;
 
-        container.style.display = "block";
+        let statusClass;
+        let title;
 
-        let statusClass, title;
-        if (result.filetype === "UNKNOWN") {
+        if (result.unknown) {
             statusClass = "unknown";
-            title       = "File Type Unknown";
+            title       = "Unknown File Type";
         } else if (result.mismatch) {
             statusClass = "mismatch";
             title       = "Extension Mismatch";
@@ -188,14 +191,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
         let markup = `
             <div class="result-box ${statusClass}">
-                <h3 style="margin-bottom: 1rem;">${title}</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div><strong>File Name:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.filename)}</span></div>
-                    <div><strong>Declared Extension:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.original_filetype)}</span></div>
-                    <div><strong>Detected File Type:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.detected_filetype)}</span></div>
-                    <div><strong>Description:</strong><br><span style="color: var(--text-main);">${escapeHtml(result.description)}</span></div>
+                <h3 class="result-title">${title}</h3>
+                <div class="result-summary">
+                    <div class="result-field">
+                        <span class="result-field-label">File Name</span>
+                        <span class="result-field-value">${escapeHtml(result.filename)}</span>
+                    </div>
+                    <div class="result-field">
+                        <span class="result-field-label">Declared Extension</span>
+                        <span class="result-field-value">${escapeHtml(result.original_filetype)}</span>
+                    </div>
+                    <div class="result-field">
+                        <span class="result-field-label">Detected File Type</span>
+                        <span class="result-field-value">${escapeHtml(result.detected_filetype)}</span>
+                    </div>
+                    <div class="result-field">
+                        <span class="result-field-label">Description</span>
+                        <span class="result-field-value">${escapeHtml(result.description)}</span>
+                    </div>
                 </div>
-                <div style="margin-top: 1rem; border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                <div class="result-analysis">
                     <strong>Analysis:</strong> ${escapeHtml(result.message)}
                 </div>
             </div>
@@ -210,22 +225,23 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         content.innerHTML = markup;
+        container.classList.remove("is-hidden");
     }
 
     function formatMetadata(metadata) {
         const rows = Object.entries(metadata)
             .map(([label, value]) => `
                 <tr>
-                    <td style="font-weight: 600; white-space: nowrap; padding-right: 1.5rem; color: var(--text-muted-light);">${escapeHtml(label)}</td>
-                    <td style="word-break: break-all;">${escapeHtml(value)}</td>
+                    <td class="metadata-label">${escapeHtml(label)}</td>
+                    <td class="metadata-value">${escapeHtml(value)}</td>
                 </tr>`)
             .join("");
 
         return `
-            <div class="result-box" style="margin-top: 1rem; border-color: var(--primary);">
-                <h4 style="margin-bottom: 1rem;">File Metadata</h4>
-                <div style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse; min-width: unset;">
+            <div class="result-box result-box-primary">
+                <h4 class="result-section-heading">File Metadata</h4>
+                <div class="table-scroll">
+                    <table class="metadata-table">
                         <tbody>${rows}</tbody>
                     </table>
                 </div>
@@ -234,33 +250,33 @@ document.addEventListener("DOMContentLoaded", function() {
 
     function formatVirusTotal(virustotal) {
         if (virustotal.error) {
-            return `<div class="result-box mismatch" style="margin-top: 1rem;"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An Error occurred during the VirusTotal query.")}</p></div>`;
+            return `<div class="result-box mismatch result-box-spaced"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An error occurred during the VirusTotal query.")}</p></div>`;
         }
         if (virustotal.message && !virustotal.virustotal_malicious && virustotal.virustotal_malicious !== 0) {
-            return `<div class="result-box unknown" style="margin-top: 1rem;"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
+            return `<div class="result-box unknown result-box-spaced"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
         }
         const isClean   = virustotal.virustotal_malicious === 0 && virustotal.virustotal_suspicious === 0;
         const statusClass = isClean ? "match" : "mismatch";
 
         return `
-            <div class="result-box ${statusClass}" style="margin-top: 1rem;">
-                <h4 style="margin-bottom: 0.5rem;">Scan Results</h4>
-                <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                    <span style="font-weight: bold; color: var(--color-malicious);">Malicious: ${virustotal.virustotal_malicious}</span>
-                    <span style="font-weight: bold; color: var(--color-suspicious);">Suspicious: ${virustotal.virustotal_suspicious}</span>
-                    <span style="font-weight: bold; color: var(--color-harmless);">Harmless: ${virustotal.virustotal_harmless}</span>
+            <div class="result-box ${statusClass} result-box-spaced">
+                <h4 class="result-section-heading">Scan Results</h4>
+                <div class="result-vt-counts">
+                    <span class="vt-count vt-malicious">Malicious: ${virustotal.virustotal_malicious}</span>
+                    <span class="vt-count vt-suspicious">Suspicious: ${virustotal.virustotal_suspicious}</span>
+                    <span class="vt-count vt-harmless">Harmless: ${virustotal.virustotal_harmless}</span>
                 </div>
-                <a href="${virustotal.link}" target="_blank" class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;">View Full Report on VirusTotal</a>
+                <a href="${escapeHtml(virustotal.link)}" target="_blank" class="btn result-vt-link">View Full Report on VirusTotal</a>
             </div>
-        `;  
+        `;
     }
 
     function displayError(message) {
         const container = document.getElementById("resultsContainer");
         const content   = document.getElementById("resultContent");
         if (container && content) {
-            container.style.display = "block";
             content.innerHTML = `<div class="result-box mismatch"><h3>Analysis Error</h3><p>${escapeHtml(message)}</p></div>`;
+            container.classList.remove("is-hidden");
         }
     }
 
