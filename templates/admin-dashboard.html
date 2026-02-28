@@ -6,7 +6,7 @@
         <h2>Admin Dashboard</h2>
         <span class="admin-badge">Administrator</span>
     </div>
-    <p class="card-subtitle">Signed in as <strong>{{ username }}</strong>.</p>
+    <p class="card-subtitle">Signed in as <strong>{{ display_name }}</strong>.</p>
 </div>
 
 <div class="card">
@@ -72,7 +72,10 @@
 
         <div class="user-row-header">
 
-            <span class="user-row-name">{{ user.username }}</span>
+            <div class="user-row-identity">
+                <span class="user-row-name">{{ user.display_name }}</span>
+                <span class="user-row-username">{{ user.username }}</span>
+            </div>
 
             {% if user.priviledge %}
             <span class="user-badge-admin">Admin</span>
@@ -95,7 +98,7 @@
             {% if user.user_id != current_user_id %}
 
             <form method="post" action="{{ url_for('AdminToggleAdmin', user_id=user.user_id) }}" style="display: inline; margin: 0;">
-                <button type="submit" class="btn-outline"
+                <button type="submit" class="button-outline"
                     {% if user.priviledge %}
                     onclick="return confirm('Revoke admin rights from {{ user.username }}?');"
                     {% endif %}>
@@ -105,7 +108,7 @@
 
             <form method="post" action="{{ url_for('AdminDeleteUser', user_id=user.user_id) }}" style="display: inline; margin: 0;"
                   onsubmit="return confirm('Permanently delete {{ user.username }} and all their scan records?');">
-                <button type="submit" class="btn-danger-sm">Delete</button>
+                <button type="submit" class="button-danger-sm">Delete</button>
             </form>
 
             {% else %}
@@ -117,7 +120,7 @@
             {% if user.file_count > 0 %}
             <button
                 onclick="toggleUserFiles('{{ user.user_id }}', this)"
-                class="btn-outline btn-outline--muted">
+                class="button-outline button-outline--muted">
                 &#9660; Files
             </button>
             {% endif %}
@@ -171,17 +174,17 @@
 </div>
 
 <script>
-function toggleUserFiles(userId, btn) {
-    var el      = document.getElementById("user-files-" + userId);
-    var hidden  = el.classList.contains("is-hidden");
+function toggleUserFiles(userId, button) {
+    var el     = document.getElementById("user-files-" + userId);
+    var hidden = el.classList.contains("is-hidden");
     if (hidden) {
         el.classList.remove("is-hidden");
-        btn.innerHTML  = "&#9650; Files";
-        btn.classList.remove("btn-outline--muted");
+        button.innerHTML = "&#9650; Files";
+        button.classList.remove("button-outline--muted");
     } else {
         el.classList.add("is-hidden");
-        btn.innerHTML  = "&#9660; Files";
-        btn.classList.add("btn-outline--muted");
+        button.innerHTML = "&#9660; Files";
+        button.classList.add("button-outline--muted");
     }
 }
 </script>

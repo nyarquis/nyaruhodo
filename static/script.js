@@ -113,12 +113,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    const deleteAccountBtn    = document.getElementById("deleteAccountBtn");
+    const deleteAccountButton    = document.getElementById("deleteAccountButton");
     const deleteAccountModal  = document.getElementById("deleteAccountModal");
     const cancelDeleteAccount = document.getElementById("cancelDeleteAccount");
 
-    if (deleteAccountBtn && deleteAccountModal) {
-        deleteAccountBtn.addEventListener("click", () => {
+    if (deleteAccountButton && deleteAccountModal) {
+        deleteAccountButton.addEventListener("click", () => {
             deleteAccountModal.classList.remove("is-hidden");
         });
 
@@ -137,25 +137,34 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    const themeToggleBtn  = document.getElementById("theme-toggle-link");
-    const themeStylesheet = document.getElementById("current-theme");
+    const themeStylesheet    = document.getElementById("current-theme");
+    const themeToggleNav     = document.getElementById("theme-toggle-link");
+    const themeToggleFooter  = document.getElementById("theme-toggle-link-footer");
+    const themeToggles       = [themeToggleNav, themeToggleFooter].filter(Boolean);
 
-    if (themeToggleBtn && themeStylesheet) {
+    function applyThemeLabel(isNight) {
+        const label = isNight ? "Switch to Light Mode" : "Switch to Night Mode";
+        themeToggles.forEach(button => { button.textContent = label; });
+    }
+
+    if (themeStylesheet && themeToggles.length) {
         const isNight = themeStylesheet.getAttribute("href").includes("night-mode.css");
-        themeToggleBtn.textContent = isNight ? "Switch to Light Mode" : "Switch to Night Mode";
+        applyThemeLabel(isNight);
 
-        themeToggleBtn.addEventListener("click", (event) => {
-            event.preventDefault();
-            const currentlyNight = themeStylesheet.getAttribute("href").includes("night-mode.css");
-            if (currentlyNight) {
-                themeStylesheet.href = themeStylesheet.href.replace("night-mode", "light-mode");
-                themeToggleBtn.textContent = "Switch to Night Mode";
-                localStorage.setItem("theme", "light");
-            } else {
-                themeStylesheet.href = themeStylesheet.href.replace("light-mode", "night-mode");
-                themeToggleBtn.textContent = "Switch to Light Mode";
-                localStorage.setItem("theme", "night");
-            }
+        themeToggles.forEach(button => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                const currentlyNight = themeStylesheet.getAttribute("href").includes("night-mode.css");
+                if (currentlyNight) {
+                    themeStylesheet.href = themeStylesheet.href.replace("night-mode", "light-mode");
+                    localStorage.setItem("theme", "light");
+                    applyThemeLabel(false);
+                } else {
+                    themeStylesheet.href = themeStylesheet.href.replace("light-mode", "night-mode");
+                    localStorage.setItem("theme", "night");
+                    applyThemeLabel(true);
+                }
+            });
         });
     }
 
@@ -261,12 +270,12 @@ document.addEventListener("DOMContentLoaded", function() {
         return `
             <div class="result-box ${statusClass} result-box-spaced">
                 <h4 class="result-section-heading">Scan Results</h4>
-                <div class="result-vt-counts">
-                    <span class="vt-count vt-malicious">Malicious: ${virustotal.virustotal_malicious}</span>
-                    <span class="vt-count vt-suspicious">Suspicious: ${virustotal.virustotal_suspicious}</span>
-                    <span class="vt-count vt-harmless">Harmless: ${virustotal.virustotal_harmless}</span>
+                <div class="result-virustotal-counts">
+                    <span class="virustotal-count virustotal-malicious">Malicious: ${virustotal.virustotal_malicious}</span>
+                    <span class="virustotal-count virustotal-suspicious">Suspicious: ${virustotal.virustotal_suspicious}</span>
+                    <span class="virustotal-count virustotal-harmless">Harmless: ${virustotal.virustotal_harmless}</span>
                 </div>
-                <a href="${escapeHtml(virustotal.link)}" target="_blank" class="btn result-vt-link">View Full Report on VirusTotal</a>
+                <a href="${escapeHtml(virustotal.link)}" target="_blank" class="button result-virustotal-link">View Full Report on VirusTotal</a>
             </div>
         `;
     }

@@ -44,8 +44,8 @@ def InitialiseDatabase():
 
         os.makedirs(server.config["FILES"], exist_ok=True)
         database = GetDatabase()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0)")
-        database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER  NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
+        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL COLLATE NOCASE, display_name TEXT NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0)")
+        database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
         database.execute("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, filename TEXT, outcome TEXT NOT NULL, created DATETIME DEFAULT CURRENT_TIMESTAMP)")
         database.commit()
 
@@ -95,21 +95,31 @@ def CreateAccount():
 
     if flask.request.method == "POST":
 
-        username = flask.request.form["username"]
-        password = flask.request.form["password"]
-        database = GetDatabase()
+        username     = flask.request.form["username"].strip()
+        display_name = flask.request.form["display_name"].strip()
+        password     = flask.request.form["password"]
+        database     = GetDatabase()
+
+        if not username:
+
+            return flask.render_template("create-account.html", message = "Account creation failed. A username is required.")
+
+        if not display_name:
+
+            return flask.render_template("create-account.html", message = "Account creation failed. A display name is required.")
 
         try:
 
-            admin_users               = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
-            primary_admin            = (admin_users == 0)
-            password                  = werkzeug.security.generate_password_hash(password)
-            cursor                    = database.execute("INSERT INTO users (username, password, priviledge) VALUES (?, ?, ?)", (username, password, 1 if primary_admin else 0))
+            admin_users                   = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
+            primary_admin                 = (admin_users == 0)
+            password                      = werkzeug.security.generate_password_hash(password)
+            cursor                        = database.execute("INSERT INTO users (username, display_name, password, priviledge) VALUES (?, ?, ?, ?)", (username, display_name, hashed_password, 1 if primary_admin else 0))
             database.commit()
-            flask.session["user_id"]  = cursor.lastrowid
-            flask.session["username"] = username
-            flask.session["priviledge"] = primary_admin
-            nyaruhodo.telemetry.Info(username, f"Account created '{username}' ({cursor.lastrowid}){' [admin]' if primary_admin else ''}")
+            flask.session["user_id"]      = cursor.lastrowid
+            flask.session["username"]     = username
+            flask.session["display_name"] = display_name
+            flask.session["priviledge"]   = primary_admin
+            nyaruhodo.telemetry.Info(username, f"Account created '{username}' (display: '{display_name}') ({cursor.lastrowid}){' [admin]' if primary_admin else ''}")
 
             if primary_admin:
 
@@ -121,7 +131,7 @@ def CreateAccount():
 
             nyaruhodo.telemetry.Warn("anonymous", f"Account creation failed '{username}'")
 
-            return flask.render_template("create-account.html", message = "Account creation failed. The username you entered is already in use.")
+            return flask.render_template("create-account.html", message = "Account creation failed. That username is already in use.")
 
     return flask.render_template("create-account.html")
 
@@ -130,16 +140,17 @@ def SignIn():
 
     if flask.request.method == "POST":
 
-        username = flask.request.form["username"]
+        username = flask.request.form["username"].strip()
         password = flask.request.form["password"]
         database = GetDatabase()
         userdata = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
 
         if userdata and werkzeug.security.check_password_hash(userdata["password"], password):
 
-            flask.session["user_id"]  = userdata["user_id"]
-            flask.session["username"] = userdata["username"]
-            flask.session["priviledge"] = bool(userdata["priviledge"])
+            flask.session["user_id"]      = userdata["user_id"]
+            flask.session["username"]     = userdata["username"]
+            flask.session["display_name"] = userdata["display_name"]
+            flask.session["priviledge"]   = bool(userdata["priviledge"])
             nyaruhodo.telemetry.Info(username, f"Account sign in '{username}'")
 
             if userdata["priviledge"]:
@@ -197,7 +208,7 @@ def AnalyseFile():
 
         return flask.jsonify({"error": "The filename contains no valid characters."}), 400
 
-    unique_filename = f"{uuid.uuid4().hex}_{filename}"
+    unique_filename   = f"{uuid.uuid4().hex}_{filename}"
     filepath          = os.path.join(server.config["FILES"], unique_filename)
     file.save(filepath)
     nyaruhodo.telemetry.Info(username, f"Analysis started '{filename}'")
@@ -239,27 +250,29 @@ def AnalyseFile():
 @RequireSignIn
 def Dashboard():
 
-    database = GetDatabase()
-    entries  = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (flask.session["user_id"],)).fetchall()
-    userdata = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    database     = GetDatabase()
+    entries      = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (flask.session["user_id"],)).fetchall()
+    userdata     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    display_name = flask.session.get("display_name", flask.session.get("username", ""))
     nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), "Dashboard access")
 
-    return flask.render_template("dashboard.html", username = flask.session["username"], entries = entries, virustotal_api_key = userdata["virustotal_api_key"] or "",)
+    return flask.render_template("dashboard.html", display_name = display_name, entries = entries, virustotal_api_key = userdata["virustotal_api_key"] or "")
 
 @server.route("/dashboard/delete-account", methods = ["POST"])
 @RequireSignIn
 def DeleteAccount():
 
-    username = flask.session.get("username", "anonymous")
-    password = flask.request.form.get("password")
-    database = GetDatabase()
-    userdata = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
+    username     = flask.session.get("username", "anonymous")
+    display_name = flask.session.get("display_name", username)
+    password     = flask.request.form.get("password")
+    database     = GetDatabase()
+    userdata     = database.execute("SELECT * FROM users WHERE user_id = ?", (flask.session["user_id"],)).fetchone()
 
     if not userdata or not werkzeug.security.check_password_hash(userdata["password"], password):
 
         entries = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (flask.session["user_id"],)).fetchall()
 
-        return flask.render_template("dashboard.html", username = flask.session["username"], entries = entries, virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else "",message = "Account deletion failed. The password you entered is incorrect.",)
+        return flask.render_template("dashboard.html", display_name = display_name, entries = entries, virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else "", message = "Account deletion failed. The password you entered is incorrect.")
 
     database.execute("DELETE FROM records WHERE user_id = ?", (flask.session["user_id"],))
     database.execute("DELETE FROM users WHERE user_id = ?", (flask.session["user_id"],))
@@ -301,13 +314,13 @@ def VirusTotal():
 def AdminDashboard():
 
     database     = GetDatabase()
-    normal_users = database.execute("SELECT COUNT(*) FROM users").fetchone()[0]
+    normal_users = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 0").fetchone()[0]
     admin_users  = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
     events       = database.execute("SELECT outcome, COUNT(*) AS cnt FROM events GROUP BY outcome").fetchall()
     event_data   = {event["outcome"]: event["cnt"] for event in events}
     records      = database.execute("SELECT status, COUNT(*) AS cnt FROM records GROUP BY status").fetchall()
     record_data  = {record["status"]: record["cnt"] for record in records}
-    users        = database.execute("SELECT u.user_id, u.username, u.priviledge, COUNT(r.record_id) AS file_count, COALESCE(SUM(CASE WHEN r.status = 'Mismatch' THEN 1 ELSE 0 END), 0) AS mismatch_count, COALESCE(SUM(CASE WHEN r.status = 'Unknown'  THEN 1 ELSE 0 END), 0) AS unknown_count, MAX(r.created) AS last_scan FROM users u LEFT JOIN records r ON u.user_id = r.user_id GROUP BY u.user_id ORDER BY u.username COLLATE NOCASE").fetchall()
+    users        = database.execute("SELECT u.user_id, u.username, u.display_name, u.priviledge, COUNT(r.record_id) AS file_count, COALESCE(SUM(CASE WHEN r.status = 'Mismatch' THEN 1 ELSE 0 END), 0) AS mismatch_count, COALESCE(SUM(CASE WHEN r.status = 'Unknown' THEN 1 ELSE 0 END), 0) AS unknown_count, MAX(r.created) AS last_scan FROM users u LEFT JOIN records r ON u.user_id = r.user_id GROUP BY u.user_id ORDER BY u.username COLLATE NOCASE").fetchall()
     user_records = {}
 
     for user in users:
@@ -317,9 +330,10 @@ def AdminDashboard():
     scans           = event_data.get("completed", 0) + event_data.get("failed", 0)
     scans_completed = event_data.get("completed", 0)
     scans_failed    = event_data.get("failed", 0)
+    display_name    = flask.session.get("display_name", flask.session.get("username", ""))
     nyaruhodo.telemetry.Info(flask.session.get("username", "anonymous"), "Admin dashboard access")
 
-    return flask.render_template("admin-dashboard.html", username = flask.session["username"], normal_users = normal_users, admin_users = admin_users, scans = scans, scans_completed = scans_completed, scans_failed = scans_failed, record_data = record_data, users = users, user_records = user_records, current_user_id = flask.session["user_id"],)
+    return flask.render_template("admin-dashboard.html", display_name = display_name, normal_users = normal_users, admin_users = admin_users, scans = scans, scans_completed = scans_completed, scans_failed = scans_failed, record_data = record_data, users = users, user_records = user_records, current_user_id = flask.session["user_id"])
 
 @server.route("/dashboard/admin/toggle-admin/<int:user_id>", methods = ["POST"])
 @RequireAdmin
@@ -352,7 +366,7 @@ def AdminDeleteUser(user_id):
         return flask.redirect(flask.url_for("AdminDashboard"))
 
     database = GetDatabase()
-    userdata   = database.execute("SELECT * FROM users WHERE user_id = ?", (user_id,)).fetchone()
+    userdata = database.execute("SELECT * FROM users WHERE user_id = ?", (user_id,)).fetchone()
 
     if not userdata:
 

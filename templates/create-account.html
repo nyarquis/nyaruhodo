@@ -1,19 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="card form-card">
+<div class="card">
     <h2>Register</h2>
     {% if message %}<div class="form-error">{{ message }}</div>{% endif %}
-    <form method="post">
+    <form method="post" class="form-narrow">
         <div class="form-group">
             <label class="form-label" for="username">Username</label>
-            <input type="text" id="username" name="username" class="form-input" required>
+            <input type="text" id="username" name="username" class="form-input" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="display_name">Display Name</label>
+            <input type="text" id="display_name" name="display_name" class="form-input" autocomplete="nickname" required>
         </div>
         <div class="form-group">
             <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-input" required>
+            <input type="password" id="password" name="password" class="form-input" autocomplete="new-password" required>
         </div>
         <button type="submit" class="button">Register</button>
     </form>
-    <a class="form-alt-link" href="{{ url_for('SignIn') }}">Already have an account? Sign in</a>
+    Already have an account? <a class="form-alt-link" href="{{ url_for('SignIn') }}">Sign in</a>.
 </div>
 {% endblock %}

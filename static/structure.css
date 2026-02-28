@@ -395,29 +395,29 @@ th {
     margin-bottom: 1rem;
 }
 
-.result-vt-counts {
+.result-virustotal-counts {
     display: flex;
     gap: 15px;
     margin-bottom: 10px;
 }
 
-.vt-count {
+.virustotal-count {
     font-weight: bold;
 }
 
-.vt-malicious {
+.virustotal-malicious {
     color: var(--color-malicious);
 }
 
-.vt-suspicious {
+.virustotal-suspicious {
     color: var(--color-suspicious);
 }
 
-.vt-harmless {
+.virustotal-harmless {
     color: var(--color-harmless);
 }
 
-.result-vt-link {
+.result-virustotal-link {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
 }
@@ -710,7 +710,7 @@ th {
     padding: 1rem;
 }
 
-.btn-outline {
+.button-outline {
     background: none;
     border-radius: 6px;
     border: 1px solid var(--primary);
@@ -722,22 +722,22 @@ th {
     white-space: nowrap;
 }
 
-.btn-outline:hover {
+.button-outline:hover {
     background: var(--primary);
     color: var(--bg-header);
 }
 
-.btn-outline--muted {
+.button-outline--muted {
     border-color: var(--border-dark);
     color: var(--text-muted);
 }
 
-.btn-outline--muted:hover {
+.button-outline--muted:hover {
     background: var(--bg-surface);
     color: var(--text-main);
 }
 
-.btn-danger-sm {
+.button-danger-sm {
     background: none;
     border-radius: 6px;
     border: 2px solid var(--color-danger);
@@ -749,7 +749,7 @@ th {
     white-space: nowrap;
 }
 
-.btn-danger-sm:hover {
+.button-danger-sm:hover {
     background: var(--color-danger);
     color: var(--bg-header);
 }
@@ -767,6 +767,94 @@ th {
 
 .no-users-note {
     color: var(--text-muted);
+}
+
+.main-wrapper--narrow {
+    max-width: 560px;
+}
+
+.page-content {
+    animation: contentEnter 0.35s ease both;
+}
+
+@keyframes contentEnter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-right {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.navbar-display-name {
+    color: var(--text-muted-light);
+    font-family: "Fira Code", monospace;
+    font-size: 0.875rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+}
+
+.nav-divider {
+    border-top: 1px solid var(--border-dark);
+    margin: 0.5rem 0;
+}
+
+.form-hint {
+    color: var(--text-muted);
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.form-label-optional {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.api-key-form {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.api-key-input {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.api-key-button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    width: auto;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.modal-action-button {
+    flex: 1;
+}
+
+.button--muted {
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
+.button--muted:hover {
+    background: var(--border-light);
 }
 
 #theme-toggle-link {

@@ -25,11 +25,16 @@
             <span class="brand-slash"> / </span>
             Nyaruhodo!
         </a>
-        <button class="menu-toggle" aria-label="Toggle Navigation Menu">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
+        <div class="navbar-right">
+            {% if session.get('user_id') %}
+            <span class="navbar-display-name">{{ session.get('display_name', '') }}</span>
+            {% endif %}
+            <button class="menu-toggle" aria-label="Toggle Navigation Menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
     </nav>
     <div class="nav-links">
         {% if session.get('user_id') %}
@@ -44,7 +49,9 @@
         {% endif %}
     </div>
     <div class="main-wrapper">
-        {% block content %}{% endblock %}
+        <div class="page-content">
+            {% block content %}{% endblock %}
+        </div>
     </div>
     <footer class="footer">
         <div class="footer-content">
