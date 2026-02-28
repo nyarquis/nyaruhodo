@@ -7,10 +7,12 @@
         <div class="form-group">
             <label class="form-label" for="username">Username</label>
             <input type="text" id="username" name="username" class="form-input" autocomplete="username" required>
+            <span class="form-hint">Used to sign in. Case-insensitive.</span>
         </div>
         <div class="form-group">
             <label class="form-label" for="display_name">Display Name</label>
             <input type="text" id="display_name" name="display_name" class="form-input" autocomplete="nickname" required>
+            <span class="form-hint">Shown in the interface. Does not need to be unique.</span>
         </div>
         <div class="form-group">
             <label class="form-label" for="password">Password</label>
@@ -18,6 +20,6 @@
         </div>
         <button type="submit" class="button">Register</button>
     </form>
-    <a class="form-alt-link" href="{{ url_for('SignIn') }}">Sign in.</a>
+    <a class="form-alt-link" href="{{ url_for('SignIn') }}">Already have an account? Sign in</a>
 </div>
 {% endblock %}
