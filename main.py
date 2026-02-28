@@ -113,7 +113,7 @@ def CreateAccount():
             admin_users                   = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
             primary_admin                 = (admin_users == 0)
             password                      = werkzeug.security.generate_password_hash(password)
-            cursor                        = database.execute("INSERT INTO users (username, display_name, password, priviledge) VALUES (?, ?, ?, ?)", (username, display_name, hashed_password, 1 if primary_admin else 0))
+            cursor                        = database.execute("INSERT INTO users (username, display_name, password, priviledge) VALUES (?, ?, ?, ?)", (username, display_name, password, 1 if primary_admin else 0))
             database.commit()
             flask.session["user_id"]      = cursor.lastrowid
             flask.session["username"]     = username
