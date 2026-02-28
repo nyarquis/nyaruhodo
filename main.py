@@ -42,6 +42,7 @@ def InitialiseDatabase():
 
     with server.app_context():
 
+        os.makedirs(server.config["FILES"], exist_ok=True)
         database = GetDatabase()
         database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0)")
         database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER  NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
@@ -258,7 +259,7 @@ def DeleteAccount():
 
         entries = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (flask.session["user_id"],)).fetchall()
 
-        return flask.render_template("dashboard.html", username = flask.session["username"], entries = entries, message = "Account deletion failed. The password you entered is incorrect.")
+        return flask.render_template("dashboard.html", username = flask.session["username"], entries = entries, virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else "",message = "Account deletion failed. The password you entered is incorrect.",)
 
     database.execute("DELETE FROM records WHERE user_id = ?", (flask.session["user_id"],))
     database.execute("DELETE FROM users WHERE user_id = ?", (flask.session["user_id"],))

@@ -17,6 +17,7 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     padding-top: 6.25vh;
+    padding-bottom: 12rem;
     transition: padding-right 0.3s ease-in-out;
 }
 
@@ -53,7 +54,7 @@ select {
     align-items: center;
     color: var(--primary);
     display: flex;
-    font-family: "Playwrite IN", cursive;
+    font-family: "Leckerli One", cursive;
     font-size: 1.5rem;
     font-weight: 400;
     gap: 12px;
@@ -329,7 +330,9 @@ th {
     margin-top: auto;
     min-width: 100vw;
     padding: 3rem 0;
-    position: relative;
+    bottom: 0;
+    left: 0;
+    position: fixed;
     transition: margin-right 0.3s ease-in-out;
     width: 100vw;
     z-index: 10005;
@@ -353,7 +356,7 @@ th {
 .footer-section strong {
     color: var(--text-muted-light);
     display: block;
-    font-family: "Playwrite IN", cursive;
+    font-family: "Leckerli One", cursive;
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
 }
