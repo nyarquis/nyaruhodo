@@ -26,6 +26,50 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    const PASSWORD_TOGGLE_ICONS = {
+        show: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>',
+        hide: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="3" x2="21" y2="21" /><path d="M10.5 6.2C11 6.07 11.49 6 12 6C18.5 6 22 12 22 12C22 12 21.06 13.76 19.5 15.24" /><path d="M4.56 9.3C3.07 10.65 2 12 2 12C2 12 5.5 18 12 18C13.81 18 15.41 17.47 16.77 16.67" /><path d="M9.18 9.18A3 3 0 0 0 14.82 14.82" /></svg>'
+    };
+
+    document.addEventListener("click", function(event) {
+        const toggle = event.target.closest(".password-toggle");
+        if (!toggle) return;
+        const input = toggle.closest(".password-field").querySelector("input");
+        if (!input) return;
+        const showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        toggle.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+        toggle.innerHTML = showing ? PASSWORD_TOGGLE_ICONS.show : PASSWORD_TOGGLE_ICONS.hide;
+    });
+
+    const apiKeyInput        = document.getElementById("apiKeyInput");
+    const apiKeySaveButton   = document.getElementById("apiKeySaveButton");
+    const apiKeyRemoveButton = document.getElementById("apiKeyRemoveButton");
+
+    if (apiKeyInput && apiKeySaveButton && apiKeyRemoveButton) {
+
+        function updateApiKeyButtons() {
+            const hasKey = apiKeyInput.value.trim().length > 0;
+            apiKeySaveButton.classList.toggle("is-hidden", hasKey);
+            apiKeyRemoveButton.classList.toggle("is-hidden", !hasKey);
+        }
+
+        updateApiKeyButtons();
+
+        apiKeyInput.addEventListener("input", updateApiKeyButtons);
+
+        apiKeyRemoveButton.addEventListener("click", function() {
+            apiKeyInput.value = "";
+            apiKeyInput.type  = "password";
+            const toggle = apiKeyInput.closest(".password-field").querySelector(".password-toggle");
+            if (toggle) {
+                toggle.innerHTML   = PASSWORD_TOGGLE_ICONS.show;
+                toggle.setAttribute("aria-label", "Show API key");
+            }
+            document.getElementById("apiKeyForm").submit();
+        });
+    }
+
     const uploadForm = document.getElementById("uploadForm");
 
     if (uploadForm) {

@@ -3,17 +3,20 @@
 <div class="card">
     <h2>Sign In</h2>
     {% if message %}<div class="form-error">{{ message }}</div>{% endif %}
-    <form method="post" class="form-narrow">
+    <form method="post">
         <div class="form-group">
             <label class="form-label" for="username">Username</label>
             <input type="text" id="username" name="username" class="form-input" autocomplete="username" required>
         </div>
         <div class="form-group">
             <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" name="password" class="form-input" autocomplete="current-password" required>
+            <div class="password-field">
+                <input type="password" id="password" name="password" class="form-input" autocomplete="current-password" required>
+                <button type="button" class="password-toggle" aria-label="Show password"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg></button>
+            </div>
         </div>
         <button type="submit" class="button">Sign In</button>
     </form>
-    <a class="form-alt-link" href="{{ url_for('CreateAccount') }}">Create an account</a>
+    <a class="form-alt-link" href="{{ url_for('CreateAccount') }}">Create an account.</a>
 </div>
 {% endblock %}

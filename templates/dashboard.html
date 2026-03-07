@@ -36,9 +36,15 @@
 
 <div class="card">
     <h3>VirusTotal API Key</h3>
-    <form method="post" action="{{ url_for('VirusTotal') }}" class="api-key-form">
-        <input type="text" name="virustotal_api_key" value="{{ virustotal_api_key }}" class="form-input api-key-input" placeholder="API key">
-        <button type="submit" class="button api-key-button">Save Key</button>
+    <form method="post" action="{{ url_for('VirusTotal') }}" id="apiKeyForm">
+        <div class="password-field api-key-field">
+            <input type="password" name="virustotal_api_key" id="apiKeyInput" value="{{ virustotal_api_key }}" class="form-input" placeholder="Paste API key" autocomplete="off">
+            <button type="button" class="password-toggle" aria-label="Show API key"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg></button>
+        </div>
+        <div class="api-key-actions">
+            <button type="submit" id="apiKeySaveButton" class="button">Save Key</button>
+            <button type="button" id="apiKeyRemoveButton" class="button-outline button-outline--muted">Remove Key</button>
+        </div>
     </form>
 </div>
 
@@ -53,7 +59,10 @@
         <h3 class="modal-heading">Confirm Account Deletion</h3>
         <p class="modal-note">Enter your password to confirm. This cannot be undone.</p>
         <form method="post" action="{{ url_for('DeleteAccount') }}">
-            <input type="password" name="password" class="form-input" placeholder="Password" autocomplete="current-password" required>
+            <div class="password-field">
+                <input type="password" name="password" class="form-input" placeholder="Password" autocomplete="current-password" required>
+                <button type="button" class="password-toggle" aria-label="Show password"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg></button>
+            </div>
             <div class="modal-actions">
                 <button type="submit" class="button-icon-danger modal-action-flex">Confirm</button>
                 <button type="button" id="cancelDeleteAccount" class="button button-secondary modal-action-flex">Cancel</button>
