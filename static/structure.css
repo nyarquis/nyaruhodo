@@ -518,58 +518,11 @@ body.menu-open .theme-column {
 
 .metric-card {
     background: var(--bg-surface);
-    border-left: 4px solid var(--primary);
+    border: 1px solid var(--border-light);
     border-radius: 8px;
-    padding: 1.25rem 1rem;
+    flex: 1;
+    padding: 1rem;
     text-align: center;
-}
-
-.metric-card--completed {
-  border-color: var(--color-harmless);
-}
-
-.metric-card--failed {
-  border-color: var(--color-danger);
-}
-
-.metric-card--match {
-  border-color: var(--color-match);
-}
-
-.metric-card--mismatch {
-  border-color: var(--color-malicious);
-}
-
-.metric-card--secondary {
-  border-color: var(--secondary);
-}
-
-.metric-card--unknown {
-  border-color: var(--color-suspicious);
-}
-
-.metric-card--completed .metric-value {
-  color: var(--color-harmless);
-}
-
-.metric-card--failed .metric-value {
-  color: var(--color-danger);
-}
-
-.metric-card--match .metric-value {
-  color: var(--color-match);
-}
-
-.metric-card--mismatch .metric-value {
-  color: var(--color-malicious);
-}
-
-.metric-card--secondary .metric-value {
-  color: var(--secondary);
-}
-
-.metric-card--unknown .metric-value {
-  color: var(--color-suspicious);
 }
 
 .metric-divider {
@@ -578,10 +531,29 @@ body.menu-open .theme-column {
     padding-top: 1.5rem;
 }
 
-.metric-grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+.metric-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.metric-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.metric-group-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.metric-row {
+    display: flex;
+    gap: 0.75rem;
 }
 
 .metric-label {
@@ -596,7 +568,7 @@ body.menu-open .theme-column {
 }
 
 .metric-value {
-    color: var(--primary);
+    color: var(--text-main);
     font-size: 2rem;
     font-weight: 700;
     line-height: 1.1;
@@ -1033,22 +1005,21 @@ body.menu-open .nav-links {
 @media (min-width: 900px) {
 
     .card--wide {
-        grid-column: 1 / -1;
+        column-span: all;
     }
 
     .main-wrapper--narrow .page-content {
-        display: block;
+        column-count: 1;
     }
-
+    
     .page-content {
-        align-items: start;
-        display: grid;
-        gap: 2rem;
-        grid-template-columns: repeat(2, 1fr);
+        column-count: 2;
+        column-gap: 2rem;
     }
 
     .page-content > .card {
-        margin-bottom: 0;
+        break-inside: avoid;
+        margin-bottom: 2rem;
     }
 }
 

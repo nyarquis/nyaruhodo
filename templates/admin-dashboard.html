@@ -13,42 +13,56 @@
     <h3>Metrics</h3>
     <p class="card-section-note">Scan counts include anonymous users. Match, mismatch, and unknown totals reflect authenticated scans only.</p>
 
-    <div class="metric-grid">
+    <div class="metric-groups">
 
-        <div class="metric-card">
-            <div class="metric-value">{{ normal_users }}</div>
-            <div class="metric-label">Users</div>
-            <div class="metric-sublabel">({{ admin_users }} admin)</div>
+        <div class="metric-group">
+            <span class="metric-group-label">Users</span>
+            <div class="metric-row">
+                <div class="metric-card">
+                    <div class="metric-value">{{ normal_users }}</div>
+                    <div class="metric-label">Normal</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ admin_users }}</div>
+                    <div class="metric-label">Admins</div>
+                </div>
+            </div>
         </div>
 
-        <div class="metric-card metric-card--secondary">
-            <div class="metric-value">{{ scans }}</div>
-            <div class="metric-label">Scans Started</div>
+        <div class="metric-group">
+            <span class="metric-group-label">Scans</span>
+            <div class="metric-row">
+                <div class="metric-card">
+                    <div class="metric-value">{{ scans }}</div>
+                    <div class="metric-label">Started</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ scans_completed }}</div>
+                    <div class="metric-label">Completed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ scans_failed }}</div>
+                    <div class="metric-label">Failed</div>
+                </div>
+            </div>
         </div>
 
-        <div class="metric-card metric-card--completed">
-            <div class="metric-value">{{ scans_completed }}</div>
-            <div class="metric-label">Completed</div>
-        </div>
-
-        <div class="metric-card metric-card--failed">
-            <div class="metric-value">{{ scans_failed }}</div>
-            <div class="metric-label">Failed</div>
-        </div>
-
-        <div class="metric-card metric-card--match">
-            <div class="metric-value">{{ record_data.get('Match', 0) }}</div>
-            <div class="metric-label">Matches</div>
-        </div>
-
-        <div class="metric-card metric-card--mismatch">
-            <div class="metric-value">{{ record_data.get('Mismatch', 0) }}</div>
-            <div class="metric-label">Mismatches</div>
-        </div>
-
-        <div class="metric-card metric-card--unknown">
-            <div class="metric-value">{{ record_data.get('Unknown', 0) }}</div>
-            <div class="metric-label">Unknown</div>
+        <div class="metric-group">
+            <span class="metric-group-label">Results</span>
+            <div class="metric-row">
+                <div class="metric-card">
+                    <div class="metric-value">{{ record_data.get('Match', 0) }}</div>
+                    <div class="metric-label">Matches</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ record_data.get('Mismatch', 0) }}</div>
+                    <div class="metric-label">Mismatches</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">{{ record_data.get('Unknown', 0) }}</div>
+                    <div class="metric-label">Unknown</div>
+                </div>
+            </div>
         </div>
 
     </div>
