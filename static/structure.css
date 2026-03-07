@@ -54,7 +54,7 @@ select {
     align-items: center;
     color: var(--primary);
     display: flex;
-    font-family: "Leckerli One", cursive;
+    font-family: "Cookie", cursive;
     font-size: 1.5rem;
     font-weight: 400;
     gap: 12px;
@@ -500,7 +500,7 @@ th {
 .footer-section strong {
     color: var(--text-muted-light);
     display: block;
-    font-family: "Leckerli One", cursive;
+    font-family: "Cookie", cursive;
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
 }
@@ -616,12 +616,29 @@ th {
     text-align: center;
 }
 
-.metric-card--secondary  { border-color: var(--secondary); }
-.metric-card--completed  { border-color: var(--color-harmless); }
-.metric-card--failed     { border-color: var(--color-danger); }
-.metric-card--match      { border-color: var(--color-match); }
-.metric-card--mismatch   { border-color: var(--color-malicious); }
-.metric-card--unknown    { border-color: var(--color-suspicious); }
+.metric-card--secondary  {
+    border-color: var(--secondary);
+}
+
+.metric-card--completed  {
+    border-color: var(--color-harmless);
+}
+
+.metric-card--failed     {
+    border-color: var(--color-danger);
+}
+
+.metric-card--match      {
+    border-color: var(--color-match);
+}
+
+.metric-card--mismatch   {
+    border-color: var(--color-malicious);
+}
+
+.metric-card--unknown    {
+    border-color: var(--color-suspicious);
+}
 
 .metric-value {
     font-size: 2rem;
@@ -870,42 +887,23 @@ th {
     text-decoration: underline;
 }
 
-/* ── Visibility utility ──────────────────────────────────────────────────── */
-
 .is-hidden {
     display: none !important;
 }
 
-/* ── Body line-height ────────────────────────────────────────────────────── */
-
-/*
- * The base stylesheet sets no line-height, so body text in cards sits very
- * tightly. 1.6 is comfortable for the monospace font in use.
- */
 body {
     line-height: 1.6;
 }
-
-/* ── Main wrapper — more canvas breathing room on desktop ────────────────── */
 
 .main-wrapper {
     padding: 3rem;
 }
 
-/* ── Cards — framing and internal space ──────────────────────────────────── */
-
-/*
- * The original card has box-shadow: none and no border, which means it sits
- * flush against --bg-canvas with very little perceptual separation. A thin
- * border and a soft shadow lift each card into a distinct panel.
- */
 .card {
     border: 1px solid var(--border-light);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     padding: 2.5rem 3rem;
 }
-
-/* ── Card headings — space below so content does not crowd the title ─────── */
 
 .card h2 {
     margin-bottom: 1.25rem;
@@ -914,8 +912,6 @@ body {
 .card h3 {
     margin-bottom: 1rem;
 }
-
-/* ── Navbar right cluster ────────────────────────────────────────────────── */
 
 .navbar-right {
     align-items: center;
@@ -933,8 +929,6 @@ body {
     white-space: nowrap;
 }
 
-/* ── Page-content entry animation ────────────────────────────────────────── */
-
 @keyframes page-enter {
     from {
         opacity: 0;
@@ -950,13 +944,6 @@ body {
     animation: page-enter 0.25s ease-out both;
 }
 
-/* ── Form layouts ────────────────────────────────────────────────────────── */
-
-/*
- * .form-narrow keeps form controls at a comfortable reading width inside a
- * full-width card. The card itself matches all other cards; only the inputs
- * are constrained.
- */
 .form-narrow {
     max-width: 480px;
 }
@@ -1013,14 +1000,10 @@ body {
     text-decoration: underline;
 }
 
-/* ── Submit button — full width, taller, more presence ──────────────────── */
-
 .form-narrow .button {
     margin-top: 0.5rem;
     padding: 0.9rem 1.5rem;
 }
-
-/* ── Index page upload form ──────────────────────────────────────────────── */
 
 .virustotal-row {
     align-items: center;
@@ -1033,14 +1016,10 @@ body {
     margin-top: 1.5rem;
 }
 
-/* ── Loading indicator ───────────────────────────────────────────────────── */
-
 .loading-indicator {
     margin-top: 20px;
     text-align: center;
 }
-
-/* ── Result box content ──────────────────────────────────────────────────── */
 
 .result-title {
     margin-bottom: 1rem;
@@ -1082,8 +1061,6 @@ body {
     margin-bottom: 1rem;
 }
 
-/* ── Metadata table ──────────────────────────────────────────────────────── */
-
 .table-scroll {
     overflow-x: auto;
 }
@@ -1105,8 +1082,6 @@ body {
     word-break: break-all;
 }
 
-/* ── VirusTotal counts ───────────────────────────────────────────────────── */
-
 .result-vt-counts {
     display: flex;
     gap: 15px;
@@ -1117,22 +1092,23 @@ body {
     font-weight: bold;
 }
 
-.vt-malicious  { color: var(--color-malicious); }
-.vt-suspicious { color: var(--color-suspicious); }
-.vt-harmless   { color: var(--color-harmless); }
+.vt-malicious  {
+    color: var(--color-malicious);
+}
+
+.vt-suspicious {
+    color: var(--color-suspicious);
+}
+
+.vt-harmless   {
+    color: var(--color-harmless);
+}
 
 .result-vt-link {
     font-size: 0.9rem;
     padding: 0.5rem 1rem;
 }
 
-/* ── Dashboard ───────────────────────────────────────────────────────────── */
-
-/*
- * The welcome heading and the History sub-heading were directly adjacent with
- * no separator. A bottom margin on the h2 and a top margin on the h3 (which
- * the .card h3 rule now supplies) create a clear hierarchy.
- */
 .dashboard-history-heading {
     border-top: 1px solid var(--border-light);
     margin-top: 1.5rem;
@@ -1237,12 +1213,29 @@ body {
     text-align: center;
 }
 
-.metric-card--secondary  { border-color: var(--secondary); }
-.metric-card--completed  { border-color: var(--color-harmless); }
-.metric-card--failed     { border-color: var(--color-danger); }
-.metric-card--match      { border-color: var(--color-match); }
-.metric-card--mismatch   { border-color: var(--color-malicious); }
-.metric-card--unknown    { border-color: var(--color-suspicious); }
+.metric-card--secondary  {
+    border-color: var(--secondary); 
+}
+
+.metric-card--completed  {
+    border-color: var(--color-harmless); 
+}
+
+.metric-card--failed     {
+    border-color: var(--color-danger);
+}
+
+.metric-card--match      {
+    border-color: var(--color-match);
+}
+
+.metric-card--mismatch   {
+    border-color: var(--color-malicious);
+}
+
+.metric-card--unknown    {
+    border-color: var(--color-suspicious);
+}
 
 .metric-value {
     color: var(--primary);
@@ -1251,12 +1244,29 @@ body {
     line-height: 1.1;
 }
 
-.metric-card--secondary  .metric-value { color: var(--secondary); }
-.metric-card--completed  .metric-value { color: var(--color-harmless); }
-.metric-card--failed     .metric-value { color: var(--color-danger); }
-.metric-card--match      .metric-value { color: var(--color-match); }
-.metric-card--mismatch   .metric-value { color: var(--color-malicious); }
-.metric-card--unknown    .metric-value { color: var(--color-suspicious); }
+.metric-card--secondary  .metric-value {
+    color: var(--secondary);
+}
+
+.metric-card--completed  .metric-value {
+    color: var(--color-harmless);
+}
+
+.metric-card--failed     .metric-value {
+    color: var(--color-danger);
+}
+
+.metric-card--match      .metric-value {
+    color: var(--color-match);
+}
+
+.metric-card--mismatch   .metric-value {
+    color: var(--color-malicious);
+}
+
+.metric-card--unknown    .metric-value {
+    color: var(--color-suspicious);
+}
 
 .metric-label {
     color: var(--text-muted);
@@ -1324,8 +1334,13 @@ body {
     white-space: nowrap;
 }
 
-.user-stat--mismatch { color: var(--color-malicious); }
-.user-stat--unknown  { color: var(--color-suspicious); }
+.user-stat--mismatch {
+    color: var(--color-malicious);
+}
+
+.user-stat--unknown  {
+    color: var(--color-suspicious);
+}
 
 .user-self-label {
     color: var(--text-muted);
@@ -1394,4 +1409,160 @@ body {
 
 .no-users-note {
     color: var(--text-muted);
+}
+
+@media (min-width: 900px) {
+
+    .page-content {
+        align-items: start;
+        display: grid;
+        gap: 2rem;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .page-content > .card {
+        margin-bottom: 0;
+    }
+
+    .main-wrapper--narrow .page-content {
+        display: block;
+    }
+
+    .card--wide {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 767px) {
+
+    html {
+        scroll-padding-top: 56px;
+    }
+
+    body {
+        font-size: 15px;
+        padding-bottom: 0;
+        padding-top: 56px;
+        transition: none;
+    }
+
+    body.menu-open {
+        padding-right: 0;
+    }
+
+    .navbar {
+        height: 56px;
+        padding: 0 1rem;
+    }
+
+    .brand {
+        font-family: "Cookie", cursive;
+        font-size: 1.1rem;
+        gap: 8px;
+    }
+
+    .brand-slash {
+        margin: 0 2px;
+    }
+
+    .menu-toggle {
+        align-items: center;
+        gap: 5px;
+        height: 44px;
+        justify-content: center;
+        min-height: 44px;
+        min-width: 44px;
+        width: 44px;
+    }
+
+    .menu-toggle .bar {
+        width: 24px;
+    }
+
+    .nav-links {
+        padding: 1rem 1.25rem 2rem 1.25rem;
+        top: 56px;
+        width: 72vw;
+    }
+
+    .nav-links a {
+        align-items: center;
+        display: flex;
+        min-height: 44px;
+    }
+
+    .main-wrapper {
+        padding: 1rem;
+    }
+
+    .page-content {
+        display: block;
+    }
+
+    .card {
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        padding: 1.25rem;
+    }
+
+    .upload-area {
+        padding: 2.5rem 1.25rem;
+    }
+
+    .button {
+        min-height: 44px;
+    }
+
+    .button-delete {
+        font-size: 1.1rem;
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem;
+    }
+
+    .button-icon-danger {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .modal-overlay {
+        align-items: flex-end;
+    }
+
+    .modal-box {
+        border-radius: 12px 12px 0 0;
+        border: none;
+        border-top: 1px solid var(--color-danger);
+        margin: 0;
+        max-width: 100%;
+        padding: 1.5rem 1.25rem 2rem 1.25rem;
+        width: 100%;
+    }
+
+    .form-input {
+        font-size: 1rem;
+        min-height: 44px;
+        padding: 0.65rem 0.75rem;
+    }
+
+    table {
+        min-width: 480px;
+    }
+
+    th,
+    td {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+
+    .result-box {
+        border-left-width: 4px;
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+
+    body.menu-open .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
 }

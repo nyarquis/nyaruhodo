@@ -4,18 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nyaruhodo!</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
-    <script>
-        (function() {
-            var useragent = navigator.userAgent || "";
-            var ismobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(useragent);
-            var structurefilename = ismobile ? "structure-mobile.css" : "structure.css";
-            document.write('<link rel="stylesheet" href="{{ url_for("static", filename="") }}' + structurefilename + '">');
-        })();
-    </script>
     <link id="current-theme" rel="stylesheet" href="{{ url_for('static', filename='light-mode.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='structure.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Leckerli+One&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cookie&display=swap">
 </head>
 <body>
     <nav class="navbar">
