@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const PASSWORD_TOGGLE_ICONS = {
-        show: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12C2 12 5.5 5 12 5C18.5 5 22 12 22 12C22 12 18.5 19 12 19C5.5 19 2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>',
-        hide: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="3" x2="21" y2="21" /><path d="M10.5 6.2C11 6.07 11.49 6 12 6C18.5 6 22 12 22 12C22 12 21.06 13.76 19.5 15.24" /><path d="M4.56 9.3C3.07 10.65 2 12 2 12C2 12 5.5 18 12 18C13.81 18 15.41 17.47 16.77 16.67" /><path d="M9.18 9.18A3 3 0 0 0 14.82 14.82" /></svg>'
+        show: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.002 15.577c1.133 0 2.096-.397 2.887-1.19.792-.793 1.188-1.756 1.188-2.89 0-1.132-.397-2.095-1.19-2.886-.793-.792-1.756-1.188-2.89-1.188-1.132 0-2.095.397-2.886 1.19-.792.793-1.188 1.756-1.188 2.89 0 1.132.397 2.095 1.19 2.886.793.792 1.756 1.188 2.89 1.188ZM12 14.2c-.75 0-1.387-.262-1.912-.787A2.604 2.604 0 0 1 9.3 11.5c0-.75.262-1.387.787-1.912A2.604 2.604 0 0 1 12 8.8c.75 0 1.387.262 1.912.787.525.526.788 1.163.788 1.913s-.262 1.387-.787 1.912A2.604 2.604 0 0 1 12 14.2Zm.001 4.3c-2.3 0-4.395-.634-6.286-1.903-1.89-1.269-3.283-2.968-4.177-5.097.894-2.13 2.286-3.829 4.176-5.097C7.604 5.134 9.699 4.5 11.999 4.5c2.3 0 4.394.634 6.286 1.903 1.89 1.268 3.283 2.968 4.177 5.097-.894 2.13-2.286 3.829-4.176 5.097C16.396 17.866 14.3 18.5 12 18.5ZM12 17a9.544 9.544 0 0 0 5.188-1.488A9.774 9.774 0 0 0 20.8 11.5a9.773 9.773 0 0 0-3.613-4.013A9.545 9.545 0 0 0 12 6a9.545 9.545 0 0 0-5.188 1.487A9.773 9.773 0 0 0 3.2 11.5a9.773 9.773 0 0 0 3.612 4.012A9.544 9.544 0 0 0 12 17Z"></svg>',
+        hide: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15.773 12.973 14.65 11.85c.15-.828-.086-1.573-.709-2.234-.622-.66-1.386-.916-2.29-.766l-1.124-1.123A3.453 3.453 0 0 1 12 7.423c1.135 0 2.098.396 2.89 1.188.791.791 1.187 1.754 1.187 2.889 0 .282-.025.545-.076.788-.05.244-.127.472-.228.685Zm3.18 3.112L17.85 15.05a10.951 10.951 0 0 0 1.688-1.588A8.901 8.901 0 0 0 20.8 11.5a9.848 9.848 0 0 0-3.587-4.013C15.654 6.497 13.917 6 12 6c-.483 0-.958.033-1.425.1a9.622 9.622 0 0 0-1.375.3L8.035 5.235a10.096 10.096 0 0 1 1.936-.556c.66-.12 1.335-.179 2.03-.179 2.343 0 4.456.646 6.34 1.938 1.883 1.293 3.256 2.98 4.12 5.062a11.29 11.29 0 0 1-1.435 2.502 11.083 11.083 0 0 1-2.072 2.083Zm.809 5.784-4.046-4.015a10.85 10.85 0 0 1-1.705.465A10.6 10.6 0 0 1 12 18.5c-2.35 0-4.464-.646-6.341-1.939-1.877-1.292-3.25-2.979-4.121-5.061a11.11 11.11 0 0 1 1.43-2.472A11.367 11.367 0 0 1 4.9 7.038l-2.77-2.8 1.055-1.053 17.63 17.63-1.053 1.054ZM5.954 8.092c-.528.42-1.042.926-1.541 1.517-.5.59-.904 1.22-1.213 1.891a9.834 9.834 0 0 0 3.588 4.012C8.346 16.505 10.083 17 12 17a8.08 8.08 0 0 0 1.36-.115c.451-.077.834-.157 1.148-.239l-1.266-1.296a3.606 3.606 0 0 1-1.242.227c-1.134 0-2.098-.396-2.89-1.188-.791-.791-1.187-1.754-1.187-2.889 0-.203.02-.414.062-.636.04-.22.096-.423.165-.606L5.954 8.092Z"></svg>'
     };
 
     document.addEventListener("click", function(event) {
@@ -49,14 +49,13 @@ document.addEventListener("DOMContentLoaded", function() {
     if (apiKeyInput && apiKeySaveButton && apiKeyRemoveButton) {
 
         function updateApiKeyButtons() {
-            const hasKey = apiKeyInput.value.trim().length > 0;
+            const form   = document.getElementById("apiKeyForm");
+            const hasKey = form.getAttribute("data-has-key") === "true";
             apiKeySaveButton.classList.toggle("is-hidden", hasKey);
             apiKeyRemoveButton.classList.toggle("is-hidden", !hasKey);
         }
 
         updateApiKeyButtons();
-
-        apiKeyInput.addEventListener("input", updateApiKeyButtons);
 
         apiKeyRemoveButton.addEventListener("click", function() {
             apiKeyInput.value = "";

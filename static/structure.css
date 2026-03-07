@@ -70,18 +70,12 @@ th {
     margin-top: 0.75rem;
 }
 
-.api-key-actions .button {
-    flex: 1;
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-}
-
+.api-key-actions .button,
 .api-key-actions .button-outline {
     flex: 1;
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
+    text-align: center;
+    width: auto;
 }
-
 .badge-match {
     background: var(--color-match);
     color: var(--color-match-fg);
@@ -163,19 +157,20 @@ body.menu-open .theme-column {
     background: var(--border-light);
 }
 
-.button-danger-sm {
+.button-danger {
     background: none;
+    border-radius: 8px;
     border: 2px solid var(--color-danger);
-    border-radius: 6px;
     color: var(--color-danger);
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.65rem;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
     white-space: nowrap;
 }
 
-.button-danger-sm:hover {
+.button-danger:hover {
     background: var(--color-danger);
     color: var(--bg-header);
 }
@@ -211,13 +206,14 @@ body.menu-open .theme-column {
 
 .button-outline {
     background: none;
+    border-radius: 8px;
     border: 1px solid var(--primary);
-    border-radius: 6px;
     color: var(--primary);
     cursor: pointer;
     font-family: inherit;
-    font-size: 0.8rem;
-    padding: 0.3rem 0.65rem;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
     white-space: nowrap;
 }
 

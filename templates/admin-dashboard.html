@@ -108,7 +108,7 @@
 
             <form method="post" action="{{ url_for('AdminDeleteUser', user_id=user.user_id) }}" style="display: inline; margin: 0;"
                   onsubmit="return confirm('Permanently delete {{ user.username }} and all their scan records?');">
-                <button type="submit" class="button-danger-sm">Delete</button>
+                <button type="submit" class="button-danger">Delete</button>
             </form>
 
             {% else %}
