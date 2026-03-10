@@ -3,7 +3,7 @@
 <div class="card">
     <h2>Sign In</h2>
     {% if message %}<div class="form-error">{{ message }}</div>{% endif %}
-    <form method="post">
+    <form method="post" action="{{ url_for('SignIn') }}">
         <div class="form-group">
             <label class="form-label" for="username">Username</label>
             <input type="text" id="username" name="username" class="form-input" autocomplete="username" required>
@@ -20,7 +20,9 @@
     <a class="form-alt-link" href="{{ url_for('CreateAccount') }}">Don't have an account? Create one.</a>
     <a class="form-alt-link" id="forgotPasswordLink" href="#">Forgot Password?</a>
 </div>
+{% endblock %}
 
+{% block modals %}
 <div id="forgotPasswordModal" class="modal-overlay {% if not forgot_open %}is-hidden{% endif %}">
     <div class="modal-box">
         <h3 class="modal-heading">Reset Password</h3>

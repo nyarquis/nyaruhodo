@@ -31,7 +31,6 @@
             </tbody>
         </table>
     </div>
-    {% if message %}<div style="margin-top: 1rem; color: var(--color-danger);">{{ message }}</div>{% endif %}
 </div>
 
 <div class="card">
@@ -51,10 +50,13 @@
 <div class="card">
     <h3>Delete Account</h3>
     <p class="card-muted-note">This will permanently delete your account and all scan history.</p>
+    {% if message %}<div class="form-error" style="margin-bottom: 1rem;">{{ message }}</div>{% endif %}
     <button id="deleteAccountButton" class="button-icon-danger">Delete Account</button>
 </div>
+{% endblock %}
 
-<div id="deleteAccountModal" class="modal-overlay is-hidden">
+{% block modals %}
+<div id="deleteAccountModal" class="modal-overlay is-hidden" data-open="{{ 'true' if delete_open else 'false' }}">
     <div class="modal-box">
         <h3 class="modal-heading">Confirm Account Deletion</h3>
         <p class="modal-note">Enter your password to confirm. This cannot be undone.</p>

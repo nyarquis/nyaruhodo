@@ -166,8 +166,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Forgot password modal
-
     const forgotPasswordLink  = document.getElementById("forgotPasswordLink");
     const forgotPasswordModal = document.getElementById("forgotPasswordModal");
     const cancelForgotPassword = document.getElementById("cancelForgotPassword");
@@ -188,8 +186,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
-    // Generate random password
 
     const generatePasswordLink = document.getElementById("generatePasswordLink");
 
@@ -299,19 +295,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     </div>
                 </div>`;
 
+        if (result.virustotal) {
+            markup += buildVirusTotalMarkup(result.virustotal);
+        }
+
+        markup += `</div>`;
+
         if (result.metadata && Object.keys(result.metadata).length > 0) {
-            markup += `<div class="result-analysis"><h4 class="result-section-heading">Metadata</h4><div class="table-container"><table class="metadata-table"><tbody>`;
+            markup += `<div class="card result-metadata-card"><h4 class="result-section-heading">Metadata</h4><div class="table-container"><table class="metadata-table"><tbody>`;
             for (const [key, value] of Object.entries(result.metadata)) {
                 markup += `<tr><td class="metadata-label">${escapeHtml(key)}</td><td class="metadata-value">${escapeHtml(String(value))}</td></tr>`;
             }
             markup += `</tbody></table></div></div>`;
         }
 
-        if (result.virustotal) {
-            markup += buildVirusTotalMarkup(result.virustotal);
-        }
-
-        markup += `</div>`;
         content.innerHTML = markup;
         container.classList.remove("is-hidden");
     }

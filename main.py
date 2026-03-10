@@ -304,7 +304,7 @@ def DeleteAccount():
 
         entries = database.execute("SELECT * FROM records WHERE user_id = ? ORDER BY created DESC", (flask.session["user_id"],)).fetchall()
 
-        return flask.render_template("dashboard.html", display_name = display_name, entries = entries, virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else "", message = "Account deletion failed. The password you entered is incorrect.")
+        return flask.render_template("dashboard.html", display_name = display_name, entries = entries, virustotal_api_key = userdata["virustotal_api_key"] if userdata and userdata["virustotal_api_key"] else "", message = "Account deletion failed. The password you entered is incorrect.", delete_open = True)
 
     database.execute("DELETE FROM records WHERE user_id = ?", (flask.session["user_id"],))
     database.execute("DELETE FROM users WHERE user_id = ?", (flask.session["user_id"],))

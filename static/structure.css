@@ -614,7 +614,7 @@ body.menu-open .theme-column {
     inset: 0;
     justify-content: center;
     position: fixed;
-    z-index: 20000;
+    z-index: 9500;
 }
 
 .nav-divider {
@@ -743,6 +743,10 @@ body.menu-open .nav-links {
     width: 1.125rem;
 }
 
+#resultsContainer {
+    break-inside: avoid;
+}
+
 .result-analysis {
     border-top: 1px solid var(--border-light);
     margin-top: 1rem;
@@ -757,26 +761,42 @@ body.menu-open .nav-links {
     padding: 1.5rem;
 }
 
+.result-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    margin-top: 2rem;
+    padding: 2.5rem 3rem;
+}
+
 .result-box.match {
-  border-color: var(--color-match);
+    background: var(--bg-result-match);
+    border-color: var(--border-result-match);
 }
 
 .result-box.mismatch {
-  border-color: var(--color-danger);
+    background: var(--bg-result-mismatch);
+    border-color: var(--border-result-mismatch);
 }
 
 .result-box.unknown {
-  border-color: var(--color-unknown);
+    background: var(--bg-result-unknown);
+    border-color: var(--border-result-unknown);
 }
 
 .result-box-primary {
-    border-color: var(--primary);
     margin-top: 1rem;
 }
 
 .result-box-spaced {
     margin-top: 1rem;
 }
+
+.result-metadata-card {
+    margin-top: 2rem;
+}
+
 
 .result-field-label {
     color: var(--text-muted-light);
@@ -1136,9 +1156,8 @@ body.menu-open .nav-links {
     }
 
     .result-box {
-        border-left-width: 4px;
         margin-top: 1rem;
-        padding: 1rem;
+        padding: 1.25rem;
     }
 
     table {

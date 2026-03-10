@@ -6,6 +6,12 @@
     --bg-surface: #e6e9ef;
     --bg-upload-hover: #e6e9ef;
     --bg-upload: #eff1f5;
+    --bg-result-match:      rgba(64, 160, 43, 0.25);
+    --bg-result-mismatch:   rgba(210, 15, 57, 0.25);
+    --bg-result-unknown:    rgba(223, 142, 29, 0.25);
+    --border-result-match:  rgba(64, 160, 43, 1);
+    --border-result-mismatch: rgba(210, 15, 57, 1);
+    --border-result-unknown:  rgba(223, 142, 29, 1);
     --border-dark: #bcc0cc; 
     --border-dashed: #9ca0b0;
     --border-light: #ccd0da;
