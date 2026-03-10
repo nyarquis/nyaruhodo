@@ -76,43 +76,29 @@ document.addEventListener("DOMContentLoaded", function() {
         const dropZone         = document.getElementById("dropZone");
         const fileNameDisplay  = document.getElementById("fileNameDisplay");
         const loadingIndicator = document.getElementById("loadingIndicator");
-        const resultsContainer = document.getElementById("resultsContainer");
-        const resultContent    = document.getElementById("resultContent");
         const submitButton     = document.getElementById("submitButton");
+        const resultsContainer = document.getElementById("resultsContainer");
 
-        fileInput.addEventListener("change", function() {
-            if (this.files && this.files[0]) {
-                fileNameDisplay.textContent      = this.files[0].name;
-                fileNameDisplay.style.fontWeight = "bold";
-            } else {
-                fileNameDisplay.innerHTML = "<strong>Click to upload</strong> or drag and drop";
-            }
-        });
+        if (fileInput && fileNameDisplay) {
+            fileInput.addEventListener("change", function() {
+                fileNameDisplay.textContent      = fileInput.files[0] ? fileInput.files[0].name : "No file chosen";
+                fileNameDisplay.style.fontWeight = fileInput.files[0] ? "bold" : "normal";
+            });
+        }
 
-        if (dropZone) {
-            dropZone.addEventListener("click", (event) => {
-                if (event.target === dropZone) {
-                    fileInput.click();
-                }
+        if (dropZone && fileInput) {
+            dropZone.addEventListener("dragover", (event) => {
+                event.preventDefault();
+                dropZone.classList.add("drag-over");
             });
 
-            ["dragenter", "dragover"].forEach(eventName => {
-                dropZone.addEventListener(eventName, (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    dropZone.classList.add("dragover");
-                }, false);
-            });
-
-            ["dragleave", "drop"].forEach(eventName => {
-                dropZone.addEventListener(eventName, (event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    dropZone.classList.remove("dragover");
-                }, false);
+            dropZone.addEventListener("dragleave", () => {
+                dropZone.classList.remove("drag-over");
             });
 
             dropZone.addEventListener("drop", (event) => {
+                event.preventDefault();
+                dropZone.classList.remove("drag-over");
                 const transfer     = event.dataTransfer;
                 const droppedFiles = transfer.files;
                 if (droppedFiles && droppedFiles[0]) {
@@ -156,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    const deleteAccountButton    = document.getElementById("deleteAccountButton");
+    const deleteAccountButton = document.getElementById("deleteAccountButton");
     const deleteAccountModal  = document.getElementById("deleteAccountModal");
     const cancelDeleteAccount = document.getElementById("cancelDeleteAccount");
 
@@ -180,10 +166,60 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    const themeStylesheet    = document.getElementById("current-theme");
-    const themeToggleNav     = document.getElementById("theme-toggle-link");
-    const themeToggleFooter  = document.getElementById("theme-toggle-link-footer");
-    const themeToggles       = [themeToggleNav, themeToggleFooter].filter(Boolean);
+    // Forgot password modal
+
+    const forgotPasswordLink  = document.getElementById("forgotPasswordLink");
+    const forgotPasswordModal = document.getElementById("forgotPasswordModal");
+    const cancelForgotPassword = document.getElementById("cancelForgotPassword");
+
+    if (forgotPasswordLink && forgotPasswordModal) {
+        forgotPasswordLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            forgotPasswordModal.classList.remove("is-hidden");
+        });
+
+        cancelForgotPassword.addEventListener("click", () => {
+            forgotPasswordModal.classList.add("is-hidden");
+        });
+
+        forgotPasswordModal.addEventListener("click", (event) => {
+            if (event.target === forgotPasswordModal) {
+                forgotPasswordModal.classList.add("is-hidden");
+            }
+        });
+    }
+
+    // Generate random password
+
+    const generatePasswordLink = document.getElementById("generatePasswordLink");
+
+    if (generatePasswordLink) {
+        generatePasswordLink.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const charset  = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}";
+            const length   = 20;
+            const array    = new Uint32Array(length);
+            crypto.getRandomValues(array);
+            const password = Array.from(array, (n) => charset[n % charset.length]).join("");
+
+            const input  = document.getElementById("password");
+            const toggle = input.closest(".password-field").querySelector(".password-toggle");
+
+            input.value = password;
+            input.type  = "text";
+
+            if (toggle) {
+                toggle.innerHTML = PASSWORD_TOGGLE_ICONS.hide;
+                toggle.setAttribute("aria-label", "Hide password");
+            }
+        });
+    }
+
+    const themeStylesheet   = document.getElementById("current-theme");
+    const themeToggleNav    = document.getElementById("theme-toggle-link");
+    const themeToggleFooter = document.getElementById("theme-toggle-link-footer");
+    const themeToggles      = [themeToggleNav, themeToggleFooter].filter(Boolean);
 
     function applyThemeLabel(isNight) {
         const label = isNight ? "Switch to Light Mode" : "Switch to Night Mode";
@@ -261,53 +297,33 @@ document.addEventListener("DOMContentLoaded", function() {
                         <span class="result-field-label">Description</span>
                         <span class="result-field-value">${escapeHtml(result.description)}</span>
                     </div>
-                </div>
-                <div class="result-analysis">
-                    <strong>Analysis:</strong> ${escapeHtml(result.message)}
-                </div>
-            </div>
-        `;
+                </div>`;
 
         if (result.metadata && Object.keys(result.metadata).length > 0) {
-            markup += formatMetadata(result.metadata);
+            markup += `<div class="result-analysis"><h4 class="result-section-heading">Metadata</h4><div class="table-container"><table class="metadata-table"><tbody>`;
+            for (const [key, value] of Object.entries(result.metadata)) {
+                markup += `<tr><td class="metadata-label">${escapeHtml(key)}</td><td class="metadata-value">${escapeHtml(String(value))}</td></tr>`;
+            }
+            markup += `</tbody></table></div></div>`;
         }
 
         if (result.virustotal) {
-            markup += formatVirusTotal(result.virustotal);
+            markup += buildVirusTotalMarkup(result.virustotal);
         }
 
+        markup += `</div>`;
         content.innerHTML = markup;
         container.classList.remove("is-hidden");
     }
 
-    function formatMetadata(metadata) {
-        const rows = Object.entries(metadata)
-            .map(([label, value]) => `
-                <tr>
-                    <td class="metadata-label">${escapeHtml(label)}</td>
-                    <td class="metadata-value">${escapeHtml(value)}</td>
-                </tr>`)
-            .join("");
-
-        return `
-            <div class="result-box result-box-primary">
-                <h4 class="result-section-heading">File Metadata</h4>
-                <div class="table-scroll">
-                    <table class="metadata-table">
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-            </div>`;
-    }
-
-    function formatVirusTotal(virustotal) {
+    function buildVirusTotalMarkup(virustotal) {
         if (virustotal.error) {
-            return `<div class="result-box mismatch result-box-spaced"><h4>VirusTotal Error</h4><p>${escapeHtml(virustotal.message || virustotal.details || "An error occurred during the VirusTotal query.")}</p></div>`;
+            return `<div class="result-box unknown result-box-spaced"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.error)}</p></div>`;
         }
         if (virustotal.message && !virustotal.virustotal_malicious && virustotal.virustotal_malicious !== 0) {
             return `<div class="result-box unknown result-box-spaced"><h4>VirusTotal</h4><p>${escapeHtml(virustotal.message)} <a href="${escapeHtml(virustotal.link)}" target="_blank">Submit for analysis.</a></p></div>`;
         }
-        const isClean   = virustotal.virustotal_malicious === 0 && virustotal.virustotal_suspicious === 0;
+        const isClean     = virustotal.virustotal_malicious === 0 && virustotal.virustotal_suspicious === 0;
         const statusClass = isClean ? "match" : "mismatch";
 
         return `

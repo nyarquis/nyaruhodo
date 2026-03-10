@@ -1,5 +1,6 @@
 import flask
 import functools
+import json
 import os
 import sqlite3
 import uuid
@@ -44,7 +45,7 @@ def InitialiseDatabase():
 
         os.makedirs(server.config["FILES"], exist_ok=True)
         database = GetDatabase()
-        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL COLLATE NOCASE, display_name TEXT NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0)")
+        database.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE NOT NULL COLLATE NOCASE, display_name TEXT NOT NULL, password TEXT NOT NULL, virustotal_api_key TEXT, priviledge INTEGER DEFAULT 0, password_history TEXT DEFAULT '[]')")
         database.execute("CREATE TABLE IF NOT EXISTS records (record_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, filename TEXT NOT NULL, filetype TEXT, status TEXT, created DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users (user_id))")
         database.execute("CREATE TABLE IF NOT EXISTS events (event_id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, filename TEXT, outcome TEXT NOT NULL, created DATETIME DEFAULT CURRENT_TIMESTAMP)")
         database.commit()
@@ -112,8 +113,9 @@ def CreateAccount():
 
             admin_users                   = database.execute("SELECT COUNT(*) FROM users WHERE priviledge = 1").fetchone()[0]
             primary_admin                 = (admin_users == 0)
-            password                      = werkzeug.security.generate_password_hash(password)
-            cursor                        = database.execute("INSERT INTO users (username, display_name, password, priviledge) VALUES (?, ?, ?, ?)", (username, display_name, password, 1 if primary_admin else 0))
+            password_hash                 = werkzeug.security.generate_password_hash(password)
+            password_history              = json.dumps([password_hash])
+            cursor                        = database.execute("INSERT INTO users (username, display_name, password, priviledge, password_history) VALUES (?, ?, ?, ?, ?)", (username, display_name, password_hash, 1 if primary_admin else 0, password_history))
             database.commit()
             flask.session["user_id"]      = cursor.lastrowid
             flask.session["username"]     = username
@@ -164,6 +166,36 @@ def SignIn():
         return flask.render_template("sign-in.html", message = "Authentication failed. The username or password you entered is incorrect.")
 
     return flask.render_template("sign-in.html")
+
+@server.route("/sign-in/forgot-password", methods = ["POST"])
+def ForgotPassword():
+
+    username     = flask.request.form.get("username", "").strip()
+    new_password = flask.request.form.get("new_password", "")
+    database     = GetDatabase()
+    userdata     = database.execute("SELECT * FROM users WHERE username = ?", (username,)).fetchone()
+
+    if not userdata:
+
+        nyaruhodo.telemetry.Warn("anonymous", f"Forgot password failed: unknown username '{username}'")
+
+        return flask.render_template("sign-in.html", forgot_message = "No account with that username was found.", forgot_open = True)
+
+    history = json.loads(userdata["password_history"] or "[]")
+
+    for old_hash in history:
+
+        if werkzeug.security.check_password_hash(old_hash, new_password):
+
+            return flask.render_template("sign-in.html", forgot_message = "That password has been used before. Please choose a different one.", forgot_open = True)
+
+    new_hash = werkzeug.security.generate_password_hash(new_password)
+    history.append(new_hash)
+    database.execute("UPDATE users SET password = ?, password_history = ? WHERE user_id = ?", (new_hash, json.dumps(history), userdata["user_id"]))
+    database.commit()
+    nyaruhodo.telemetry.Info(username, f"Password reset for '{username}'")
+
+    return flask.render_template("sign-in.html", message = "Your password has been reset. You can now sign in.")
 
 @server.route("/sign-out")
 def SignOut():
