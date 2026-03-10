@@ -1,14 +1,14 @@
 :root {
-    --bg-canvas: #1e1e2e; 
-    --bg-card: #313244; 
-    --bg-header: #11111b;
-    --bg-hover-glass: rgba(137, 180, 250, 0.1);
-    --bg-surface: #313244;
-    --bg-upload-hover: #313244;
-    --bg-upload: #1e1e2e; 
-    --bg-result-match:      rgba(166, 227, 161, 0.25);
-    --bg-result-mismatch:   rgba(243, 139, 168, 0.25);
-    --bg-result-unknown:    rgba(249, 226, 175, 0.25);
+    --background-canvas: #1e1e2e; 
+    --background-card: #313244; 
+    --background-header: #11111b;
+    --background-hover-glass: rgba(137, 180, 250, 0.1);
+    --background-surface: #313244;
+    --background-upload-hover: #313244;
+    --background-upload: #1e1e2e; 
+    --background-result-match:      rgba(166, 227, 161, 0.25);
+    --background-result-mismatch:   rgba(243, 139, 168, 0.25);
+    --background-result-unknown:    rgba(249, 226, 175, 0.25);
     --border-result-match:  rgba(166, 227, 161, 1);
     --border-result-mismatch: rgba(243, 139, 168, 1);
     --border-result-unknown:  rgba(249, 226, 175, 1);
