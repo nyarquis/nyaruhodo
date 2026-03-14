@@ -97,22 +97,28 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         }
 
-        if (dropZone && fileInput) {
+                if (dropZone && fileInput) {
+            dropZone.addEventListener("click", function(event) {
+                if (!event.target.closest("label")) {
+                    fileInput.click();
+                }
+            });
+ 
             dropZone.addEventListener("dragover", (event) => {
                 event.preventDefault();
                 dropZone.classList.add("drag-over");
             });
-
+ 
             dropZone.addEventListener("dragleave", () => {
                 dropZone.classList.remove("drag-over");
             });
-
+ 
             dropZone.addEventListener("drop", (event) => {
                 event.preventDefault();
                 dropZone.classList.remove("drag-over");
                 const transfer     = event.dataTransfer;
                 const droppedFiles = transfer.files;
-                
+ 
                 if (droppedFiles && droppedFiles[0]) {
                     fileInput.files                  = droppedFiles;
                     fileNameDisplay.textContent      = droppedFiles[0].name + " [ " + formatFileSize(droppedFiles[0].size) + " ]";
@@ -120,14 +126,31 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         }
+ 
+        const analyseAnotherButton = document.getElementById("analyseAnotherButton");
+ 
+        if (analyseAnotherButton) {
+            analyseAnotherButton.addEventListener("click", function() {
+                uploadForm.reset();
+                fileNameDisplay.innerHTML        = "<strong>Click to upload</strong> or drag and drop a file.";
+                fileNameDisplay.style.fontWeight = "";
+                resultsContainer.classList.add("is-hidden");
+                analyseAnotherButton.classList.add("is-hidden");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        }
 
         uploadForm.addEventListener("submit", function(event) {
             event.preventDefault();
 
-            submitButton.disabled    = true;
+                        submitButton.disabled    = true;
             submitButton.textContent = "Analysing...";
             resultsContainer.classList.add("is-hidden");
             loadingIndicator.classList.remove("is-hidden");
+ 
+            if (analyseAnotherButton) {
+                analyseAnotherButton.classList.add("is-hidden");
+            }
 
             fetch("/analyse", {
                 method: "POST",
@@ -352,39 +375,13 @@ document.addEventListener("DOMContentLoaded", function() {
             markup += `</tbody></table></div></div>`;
         }
 
-        markup += `<div class="result-reset-row"><button type="button" class="button-outline analyse-another-btn">Analyse another file</button></div>`;
-
         content.innerHTML = markup;
-
-        const metaToggle = content.querySelector(".metadata-toggle-btn");
-        if (metaToggle) {
-            metaToggle.addEventListener("click", function() {
-                const expanded = metaToggle.getAttribute("aria-expanded") === "true";
-                const body     = content.querySelector(".metadata-collapsible");
-                if (expanded) {
-                    body.classList.add("is-hidden");
-                    metaToggle.setAttribute("aria-expanded", "false");
-                    metaToggle.innerHTML = "&#9660; Show";
-                } else {
-                    body.classList.remove("is-hidden");
-                    metaToggle.setAttribute("aria-expanded", "true");
-                    metaToggle.innerHTML = "&#9650; Hide";
-                }
-            });
-        }
-
-        const resetBtn = content.querySelector(".analyse-another-btn");
-        if (resetBtn) {
-            resetBtn.addEventListener("click", function() {
-                uploadForm.reset();
-                fileNameDisplay.innerHTML        = "<strong>Click to upload</strong> or drag and drop a file.";
-                fileNameDisplay.style.fontWeight = "";
-                container.classList.add("is-hidden");
-                window.scrollTo({ top: 0, behavior: "smooth" });
-            });
-        }
-
         container.classList.remove("is-hidden");
+ 
+        const analyseAnotherButton = document.getElementById("analyseAnotherButton");
+        if (analyseAnotherButton) {
+            analyseAnotherButton.classList.remove("is-hidden");
+        }
     }
 
     function buildVirusTotalMarkup(virustotal) {
@@ -417,12 +414,10 @@ document.addEventListener("DOMContentLoaded", function() {
             content.innerHTML = `<div class="result-box mismatch"><h3>Analysis Error</h3><p>${escapeHtml(message)}</p></div>`;
             container.classList.remove("is-hidden");
         }
-    }
-
-    function escapeHtml(text) {
-        if (!text) return "";
-        const temp = document.createElement("div");
-        temp.textContent = text;
-        return temp.innerHTML;
+ 
+        const analyseAnotherButton = document.getElementById("analyseAnotherButton");
+        if (analyseAnotherButton) {
+            analyseAnotherButton.classList.remove("is-hidden");
+        }
     }
 });
