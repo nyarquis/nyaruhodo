@@ -20,7 +20,9 @@
                     <td data-ts="{{ entry.created }}"></td>
                     <td>{{ entry.filename }}</td>
                     <td>{{ entry.filetype }}</td>
-                    <td>{{ entry.status }}</td>
+                    <td>
+                        <span class="status-badge {% if entry.status == 'Match' %}badge-match {% elif entry.status == 'Mismatch' %}badge-mismatch {% elif entry.status == 'Unknown' %}badge-unknown {% endif %}">{{ entry.status }}</span>
+                    </td>
                     <td>
                         <form method="post" action="{{ url_for('DeleteRecord', record_id=entry.record_id) }}">
                             <button type="submit" class="button-delete">Delete</button>

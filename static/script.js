@@ -69,6 +69,12 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + " B";
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
     const uploadForm = document.getElementById("uploadForm");
 
     if (uploadForm) {
@@ -81,8 +87,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if (fileInput && fileNameDisplay) {
             fileInput.addEventListener("change", function() {
-                fileNameDisplay.textContent      = fileInput.files[0] ? fileInput.files[0].name : "No file chosen";
-                fileNameDisplay.style.fontWeight = fileInput.files[0] ? "bold" : "normal";
+                if (fileInput.files[0]) {
+                    fileNameDisplay.textContent      = fileInput.files[0].name + " [ " + formatFileSize(fileInput.files[0].size) + " ]";
+                    fileNameDisplay.style.fontWeight = "bold";
+                } else {
+                    fileNameDisplay.textContent      = "No file chosen";
+                    fileNameDisplay.style.fontWeight = "normal";
+                }
             });
         }
 
@@ -101,9 +112,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 dropZone.classList.remove("drag-over");
                 const transfer     = event.dataTransfer;
                 const droppedFiles = transfer.files;
+                
                 if (droppedFiles && droppedFiles[0]) {
                     fileInput.files                  = droppedFiles;
-                    fileNameDisplay.textContent      = droppedFiles[0].name;
+                    fileNameDisplay.textContent      = droppedFiles[0].name + " [ " + formatFileSize(droppedFiles[0].size) + " ]";
                     fileNameDisplay.style.fontWeight = "bold";
                 }
             });
@@ -254,6 +266,37 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    function setInputError(input, message) {
+        input.classList.add("form-input--error");
+        let hint = input.parentElement.querySelector(".form-hint--error");
+        if (!hint) {
+            hint           = document.createElement("span");
+            hint.className = "form-hint form-hint--error";
+            input.parentElement.appendChild(hint);
+        }
+        hint.textContent = message;
+    }
+
+    function clearInputError(input) {
+        input.classList.remove("form-input--error");
+        const hint = input.parentElement.querySelector(".form-hint--error");
+        if (hint) hint.remove();
+    }
+
+    document.querySelectorAll('input[name="username"]').forEach(function(input) {
+        input.addEventListener("input", function() {
+            if (input.value.includes(" ")) {
+                input.value = input.value.replace(/ /g, "");
+            }
+            clearInputError(input);
+        });
+        input.addEventListener("blur", function() {
+            if (!input.value.trim()) {
+                setInputError(input, "Username is required.");
+            }
+        });
+    });
+
     function displayResults(result) {
         const container = document.getElementById("resultsContainer");
         const content   = document.getElementById("resultContent");
@@ -309,7 +352,38 @@ document.addEventListener("DOMContentLoaded", function() {
             markup += `</tbody></table></div></div>`;
         }
 
+        markup += `<div class="result-reset-row"><button type="button" class="button-outline analyse-another-btn">Analyse another file</button></div>`;
+
         content.innerHTML = markup;
+
+        const metaToggle = content.querySelector(".metadata-toggle-btn");
+        if (metaToggle) {
+            metaToggle.addEventListener("click", function() {
+                const expanded = metaToggle.getAttribute("aria-expanded") === "true";
+                const body     = content.querySelector(".metadata-collapsible");
+                if (expanded) {
+                    body.classList.add("is-hidden");
+                    metaToggle.setAttribute("aria-expanded", "false");
+                    metaToggle.innerHTML = "&#9660; Show";
+                } else {
+                    body.classList.remove("is-hidden");
+                    metaToggle.setAttribute("aria-expanded", "true");
+                    metaToggle.innerHTML = "&#9650; Hide";
+                }
+            });
+        }
+
+        const resetBtn = content.querySelector(".analyse-another-btn");
+        if (resetBtn) {
+            resetBtn.addEventListener("click", function() {
+                uploadForm.reset();
+                fileNameDisplay.innerHTML        = "<strong>Click to upload</strong> or drag and drop a file.";
+                fileNameDisplay.style.fontWeight = "";
+                container.classList.add("is-hidden");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+            });
+        }
+
         container.classList.remove("is-hidden");
     }
 

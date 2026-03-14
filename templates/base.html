@@ -23,6 +23,7 @@
         <div class="navbar-right">
             {% if session.get('user_id') %}
             <span class="navbar-display-name">{{ session.get('display_name', '') }}</span>
+            <a href="{{ url_for('Index') }}" class="navbar-new-scan">New Scan</a>
             {% endif %}
             <button class="menu-toggle" aria-label="Toggle Navigation Menu">
                 <span class="bar"></span>
