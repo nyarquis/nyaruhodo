@@ -13,7 +13,7 @@ body {
 	line-height: 1.6;
 	min-height: 100vh;
 	overflow-x: hidden;
-	padding-bottom: 12rem;
+	padding-bottom: 6rem;
 	padding-top: 6.25vh;
 	transition: padding-right 0.3s ease-in-out;
 }
@@ -214,7 +214,7 @@ body.menu-open .theme-column {
 	font-family: inherit;
 	font-size: 1rem;
 	font-weight: 600;
-	padding: 0.75rem 1.5rem;
+	padding: 0.9rem 1.5rem;
 	white-space: nowrap;
 }
 
@@ -255,9 +255,12 @@ body.menu-open .theme-column {
 	margin-bottom: 1rem;
 }
 
-.card > form .button {
+.card > form .button,
+.card > form .button-outline {
+	font-size: 1rem;
 	margin-top: 0.5rem;
 	padding: 0.9rem 1.5rem;
+	width: 100%;
 }
 
 .card-header-row {
@@ -307,7 +310,7 @@ body.menu-open .theme-column {
 	left: 0;
 	margin-top: auto;
 	min-width: 100vw;
-	padding: 3rem 0;
+	padding: 1.5rem 0;
 	position: fixed;
 	transition: margin-right 0.3s ease-in-out;
 	width: 100vw;
@@ -353,7 +356,7 @@ body.menu-open .theme-column {
 	color: var(--text-muted);
 	font-size: 0.9rem;
 	line-height: 1.5;
-	min-height: 4.5em;
+	min-height: 3em;
 }
 
 .footer-section strong {
